@@ -3,8 +3,9 @@ using UnityEngine;
 public class pickup : MonoBehaviour
 {
     [SerializeField] private Weapon weapon;
-    [SerializeField] bool isAmmo = false;
-    [SerializeField] int ammoAmmount = 0;
+    [SerializeField] private bool isAmmo = false;
+    [SerializeField] private WeaponAmmoType weaponAmmoType;
+    [SerializeField] private int ammoAmmount = 0;
 
     void OnCollisionEnter2D(Collision2D collision)
     {
@@ -21,7 +22,7 @@ public class pickup : MonoBehaviour
             }
             else
             {
-                if (player.AddAmmo(weapon.weaponAmmoType, ammoAmmount))
+                if (player.AddAmmo(weaponAmmoType, ammoAmmount))
                 {
                     Destroy(transform.gameObject);
                 }

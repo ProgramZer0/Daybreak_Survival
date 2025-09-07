@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f2b4632e1d3e7247834d0f3770859a3, type: 3}
+  m_Name: AR
+  m_EditorClassIdentifier: 
+  weaponName: Assult Rifle
+  prefab: {fileID: 6576119893973202260, guid: 3bcdd6a29afec0d4aaaaeae99a233bdd, type: 3}
+  maxAmmo: 32
+  projectileDamage: 1
+  projectileSpeed: 15
+  projectileAmount: 1
+  projectileCooldown: 0.06
+  spread: 0
+  splashDamage: 0
+  projectilePrefab: {fileID: 8562623839093297936, guid: 9552de84965ae7d4ebe82b6f5d05d66c, type: 3}
+  weaponAmmoType: 1

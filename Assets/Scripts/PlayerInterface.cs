@@ -118,8 +118,8 @@ public class PlayerInterface : MonoBehaviour
         Vector2 moveDirection = (mouseWorldPos - gun).normalized;
 
         //Debug.Log(moveDirection.ToString());
-        o.GetComponent<Rigidbody2D>().linearVelocity = moveDirection * currentWeapon.attackSpeed;
-        o.GetComponent<Projectile>().damage = currentWeapon.damage;
+        o.GetComponent<Rigidbody2D>().linearVelocity = moveDirection * currentWeapon.projectileSpeed;
+        o.GetComponent<Projectile>().damage = currentWeapon.projectileDamage;
         canShoot = false;
         weaponAmmo--;
         StartCoroutine(ShootingCoooldown());
