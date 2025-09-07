@@ -65,7 +65,7 @@ public class PlayerInterface : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.C)) crouch = true;
         if (Input.GetKeyDown(KeyCode.LeftShift)) dashing = true;
     }
-
+    
     private void FixedUpdate()
     {
         if(currentHP < 0)
