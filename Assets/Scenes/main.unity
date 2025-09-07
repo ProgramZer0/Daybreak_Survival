@@ -660,6 +660,12 @@ MonoBehaviour:
     volume: 0
     pitch: 0
     source: {fileID: 0}
+  - name: Reload
+    clip: {fileID: 0}
+    loop: 0
+    volume: 0
+    pitch: 0
+    source: {fileID: 0}
 --- !u!4 &276416485
 Transform:
   m_ObjectHideFlags: 0
