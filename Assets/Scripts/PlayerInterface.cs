@@ -28,6 +28,17 @@ public class PlayerInterface : MonoBehaviour
     [SerializeField] private GameObject[] gunPoss;
     [SerializeField] private MainGUIController GUI;
     [SerializeField] private SoundManager SM;
+    [SerializeField] private Sprite downSprite;
+    [SerializeField] private Sprite upSprite;
+    [SerializeField] private Sprite leftSprite;
+    [SerializeField] private Sprite rightSprite;
+    [SerializeField] private SpriteRenderer spriteRenderer;
+
+    [SerializeField] private GameObject downObj;
+    [SerializeField] private GameObject upObj;
+    [SerializeField] private GameObject leftObj;
+    [SerializeField] private GameObject rightObj;
+    [SerializeField] private GameObject mainPlayerObj;
 
     [SerializeField] private Weapon currentWeapon;
 
@@ -36,7 +47,7 @@ public class PlayerInterface : MonoBehaviour
 
 
     private Rigidbody2D body;
-    private Direction facing = Direction.N;
+    private Direction facing = Direction.S;
     private bool attacking = false;
     private bool interact = false;
     private bool dashing = false;
@@ -52,6 +63,11 @@ public class PlayerInterface : MonoBehaviour
     {
         currentWeapon = GUI.ReturnEmptyWeapon();
         body = GetComponent<Rigidbody2D>();
+        downObj.SetActive(false);
+        upObj.SetActive(false);
+        leftObj.SetActive(false);
+        rightObj.SetActive(false);
+        mainPlayerObj.SetActive(true);
     }
 
     private void Update()
@@ -75,7 +91,6 @@ public class PlayerInterface : MonoBehaviour
 
         if (cannotMove) 
         {
-            Animator.SetBool("Running", false);
             walkingSound.SetActive(false);
             return;
         }         
@@ -110,11 +125,38 @@ public class PlayerInterface : MonoBehaviour
         }
 
         SM.Play("Fire");
-
+        int facingside = 0;
+        switch (facing)
+        {
+            case (Direction.N):
+                facingside = 0;
+                break;
+            case (Direction.NE):
+                facingside = 1;
+                break;
+            case (Direction.E):
+                facingside = 2;
+                break;
+            case (Direction.SE):
+                facingside = 3;
+                break;
+            case (Direction.S):
+                facingside = 4;
+                break;
+            case (Direction.SW):
+                facingside = 5;
+                break;
+            case (Direction.W):
+                facingside = 6;
+                break;
+            case (Direction.NW):
+                facingside = 7;
+                break;
+        }
         Vector2 mouseScreenPos = Input.mousePosition;
         Vector2 mouseWorldPos = Camera.main.ScreenToWorldPoint(new Vector2(mouseScreenPos.x, mouseScreenPos.y));
-        GameObject o = GameObject.Instantiate(projectile, gunPoss[0].transform.position, Quaternion.identity);
-        Vector2 gun = new Vector2(gunPoss[0].transform.position.x, gunPoss[0].transform.position.y);
+        GameObject o = GameObject.Instantiate(projectile, gunPoss[facingside].transform.position, Quaternion.identity);
+        Vector2 gun = new Vector2(gunPoss[facingside].transform.position.x, gunPoss[facingside].transform.position.y);
         Vector2 moveDirection = (mouseWorldPos - gun).normalized;
 
         //Debug.Log(moveDirection.ToString());
@@ -204,54 +246,124 @@ public class PlayerInterface : MonoBehaviour
         switch (facing)
         {
             case (Direction.E):
-
+                if (moving)
+                {
+                    downObj.SetActive(false);
+                    upObj.SetActive(false);
+                    rightObj.SetActive(true);
+                    leftObj.SetActive(false);
+                }
+                else
+                    spriteRenderer.sprite = rightSprite;
                 break;
             case (Direction.SE):
-
+                if (moving)
+                {
+                    downObj.SetActive(true);
+                    upObj.SetActive(false);
+                    rightObj.SetActive(false);
+                    leftObj.SetActive(false);
+                }
+                else
+                    spriteRenderer.sprite = downSprite;
                 break;
             case (Direction.NE):
-
+                if (moving)
+                {
+                    downObj.SetActive(false);
+                    upObj.SetActive(true);
+                    rightObj.SetActive(false);
+                    leftObj.SetActive(false);
+                }
+                else
+                    spriteRenderer.sprite = upSprite;
                 break;
             case (Direction.W):
-
+                if (moving)
+                {
+                    downObj.SetActive(false);
+                    upObj.SetActive(false);
+                    rightObj.SetActive(false);
+                    leftObj.SetActive(true);
+                }
+                else
+                    spriteRenderer.sprite = leftSprite;
                 break;
             case (Direction.SW):
-
+                if (moving)
+                {
+                    downObj.SetActive(true);
+                    upObj.SetActive(false);
+                    rightObj.SetActive(false);
+                    leftObj.SetActive(false);
+                }
+                else
+                    spriteRenderer.sprite = downSprite;
                 break;
             case (Direction.NW):
-
+                if (moving)
+                {
+                    downObj.SetActive(false);
+                    upObj.SetActive(true);
+                    rightObj.SetActive(false);
+                    leftObj.SetActive(false);
+                }
+                else
+                    spriteRenderer.sprite = upSprite;
                 break;
             case (Direction.S):
-
+                if (moving)
+                {
+                    downObj.SetActive(true);
+                    upObj.SetActive(false);
+                    rightObj.SetActive(false);
+                    leftObj.SetActive(false);
+                }
+                else
+                    spriteRenderer.sprite = downSprite;
                 break;
             case (Direction.N):
-
+                if (moving)
+                {
+                    downObj.SetActive(false);
+                    upObj.SetActive(true);
+                    rightObj.SetActive(false);
+                    leftObj.SetActive(false);
+                }
+                else
+                    spriteRenderer.sprite = upSprite;
                 break;
         }
-            
+
         if (moving)
         {
+            mainPlayerObj.SetActive(false);
             walkingSound.SetActive(true);
         }
         else
         {
+            disableAllWalks();
             walkingSound.SetActive(false);
         }
 
-        Animator.SetBool("Running", moving);
-        Animator.SetBool("Dash", dashed);
 
         if (dashed)
         {
             //dash
             SM.Play("Dash");
+            Animator.Play("Dash");
             dashing = false;
         }
-        else
-        {
-            Animator.SetBool("Dash", false);
-        }
         dashing = false;
+    }
+
+    private void disableAllWalks()
+    {
+        downObj.SetActive(false);
+        upObj.SetActive(false);
+        rightObj.SetActive(false);
+        leftObj.SetActive(false);
+        mainPlayerObj.SetActive(true);
     }
 
     public bool AddWeapon(Weapon weapon)
