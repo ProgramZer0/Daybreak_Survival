@@ -15,19 +15,20 @@ public enum Direction
 
 public class PlayerInterface : MonoBehaviour
 {
-    [SerializeField] private float speed = 10;
-    [SerializeField] private float attackSpeed = 1;
-    [SerializeField] private float damage = 1;
-    [SerializeField] private float coolDown = 0.3f;
 
+    [SerializeField] private MainGUIController GUI;
+    [SerializeField] private SoundManager SM;
+    [SerializeField] private GameManager GM; 
+    [SerializeField] private float speed = 4;
+    [SerializeField] private float crouchSpeed = 1.5f;
+    [SerializeField] private float dashCooldown = 10f;
     [SerializeField] private float interactRange = 2f;
     [SerializeField] private LayerMask interactLayer;
     [SerializeField] private Animator Animator;
     [SerializeField] private GameObject walkingSound;
     [SerializeField] private GameObject projectile;
     [SerializeField] private GameObject[] gunPoss;
-    [SerializeField] private MainGUIController GUI;
-    [SerializeField] private SoundManager SM;
+
     [SerializeField] private Sprite downSprite;
     [SerializeField] private Sprite upSprite;
     [SerializeField] private Sprite leftSprite;
@@ -53,6 +54,8 @@ public class PlayerInterface : MonoBehaviour
     private bool dashing = false;
     private bool crouch = false; 
     private bool canShoot = true;
+    private bool canDash = true;
+    private bool IframesDown = true;
     private bool cannotMove = false;
     private float inputH = 0f;
     private float inputV = 0f;
@@ -72,7 +75,6 @@ public class PlayerInterface : MonoBehaviour
 
     private void Update()
     {
-
         inputH = Input.GetAxis("Horizontal");
         inputV = Input.GetAxisRaw("Vertical");
 
@@ -80,6 +82,7 @@ public class PlayerInterface : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.Mouse0)) attacking = false;
         if (Input.GetKeyDown(KeyCode.F)) interact = true;
         if (Input.GetKeyDown(KeyCode.C)) crouch = true;
+        if (Input.GetKeyUp(KeyCode.C)) crouch = false;
         if (Input.GetKeyDown(KeyCode.LeftShift)) dashing = true;
     }
     
@@ -87,7 +90,7 @@ public class PlayerInterface : MonoBehaviour
     {
         if(currentHP < 0)
         {
-            //end game
+            GM.EndGameFail();
         }
 
         if (cannotMove) 
@@ -100,7 +103,7 @@ public class PlayerInterface : MonoBehaviour
 
         if (attacking && canShoot)
         {
-            tryAttacking();
+            TryAttacking();
         }
 
         if (interact)
@@ -112,7 +115,7 @@ public class PlayerInterface : MonoBehaviour
         Move(moveAmount, false, dashing);
     }
 
-    private void tryAttacking()
+    private void TryAttacking()
     {
 
         if (GUI.GetInUI())
@@ -138,16 +141,36 @@ public class PlayerInterface : MonoBehaviour
             case Direction.NE: facingside = 7; break;
         }
 
-        Vector3 spawnPos = gunPoss[facingside].transform.position;
-        GameObject o = GameObject.Instantiate(projectile, transform.position, Quaternion.Euler(0, 0, (facingside*45)));
-        Vector2 moveDirection = (spawnPos - transform.position).normalized;
+        for(int i = 0; i < currentWeapon.projectileAmount; i++)
+        {
+            Vector3 gunDirection = gunPoss[facingside].transform.position;
+            Vector2 randomOffset = Random.insideUnitCircle * currentWeapon.spawnSpread;
+            Vector2 spawnPos = transform.position + (Vector3)randomOffset;
+            GameObject o = GameObject.Instantiate(projectile, spawnPos, Quaternion.Euler(0, 0, (facingside * 45)));
 
-        o.GetComponent<Rigidbody2D>().linearVelocity = moveDirection * currentWeapon.projectileSpeed;
-        o.GetComponent<Projectile>().damage = currentWeapon.projectileDamage;
+            Vector2 baseDir = (gunDirection - transform.position).normalized;
+            float spread = currentWeapon.projectileSpread; // e.g. 45
+            float randomAngle = Random.Range(-spread / 2f, spread / 2f);
+            Vector2 moveDirection = RandomMovement(baseDir, randomAngle).normalized;
+
+            o.GetComponent<Rigidbody2D>().linearVelocity = moveDirection * currentWeapon.projectileSpeed;
+            o.GetComponent<Projectile>().damage = currentWeapon.projectileDamage;
+        }
+        
         canShoot = false;
 
         weaponAmmo--;
         StartCoroutine(ShootingCoooldown(currentWeapon.projectileCooldown));
+    }
+    private Vector2 RandomMovement(Vector2 v, float degrees)
+    {
+        float rad = degrees * Mathf.Deg2Rad;
+        float sin = Mathf.Sin(rad);
+        float cos = Mathf.Cos(rad);
+        return new Vector2(
+            v.x * cos - v.y * sin,
+            v.x * sin + v.y * cos
+        );
     }
 
     private IEnumerator ShootingCoooldown(float cooldown)
@@ -178,7 +201,11 @@ public class PlayerInterface : MonoBehaviour
     private void Move(Vector2 move, bool crouch, bool dashed)
     {
         bool moving = true;
-        body.linearVelocity = move * speed;
+        float speeds = speed;
+        int facingInt = 0;
+        if (crouch)
+            speeds = crouchSpeed;
+        body.linearVelocity = move * speeds;
 
         if (inputH > 0)
         {
@@ -235,10 +262,10 @@ public class PlayerInterface : MonoBehaviour
                     upObj.SetActive(false);
                     rightObj.SetActive(true);
                     leftObj.SetActive(false);
-                    DisableCrossEnablex(6);
                 }
                 else
                     spriteRenderer.sprite = rightSprite;
+                facingInt = 6;
                 break;
             case (Direction.SE):
                 if (moving)
@@ -247,10 +274,10 @@ public class PlayerInterface : MonoBehaviour
                     upObj.SetActive(false);
                     rightObj.SetActive(false);
                     leftObj.SetActive(false);
-                    DisableCrossEnablex(5);
                 }
                 else
                     spriteRenderer.sprite = downSprite;
+                facingInt = 5;
                 break;
             case (Direction.NE):
                 if (moving)
@@ -259,10 +286,10 @@ public class PlayerInterface : MonoBehaviour
                     upObj.SetActive(true);
                     rightObj.SetActive(false);
                     leftObj.SetActive(false);
-                    DisableCrossEnablex(7);
                 }
                 else
                     spriteRenderer.sprite = upSprite;
+                facingInt = 7;
                 break;
             case (Direction.W):
                 if (moving)
@@ -271,10 +298,10 @@ public class PlayerInterface : MonoBehaviour
                     upObj.SetActive(false);
                     rightObj.SetActive(false);
                     leftObj.SetActive(true);
-                    DisableCrossEnablex(2);
                 }
                 else
                     spriteRenderer.sprite = leftSprite;
+                facingInt = 2;
                 break;
             case (Direction.SW):
                 if (moving)
@@ -283,10 +310,10 @@ public class PlayerInterface : MonoBehaviour
                     upObj.SetActive(false);
                     rightObj.SetActive(false);
                     leftObj.SetActive(false);
-                    DisableCrossEnablex(3);
                 }
                 else
                     spriteRenderer.sprite = downSprite;
+                facingInt = 3;
                 break;
             case (Direction.NW):
                 if (moving)
@@ -295,10 +322,10 @@ public class PlayerInterface : MonoBehaviour
                     upObj.SetActive(true);
                     rightObj.SetActive(false);
                     leftObj.SetActive(false);
-                    DisableCrossEnablex(1);
                 }
                 else
                     spriteRenderer.sprite = upSprite;
+                facingInt = 1;
                 break;
             case (Direction.S):
                 if (moving)
@@ -307,10 +334,10 @@ public class PlayerInterface : MonoBehaviour
                     upObj.SetActive(false);
                     rightObj.SetActive(false);
                     leftObj.SetActive(false);
-                    DisableCrossEnablex(4);
                 }
                 else
                     spriteRenderer.sprite = downSprite;
+                facingInt = 4;
                 break;
             case (Direction.N):
                 if (moving)
@@ -319,13 +346,14 @@ public class PlayerInterface : MonoBehaviour
                     upObj.SetActive(true);
                     rightObj.SetActive(false);
                     leftObj.SetActive(false);
-                    DisableCrossEnablex(0);
                 }
                 else
                     spriteRenderer.sprite = upSprite;
+                facingInt = 0;
                 break;
         }
 
+        DisableCrossEnablex(facingInt);
 
         if (moving)
         {
@@ -334,22 +362,24 @@ public class PlayerInterface : MonoBehaviour
         }
         else
         {
-            disableAllWalks();
+            DisableAllWalks();
             walkingSound.SetActive(false);
         }
 
 
-        if (dashed)
+        if (dashed && canDash)
         {
-            //dash
+            LockMovement(true);
             SM.Play("Dash");
-            Animator.Play("Dash");
-            dashing = false;
+            //dash animation
+            StartCoroutine(DashMovement(gunPoss[facingInt].transform.position));
+            canDash = false;
+            StartCoroutine(WaitDash());
         }
         dashing = false;
     }
 
-    private void disableAllWalks()
+    private void DisableAllWalks()
     {
         downObj.SetActive(false);
         upObj.SetActive(false);
@@ -396,6 +426,44 @@ public class PlayerInterface : MonoBehaviour
 
     public void TakeDamage(float damage)
     {
-        currentHP -= damage;
+        if (IframesDown)
+        {
+            currentHP -= damage;
+            IframesDown = false;
+            StartCoroutine(IFrameCooldown());
+            StartCoroutine(Flash());
+        }
+    }
+
+    private IEnumerator Flash()
+    {
+        Color spriteColor = spriteRenderer.color;
+        for(int i = 0; i < 3; i++)
+        {
+            spriteColor.a = 0.3f;
+            spriteRenderer.color = spriteColor;
+            yield return new WaitForSeconds(.1f);
+            spriteColor.a = 1f;
+            spriteRenderer.color = spriteColor;
+            yield return new WaitForSeconds(.1f);
+        }
+    }
+
+    private IEnumerator IFrameCooldown()
+    {
+        yield return new WaitForSeconds(.6f);
+        IframesDown = true;
+    }
+    private IEnumerator DashMovement(Vector2 dashLoc)
+    {
+        yield return new WaitForSeconds(.05f);
+        transform.position = dashLoc;
+        if(!GUI.GetInUI())
+            LockMovement(false);
+    }
+    private IEnumerator WaitDash()
+    {
+        yield return new WaitForSeconds(dashCooldown);
+        canDash = true;
     }
 }

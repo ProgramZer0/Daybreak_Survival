@@ -15,11 +15,12 @@ MonoBehaviour:
   weaponName: SMG
   prefab: {fileID: 6058335025305764222, guid: d644aca0f721a9047b41eb0d55f55b00, type: 3}
   maxAmmo: 32
-  projectileDamage: 0.3
-  projectileSpeed: 20
+  projectileDamage: 0.25
+  projectileSpeed: 27
   projectileAmount: 2
-  projectileCooldown: 0.08
-  spread: 5
+  projectileCooldown: 0.03
+  projectileSpread: 10
+  spawnSpread: 0.12
   splashDamage: 0
   projectilePrefab: {fileID: 8562623839093297936, guid: 9552de84965ae7d4ebe82b6f5d05d66c, type: 3}
   weaponAmmoType: 0

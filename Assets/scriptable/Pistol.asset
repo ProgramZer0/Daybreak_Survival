@@ -19,7 +19,8 @@ MonoBehaviour:
   projectileSpeed: 20
   projectileAmount: 1
   projectileCooldown: 0.4
-  spread: 0
+  projectileSpread: 5
+  spawnSpread: 0
   splashDamage: 0
   projectilePrefab: {fileID: 8562623839093297936, guid: 9552de84965ae7d4ebe82b6f5d05d66c, type: 3}
   weaponAmmoType: 0

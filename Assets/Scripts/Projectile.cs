@@ -15,7 +15,7 @@ public class Projectile : MonoBehaviour
     {
 
         spriteColor = renderer.color;
-        spriteColor.a = 0.7f;
+        spriteColor.a = 0.4f;
         renderer.color = spriteColor;
     }
 
@@ -24,11 +24,9 @@ public class Projectile : MonoBehaviour
     {
         timer += Time.deltaTime;
 
-        alpha = timer / 1.3f;
+        if (timer > .1) alpha = 1f;
 
-        if (alpha > .2) alpha = 1;
-
-        if (alpha < .1) alpha = 0.3f;
+        if (timer <= .1) alpha = 0.7f;
 
         spriteColor.a = alpha;
 

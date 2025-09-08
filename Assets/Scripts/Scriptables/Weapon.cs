@@ -19,7 +19,8 @@ public class Weapon : ScriptableObject
     public float projectileSpeed;
     public float projectileAmount;
     public float projectileCooldown;
-    public float spread = 0f;
+    public float projectileSpread = 0f;
+    public float spawnSpread = 0f;
     public bool splashDamage = false;
     public GameObject projectilePrefab;
     public WeaponAmmoType weaponAmmoType;
