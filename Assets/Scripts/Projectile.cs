@@ -26,9 +26,9 @@ public class Projectile : MonoBehaviour
 
         alpha = timer / 1.3f;
 
-        if (alpha > 1) alpha = 1;
+        if (alpha > .2) alpha = 1;
 
-        if (alpha < .7) alpha = 0.3f;
+        if (alpha < .1) alpha = 0.3f;
 
         spriteColor.a = alpha;
 

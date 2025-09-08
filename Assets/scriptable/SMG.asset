@@ -16,7 +16,7 @@ MonoBehaviour:
   prefab: {fileID: 6058335025305764222, guid: d644aca0f721a9047b41eb0d55f55b00, type: 3}
   maxAmmo: 32
   projectileDamage: 0.3
-  projectileSpeed: 10
+  projectileSpeed: 20
   projectileAmount: 2
   projectileCooldown: 0.08
   spread: 5

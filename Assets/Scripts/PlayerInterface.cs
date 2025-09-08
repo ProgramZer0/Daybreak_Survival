@@ -77,6 +77,7 @@ public class PlayerInterface : MonoBehaviour
         inputV = Input.GetAxisRaw("Vertical");
 
         if (Input.GetKeyDown(KeyCode.Mouse0)) attacking = true;
+        if (Input.GetKeyUp(KeyCode.Mouse0)) attacking = false;
         if (Input.GetKeyDown(KeyCode.F)) interact = true;
         if (Input.GetKeyDown(KeyCode.C)) crouch = true;
         if (Input.GetKeyDown(KeyCode.LeftShift)) dashing = true;
@@ -100,7 +101,6 @@ public class PlayerInterface : MonoBehaviour
         if (attacking && canShoot)
         {
             tryAttacking();
-            attacking = false;
         }
 
         if (interact)
@@ -126,50 +126,33 @@ public class PlayerInterface : MonoBehaviour
 
         SM.Play("Fire");
         int facingside = 0;
-        switch (facing)
+        switch(facing)
         {
-            case (Direction.N):
-                facingside = 0;
-                break;
-            case (Direction.NE):
-                facingside = 1;
-                break;
-            case (Direction.E):
-                facingside = 2;
-                break;
-            case (Direction.SE):
-                facingside = 3;
-                break;
-            case (Direction.S):
-                facingside = 4;
-                break;
-            case (Direction.SW):
-                facingside = 5;
-                break;
-            case (Direction.W):
-                facingside = 6;
-                break;
-            case (Direction.NW):
-                facingside = 7;
-                break;
+            case Direction.N:  facingside = 0; break;
+            case Direction.NW: facingside = 1; break;
+            case Direction.W: facingside = 2; break;
+            case Direction.SW: facingside = 3; break;
+            case Direction.S: facingside = 4; break;
+            case Direction.SE: facingside = 5; break;
+            case Direction.E: facingside = 6; break;
+            case Direction.NE: facingside = 7; break;
         }
-        Vector2 mouseScreenPos = Input.mousePosition;
-        Vector2 mouseWorldPos = Camera.main.ScreenToWorldPoint(new Vector2(mouseScreenPos.x, mouseScreenPos.y));
-        GameObject o = GameObject.Instantiate(projectile, gunPoss[facingside].transform.position, Quaternion.identity);
-        Vector2 gun = new Vector2(gunPoss[facingside].transform.position.x, gunPoss[facingside].transform.position.y);
-        Vector2 moveDirection = (mouseWorldPos - gun).normalized;
 
-        //Debug.Log(moveDirection.ToString());
+        Vector3 spawnPos = gunPoss[facingside].transform.position;
+        GameObject o = GameObject.Instantiate(projectile, transform.position, Quaternion.Euler(0, 0, (facingside*45)));
+        Vector2 moveDirection = (spawnPos - transform.position).normalized;
+
         o.GetComponent<Rigidbody2D>().linearVelocity = moveDirection * currentWeapon.projectileSpeed;
         o.GetComponent<Projectile>().damage = currentWeapon.projectileDamage;
         canShoot = false;
+
         weaponAmmo--;
-        StartCoroutine(ShootingCoooldown());
+        StartCoroutine(ShootingCoooldown(currentWeapon.projectileCooldown));
     }
 
-    private IEnumerator ShootingCoooldown()
+    private IEnumerator ShootingCoooldown(float cooldown)
     {
-        yield return new WaitForSeconds(coolDown);
+        yield return new WaitForSeconds(cooldown);
         canShoot = true;
     }
     public void LockMovement(bool val)
@@ -252,6 +235,7 @@ public class PlayerInterface : MonoBehaviour
                     upObj.SetActive(false);
                     rightObj.SetActive(true);
                     leftObj.SetActive(false);
+                    DisableCrossEnablex(6);
                 }
                 else
                     spriteRenderer.sprite = rightSprite;
@@ -263,6 +247,7 @@ public class PlayerInterface : MonoBehaviour
                     upObj.SetActive(false);
                     rightObj.SetActive(false);
                     leftObj.SetActive(false);
+                    DisableCrossEnablex(5);
                 }
                 else
                     spriteRenderer.sprite = downSprite;
@@ -274,6 +259,7 @@ public class PlayerInterface : MonoBehaviour
                     upObj.SetActive(true);
                     rightObj.SetActive(false);
                     leftObj.SetActive(false);
+                    DisableCrossEnablex(7);
                 }
                 else
                     spriteRenderer.sprite = upSprite;
@@ -285,6 +271,7 @@ public class PlayerInterface : MonoBehaviour
                     upObj.SetActive(false);
                     rightObj.SetActive(false);
                     leftObj.SetActive(true);
+                    DisableCrossEnablex(2);
                 }
                 else
                     spriteRenderer.sprite = leftSprite;
@@ -296,6 +283,7 @@ public class PlayerInterface : MonoBehaviour
                     upObj.SetActive(false);
                     rightObj.SetActive(false);
                     leftObj.SetActive(false);
+                    DisableCrossEnablex(3);
                 }
                 else
                     spriteRenderer.sprite = downSprite;
@@ -307,6 +295,7 @@ public class PlayerInterface : MonoBehaviour
                     upObj.SetActive(true);
                     rightObj.SetActive(false);
                     leftObj.SetActive(false);
+                    DisableCrossEnablex(1);
                 }
                 else
                     spriteRenderer.sprite = upSprite;
@@ -318,6 +307,7 @@ public class PlayerInterface : MonoBehaviour
                     upObj.SetActive(false);
                     rightObj.SetActive(false);
                     leftObj.SetActive(false);
+                    DisableCrossEnablex(4);
                 }
                 else
                     spriteRenderer.sprite = downSprite;
@@ -329,11 +319,13 @@ public class PlayerInterface : MonoBehaviour
                     upObj.SetActive(true);
                     rightObj.SetActive(false);
                     leftObj.SetActive(false);
+                    DisableCrossEnablex(0);
                 }
                 else
                     spriteRenderer.sprite = upSprite;
                 break;
         }
+
 
         if (moving)
         {
@@ -364,6 +356,19 @@ public class PlayerInterface : MonoBehaviour
         rightObj.SetActive(false);
         leftObj.SetActive(false);
         mainPlayerObj.SetActive(true);
+    }
+
+    private void DisableCrossEnablex(int i)
+    {
+        gunPoss[0].SetActive(false);
+        gunPoss[1].SetActive(false);
+        gunPoss[2].SetActive(false);
+        gunPoss[3].SetActive(false);
+        gunPoss[4].SetActive(false);
+        gunPoss[5].SetActive(false);
+        gunPoss[6].SetActive(false);
+        gunPoss[7].SetActive(false);
+        gunPoss[i].SetActive(true);
     }
 
     public bool AddWeapon(Weapon weapon)
