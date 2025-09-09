@@ -18,9 +18,12 @@ MonoBehaviour:
   projectileDamage: 0.5
   projectileSpeed: 0.5
   projectileAmount: 5
-  projectileCooldown: 1
+  projectileTime: 0.4
+  projectileCooldown: 0.01
   projectileSpread: 45
+  projectileFallOffMultiplier: 1
   spawnSpread: 0.2
   splashDamage: 1
+  splashRange: 0
   projectilePrefab: {fileID: 0}
   weaponAmmoType: 4

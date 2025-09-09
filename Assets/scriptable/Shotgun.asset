@@ -10,20 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4f2b4632e1d3e7247834d0f3770859a3, type: 3}
-  m_Name: SMG
+  m_Name: Shotgun
   m_EditorClassIdentifier: 
-  weaponName: SMG
-  prefab: {fileID: 6058335025305764222, guid: d644aca0f721a9047b41eb0d55f55b00, type: 3}
-  maxAmmo: 32
-  projectileDamage: 0.25
-  projectileSpeed: 27
-  projectileAmount: 2
-  projectileTime: 3
-  projectileCooldown: 0.03
-  projectileSpread: 10
-  projectileFallOffMultiplier: 3
-  spawnSpread: 0.12
+  weaponName: Shotgun
+  prefab: {fileID: 0}
+  maxAmmo: 16
+  projectileDamage: 0
+  projectileSpeed: 0
+  projectileAmount: 0
+  projectileTime: 7
+  projectileCooldown: 0
+  projectileSpread: 0
+  projectileFallOffMultiplier: 1
+  spawnSpread: 0
   splashDamage: 0
   splashRange: 0
-  projectilePrefab: {fileID: 8562623839093297936, guid: 9552de84965ae7d4ebe82b6f5d05d66c, type: 3}
+  projectilePrefab: {fileID: 0}
   weaponAmmoType: 0

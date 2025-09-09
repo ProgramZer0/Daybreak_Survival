@@ -15,13 +15,16 @@ public class Weapon : ScriptableObject
     public string weaponName;
     public GameObject prefab;
     public int maxAmmo;
-    public float projectileDamage;
-    public float projectileSpeed;
-    public float projectileAmount;
-    public float projectileCooldown;
+    public float projectileDamage = 0f;
+    public float projectileSpeed = 0f;
+    public float projectileAmount = 0f;
+    public float projectileTime = 7;
+    public float projectileCooldown = 0f;
     public float projectileSpread = 0f;
+    public float projectileFallOffMultiplier = 1;
     public float spawnSpread = 0f;
     public bool splashDamage = false;
+    public float splashRange = 0f;
     public GameObject projectilePrefab;
     public WeaponAmmoType weaponAmmoType;
 }
