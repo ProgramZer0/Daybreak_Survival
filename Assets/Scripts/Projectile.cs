@@ -4,13 +4,20 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-    private float timer = 0;
+    private float timer = 0.00001f;
     private float alpha = 0;
     private Color spriteColor;
-
+    private float FallOffMultiplier = 1;
+    private float FallOffTime = 0;
+    private float projectileTime  = 8;
+    private float splashRange = 0;  
+    private bool splashDamge = false;
+    private float damage = 0;
+    private float fallDamage = 0;
+    private float FOM_MULTIPLY = 0.01f;
+    private bool hasAnimation;
     [SerializeField] private SpriteRenderer renderer;
 
-    public float damage = 0;
     private void Awake()
     {
 
@@ -29,14 +36,37 @@ public class Projectile : MonoBehaviour
         if (timer <= .1) alpha = 0.7f;
 
         spriteColor.a = alpha;
-
         renderer.color = spriteColor;
 
-        if (timer > 8)
+        if (timer <= FallOffTime)
+            fallDamage = damage;
+        else
+        {
+            float decayRate = FallOffMultiplier / (projectileTime - FallOffTime);
+            float elapsedSinceFalloff = timer - FallOffTime;
+
+            fallDamage = damage * Mathf.Exp(-decayRate * elapsedSinceFalloff);
+        }
+
+        if (timer > projectileTime)
         {
             timer = -100000;
-            Explode();
+            if (hasAnimation)
+                ExplodeAnim();
+            else
+                Explode();
         }
+    }
+
+    public void SetValues(float FOM, float time, float range, bool splash, float d, float FOMTime, bool projectileHasAnimation)
+    {
+        hasAnimation = projectileHasAnimation;
+        FallOffTime = FOMTime;
+        damage = d;
+        FallOffMultiplier = FOM;
+        projectileTime = time;
+        splashDamge = splash;
+        splashRange = range;
     }
 
     void OnCollisionEnter2D(Collision2D collision)
@@ -45,17 +75,41 @@ public class Projectile : MonoBehaviour
         collision.gameObject.TryGetComponent<IEnemy>(out IEnemy enemy);
         if(enemy != null)
         {
-            enemy.TakeDamage(damage);
+            enemy.TakeDamage(fallDamage);
         }
 
         gameObject.GetComponent<Collider2D>().enabled = false;
-        Explode();
+        if (hasAnimation)
+            ExplodeAnim();
+        else
+            Explode();
+
     }
 
+    private IEnumerator ExplodeAnim()
+    {
+        GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
+        if (splashDamge)
+            Splash();
+        yield return new WaitForSeconds(0.08f);
+        Destroy(transform.gameObject);
+    }
     private void Explode()
     {
         GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
-
+        if (splashDamge)
+            Splash();
         Destroy(transform.gameObject);
+    }
+    private void Splash()
+    {
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, splashRange, FindFirstObjectByType<PlayerInterface>().EnemyLayer);
+        foreach (Collider2D hit in hits)
+        {   
+            if (hit.TryGetComponent<IEnemy>(out IEnemy enemy))
+            {
+                enemy.TakeDamage(fallDamage); 
+            }
+        }
     }
 }

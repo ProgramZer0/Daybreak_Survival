@@ -13,17 +13,19 @@ MonoBehaviour:
   m_Name: FlameThrower
   m_EditorClassIdentifier: 
   weaponName: Flame Thrower
-  prefab: {fileID: 0}
-  maxAmmo: 80
-  projectileDamage: 0.5
-  projectileSpeed: 0.5
-  projectileAmount: 5
-  projectileTime: 0.4
+  prefab: {fileID: 1672552838969658953, guid: 6fc54dcebbdd86649821824ef48c4d24, type: 3}
+  maxAmmo: 160
+  projectileDamage: 0.1
+  projectileSpeed: 20
+  projectileAmount: 10
+  projectileTime: 0.3
   projectileCooldown: 0.01
-  projectileSpread: 45
+  projectileSpread: 30
   projectileFallOffMultiplier: 1
-  spawnSpread: 0.2
-  splashDamage: 1
+  projectileFallOffMultiplierTime: 3
+  spawnSpread: 0.4
+  projectileHasAnimation: 0
+  splashDamage: 0
   splashRange: 0
-  projectilePrefab: {fileID: 0}
+  projectilePrefab: {fileID: 8562623839093297936, guid: 4f018a506a8d97c4ea92169002db1af2, type: 3}
   weaponAmmoType: 4

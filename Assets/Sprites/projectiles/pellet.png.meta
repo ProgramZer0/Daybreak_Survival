@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: a3debd0658e1cc840a04c99e81ff6aa7
+guid: 33b8c0feed5f0f644bcba596c3ddfb10
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -7190796981973406805
-    second: rocketProjectile_0
+      213: -4405721588880470262
+    second: pellet_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,12 +113,12 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: rocketProjectile_0
+      name: pellet_0
       rect:
         serializedVersion: 2
-        x: 5
+        x: 1
         y: 0
-        width: 6
+        width: 14
         height: 15
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: bab268d4e38253c90800000000000000
-      internalID: -7190796981973406805
+      spriteID: a0f8283be8bbbd2c0800000000000000
+      internalID: -4405721588880470262
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      rocketProjectile_0: -7190796981973406805
+      pellet_0: -4405721588880470262
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

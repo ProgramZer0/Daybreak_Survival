@@ -22,7 +22,9 @@ MonoBehaviour:
   projectileCooldown: 0.4
   projectileSpread: 5
   projectileFallOffMultiplier: 2
+  projectileFallOffMultiplierTime: 3
   spawnSpread: 0
+  projectileHasAnimation: 0
   splashDamage: 0
   splashRange: 0
   projectilePrefab: {fileID: 8562623839093297936, guid: 9552de84965ae7d4ebe82b6f5d05d66c, type: 3}

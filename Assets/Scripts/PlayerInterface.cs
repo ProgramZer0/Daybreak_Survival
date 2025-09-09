@@ -24,6 +24,7 @@ public class PlayerInterface : MonoBehaviour
     [SerializeField] private float dashCooldown = 10f;
     [SerializeField] private float interactRange = 2f;
     [SerializeField] private LayerMask interactLayer;
+    public LayerMask EnemyLayer;
     [SerializeField] private Animator Animator;
     [SerializeField] private GameObject walkingSound;
     [SerializeField] private GameObject projectile;
@@ -146,15 +147,15 @@ public class PlayerInterface : MonoBehaviour
             Vector3 gunDirection = gunPoss[facingside].transform.position;
             Vector2 randomOffset = Random.insideUnitCircle * currentWeapon.spawnSpread;
             Vector2 spawnPos = transform.position + (Vector3)randomOffset;
-            GameObject o = GameObject.Instantiate(projectile, spawnPos, Quaternion.Euler(0, 0, (facingside * 45)));
+            GameObject o = GameObject.Instantiate(currentWeapon.projectilePrefab, spawnPos, Quaternion.Euler(0, 0, (facingside * 45)));
 
             Vector2 baseDir = (gunDirection - transform.position).normalized;
             float spread = currentWeapon.projectileSpread; // e.g. 45
             float randomAngle = Random.Range(-spread / 2f, spread / 2f);
             Vector2 moveDirection = RandomMovement(baseDir, randomAngle).normalized;
 
+            o.GetComponent<Projectile>().SetValues(currentWeapon.projectileFallOffMultiplier, currentWeapon.projectileTime, currentWeapon.splashRange, currentWeapon.splashDamage, currentWeapon.projectileDamage, currentWeapon.projectileFallOffMultiplierTime, currentWeapon.projectileHasAnimation);
             o.GetComponent<Rigidbody2D>().linearVelocity = moveDirection * currentWeapon.projectileSpeed;
-            o.GetComponent<Projectile>().damage = currentWeapon.projectileDamage;
         }
         
         canShoot = false;

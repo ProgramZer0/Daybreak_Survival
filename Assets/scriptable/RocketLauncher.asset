@@ -14,12 +14,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: Rocket Launcher
   prefab: {fileID: 9170968425028117989, guid: 5634e1c0eee7e75429134686de118e99, type: 3}
-  maxAmmo: 1
+  maxAmmo: 2
   projectileDamage: 300
   projectileSpeed: 8
   projectileAmount: 1
+  projectileTime: 7
   projectileCooldown: 3
-  spread: 0
+  projectileSpread: 0
+  projectileFallOffMultiplier: 1
+  projectileFallOffMultiplierTime: 8
+  spawnSpread: 0
+  projectileHasAnimation: 0
   splashDamage: 1
-  projectilePrefab: {fileID: 0}
+  splashRange: 1
+  projectilePrefab: {fileID: 8562623839093297936, guid: 987b74437e7876a4db57d9882054e5c2, type: 3}
   weaponAmmoType: 3
