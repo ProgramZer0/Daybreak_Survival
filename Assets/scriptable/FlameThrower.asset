@@ -27,5 +27,7 @@ MonoBehaviour:
   projectileHasAnimation: 0
   splashDamage: 0
   splashRange: 0
+  appearTime: 0
+  fadeTime: 0
   projectilePrefab: {fileID: 8562623839093297936, guid: 4f018a506a8d97c4ea92169002db1af2, type: 3}
   weaponAmmoType: 4

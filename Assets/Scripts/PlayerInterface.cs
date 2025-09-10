@@ -154,7 +154,9 @@ public class PlayerInterface : MonoBehaviour
             float randomAngle = Random.Range(-spread / 2f, spread / 2f);
             Vector2 moveDirection = RandomMovement(baseDir, randomAngle).normalized;
 
-            o.GetComponent<Projectile>().SetValues(currentWeapon.projectileFallOffMultiplier, currentWeapon.projectileTime, currentWeapon.splashRange, currentWeapon.splashDamage, currentWeapon.projectileDamage, currentWeapon.projectileFallOffMultiplierTime, currentWeapon.projectileHasAnimation);
+            o.GetComponent<Projectile>().SetValues(currentWeapon.projectileFallOffMultiplier, currentWeapon.projectileTime, 
+                currentWeapon.splashRange, currentWeapon.splashDamage, currentWeapon.projectileDamage, 
+                currentWeapon.projectileFallOffMultiplierTime, currentWeapon.projectileHasAnimation, currentWeapon.appearTime, currentWeapon.fadeTime);
             o.GetComponent<Rigidbody2D>().linearVelocity = moveDirection * currentWeapon.projectileSpeed;
         }
         

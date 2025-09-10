@@ -14,6 +14,8 @@ public class Projectile : MonoBehaviour
     private bool splashDamge = false;
     private float damage = 0;
     private float fallDamage = 0;
+    private float appearTime = 0f;
+    private float fadeTime = 0.1f;
     private float FOM_MULTIPLY = 0.01f;
     private bool hasAnimation;
     [SerializeField] private SpriteRenderer renderer;
@@ -31,9 +33,10 @@ public class Projectile : MonoBehaviour
     {
         timer += Time.deltaTime;
 
-        if (timer > .1) alpha = 1f;
+        if (timer >= appearTime && timer < fadeTime) alpha = 0.7f;
 
-        if (timer <= .1) alpha = 0.7f;
+        if (timer > fadeTime) alpha = 1f;
+
 
         spriteColor.a = alpha;
         renderer.color = spriteColor;
@@ -58,7 +61,7 @@ public class Projectile : MonoBehaviour
         }
     }
 
-    public void SetValues(float FOM, float time, float range, bool splash, float d, float FOMTime, bool projectileHasAnimation)
+    public void SetValues(float FOM, float time, float range, bool splash, float d, float FOMTime, bool projectileHasAnimation, float appearT, float fTime)
     {
         hasAnimation = projectileHasAnimation;
         FallOffTime = FOMTime;
@@ -67,6 +70,8 @@ public class Projectile : MonoBehaviour
         projectileTime = time;
         splashDamge = splash;
         splashRange = range;
+        appearTime = appearT;
+        fadeTime = fTime;
     }
 
     void OnCollisionEnter2D(Collision2D collision)

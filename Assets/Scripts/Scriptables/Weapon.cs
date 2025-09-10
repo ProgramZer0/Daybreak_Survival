@@ -28,6 +28,8 @@ public class Weapon : ScriptableObject
     public bool projectileHasAnimation = true;
     public bool splashDamage = false;
     public float splashRange = 0f;
+    public float appearTime = 0f;
+    public float fadeTime = 0.1f;
     public GameObject projectilePrefab;
     public WeaponAmmoType weaponAmmoType;
 }
