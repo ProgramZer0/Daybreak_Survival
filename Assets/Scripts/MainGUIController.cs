@@ -9,7 +9,8 @@ public class MainGUIController : MonoBehaviour
 
     [SerializeField] private GameObject HPBar;
     [SerializeField] private GameObject PauseMenu;
-    [SerializeField] private GameObject settingMenu;
+    [SerializeField] private GameObject settingMenuMM;
+    [SerializeField] private GameObject settingMenuPM;
     [SerializeField] private GameObject MainMenu;
 
     [SerializeField] private Weapon empty;
@@ -42,7 +43,14 @@ public class MainGUIController : MonoBehaviour
         }
         SetInUI(false);
         Time.timeScale = 1f;
-    }   
+    }
+
+    public void NoShowMM()
+    {
+        inUI = false;
+        player.LockMovement(false);
+        MainMenu.SetActive(false);
+    }
 
     public Weapon ReturnEmptyWeapon()
     {
@@ -67,11 +75,18 @@ public class MainGUIController : MonoBehaviour
         PauseMenu.SetActive(true);
         Time.timeScale = 0f;
     }
-    public void OpenSettingsMenu()
+    public void OpenSettingsMenuPM()
     {
         inUI = true;
         player.LockMovement(true);
-        settingMenu.SetActive(true);
+        settingMenuPM.SetActive(true);
+        Time.timeScale = 0f;
+    }
+    public void OpenSettingsMenuMM()
+    {
+        inUI = true;
+        player.LockMovement(true);
+        settingMenuMM.SetActive(true);
         Time.timeScale = 0f;
     }
     public void OpenMainMenu()

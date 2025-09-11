@@ -14,8 +14,8 @@ TagManager:
   - Interact
   - Projectile
   - door
-  - 
-  - 
+  - ground
+  - envrioment
   - 
   - 
   - 
@@ -46,6 +46,12 @@ TagManager:
     locked: 0
   - name: Forground
     uniqueID: 2464288255
+    locked: 0
+  - name: Enviroment
+    uniqueID: 3855091775
+    locked: 0
+  - name: Pickups
+    uniqueID: 2667294639
     locked: 0
   - name: Player
     uniqueID: 2571978683

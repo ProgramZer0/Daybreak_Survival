@@ -16,16 +16,15 @@ public class Projectile : MonoBehaviour
     private float fallDamage = 0;
     private float appearTime = 0f;
     private float fadeTime = 0.1f;
-    private float FOM_MULTIPLY = 0.01f;
     private bool hasAnimation;
-    [SerializeField] private SpriteRenderer renderer;
+    [SerializeField] private SpriteRenderer rend;
 
     private void Awake()
     {
 
-        spriteColor = renderer.color;
+        spriteColor = rend.color;
         spriteColor.a = 0.4f;
-        renderer.color = spriteColor;
+        rend.color = spriteColor;
     }
 
 
@@ -39,7 +38,7 @@ public class Projectile : MonoBehaviour
 
 
         spriteColor.a = alpha;
-        renderer.color = spriteColor;
+        rend.color = spriteColor;
 
         if (timer <= FallOffTime)
             fallDamage = damage;
@@ -88,7 +87,6 @@ public class Projectile : MonoBehaviour
             ExplodeAnim();
         else
             Explode();
-
     }
 
     private IEnumerator ExplodeAnim()

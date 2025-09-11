@@ -57,7 +57,8 @@ public class PlayerInterface : MonoBehaviour
     private bool canShoot = true;
     private bool canDash = true;
     private bool IframesDown = true;
-    private bool cannotMove = false;
+    private bool cannotMove = true;
+    private bool crouchToggle = true;
     private float inputH = 0f;
     private float inputV = 0f;
     private float currentHP = 10;
@@ -82,8 +83,17 @@ public class PlayerInterface : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Mouse0)) attacking = true;
         if (Input.GetKeyUp(KeyCode.Mouse0)) attacking = false;
         if (Input.GetKeyDown(KeyCode.F)) interact = true;
-        if (Input.GetKeyDown(KeyCode.C)) crouch = true;
-        if (Input.GetKeyUp(KeyCode.C)) crouch = false;
+        
+        if (!crouchToggle)
+        {
+            if (Input.GetKeyDown(KeyCode.C)) crouch = !crouch;
+        }
+        else
+        {
+            if (Input.GetKeyDown(KeyCode.C)) crouch = true;
+            if (Input.GetKeyUp(KeyCode.C)) crouch = false;
+        }
+
         if (Input.GetKeyDown(KeyCode.LeftShift)) dashing = true;
     }
     
@@ -369,7 +379,6 @@ public class PlayerInterface : MonoBehaviour
             walkingSound.SetActive(false);
         }
 
-
         if (dashed && canDash)
         {
             LockMovement(true);
@@ -426,7 +435,10 @@ public class PlayerInterface : MonoBehaviour
         }
     }
 
-
+    public void SetCrouchToggle(bool tog)
+    {
+        crouchToggle = tog;
+    }
     public void TakeDamage(float damage)
     {
         if (IframesDown)

@@ -13,13 +13,18 @@ public class ButtonMethods : MonoBehaviour
     public void BackMainMenu_B()
     {
         GUI.ShowNoGUI();
-        GUI.OpenPause();
+        GUI.OpenMainMenu();
     }
 
-    public void Settings_B()
+    public void SettingsFromPause_B()
     {
         GUI.ShowNoGUI();
-        GUI.OpenSettingsMenu();
+        GUI.OpenSettingsMenuPM();
+    }
+    public void SettingsFromMenu_B()
+    {
+        GUI.NoShowMM();
+        GUI.OpenSettingsMenuMM();
     }
 
     public void PauseMenu_B()
@@ -30,6 +35,13 @@ public class ButtonMethods : MonoBehaviour
 
     public void StartGame_B()
     {
+        GUI.ShowNoGUI();
+        GUI.NoShowMM();
         GM.StartGame();
+    }
+
+    public void QuitGame_B()
+    {
+        Application.Quit(0);
     }
 }
