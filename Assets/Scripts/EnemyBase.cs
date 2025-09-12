@@ -5,7 +5,7 @@ public abstract class EnemyBase : MonoBehaviour, IEnemy
 { 
     protected NavMeshAgent agent;
     protected Transform player;
-    protected float health = 5f;
+    public float health = 5f;
 
     public float damage = 1;
 
@@ -34,16 +34,5 @@ public abstract class EnemyBase : MonoBehaviour, IEnemy
     {
         health -= damage;
         if (health <= 0) OnDeath();
-    }
-
-    public void TakeDamageFrom(float damage, GameObject obj)
-    {
-        health -= damage;
-        if (health <= 0) OnDeath();
-    }
-
-    public void Initialize(object player)
-    {
-        throw new System.NotImplementedException();
     }
 }

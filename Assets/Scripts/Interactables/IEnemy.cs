@@ -1,5 +1,7 @@
-﻿internal interface IEnemy
+﻿using UnityEngine;
+
+internal interface IEnemy
 {
-    void Initialize(object player);
+    void Initialize(GameObject player);
     void TakeDamage(float damage);
 }

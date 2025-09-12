@@ -140,6 +140,7 @@ public class PlayerInterface : MonoBehaviour
 
         SM.Play("Fire");
         int facingside = 0;
+
         switch(facing)
         {
             case Direction.N:  facingside = 0; break;
@@ -438,6 +439,10 @@ public class PlayerInterface : MonoBehaviour
     public void SetCrouchToggle(bool tog)
     {
         crouchToggle = tog;
+    }
+    public bool GetCrouch()
+    {
+        return crouch;
     }
     public void TakeDamage(float damage)
     {

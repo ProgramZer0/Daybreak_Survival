@@ -20,7 +20,7 @@ public class Spawner : MonoBehaviour
         IEnemy enemy = o.GetComponent<IEnemy>();
         if (enemy != null)
         {
-            enemy.Initialize(FindFirstObjectByType<PlayerInterface>().gameObject.transform.transform);
+            enemy.Initialize(FindFirstObjectByType<PlayerInterface>().gameObject);
         }
         return o;
     }
@@ -35,7 +35,7 @@ public class Spawner : MonoBehaviour
         IEnemy enemy = o.GetComponent<IEnemy>();
         if (enemy != null)
         {
-            enemy.Initialize(player);
+            enemy.Initialize(player.gameObject);
         }
 
         return o;
