@@ -4,12 +4,16 @@ using UnityEngine.AI;
 public class RegularZombie : EnemyBase
 {
     [Header("Detection Settings")]
+    [SerializeField] private float activeRange = 100;
     [SerializeField] private float range = 8f;
+    [SerializeField] private float rangeNight = 4f;
     [SerializeField] private float hearRange = 4f;
     [SerializeField] private float fov = 90f;
+    [SerializeField] private float fovNight = 30f;
     [SerializeField] private int rayCount = 5;
     [SerializeField] private LayerMask hitLayers;
     [SerializeField] private float hearMod = 3f;
+    [SerializeField] private float hearNight = 1f;
 
     [Header("Idle Settings")]
     [SerializeField] private float idleMinTime = 2f;
@@ -25,16 +29,49 @@ public class RegularZombie : EnemyBase
     [SerializeField] private float LOSSpeed = 3f;
     [SerializeField] private float idleSpeed = 2f;
 
+    [Header("Performace Settings")]
+    [SerializeField] private int detectionIntervalFrames = 5;
+
+    //private RegularZombie hordeController;
+    private int frameOffset;
     private float idleTimer;
     private float searchTimer;
     private Vector2 facingDir = Vector2.right;
     private Vector2? lastKnownPlayerPos;
     private bool isSearching;
     private bool didSee = false;
+    //private bool isController = false;
 
+    private void Awake()
+    {
+        frameOffset = Random.Range(0, detectionIntervalFrames);
+    }
+    private bool ShouldDetectThisFrame()
+    {
+        return Time.frameCount % detectionIntervalFrames == frameOffset;
+    }
 
     public override void Tick()
     {
+        float dist = Vector2.Distance(player.position, transform.position);
+        if (dist > activeRange) return;
+
+        bool detected = false;
+
+        if (ShouldDetectThisFrame())
+        {
+            detected = DetectPlayer(); 
+        }
+
+        if (isDay)
+        {
+
+        }
+        else
+        {
+
+        }
+
         if(didSee || isSearching)
         {
             if (isDay)

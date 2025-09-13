@@ -8,12 +8,13 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private GameManager GM;
     [SerializeField] private Transform player;
     [SerializeField] private GameObject[] enemyPrefabs;
-    [SerializeField] private float spawnRadius = 200f;
-    [SerializeField] private int targetEnemyCount = 70;
+    [SerializeField] private float spawnRadius = 100f;
+    [SerializeField] private int targetEnemyCount = 200;
+    [SerializeField] private int updatesPerFrame = 5;
     [SerializeField] private GroundBuilder planetBuilder;
 
     private List<GameObject> enemies = new List<GameObject>();
-
+    private int index = 0;
 
     [SerializeField] private bool spawningEnabled = false;
 
@@ -27,19 +28,20 @@ public class EnemyController : MonoBehaviour
         if (!spawningEnabled) return;
         enemies = enemies.Where(e => e != null).ToList();
 
+        if (enemies.Count == 0) return;
+
+        for (int i = 0; i < updatesPerFrame; i++)
+        {
+            enemies[index].GetComponent<EnemyBase>().Tick();
+            index = (index + 1) % enemies.Count;
+        }
+
         int nearbyCount = enemies.Count(e =>
             Vector2.Distance(player.position, e.transform.position) <= spawnRadius);
 
         if (nearbyCount < targetEnemyCount)
         {
             SpawnEnemyNearPlayer();
-        }
-
-        foreach (var enemy in enemies.ToList())
-        {
-            if (enemy == null) continue;
-            EnemyBase enemyComp = enemy.GetComponent<EnemyBase>();
-            enemyComp?.Tick();
         }
     }
 
