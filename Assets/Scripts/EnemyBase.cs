@@ -3,16 +3,14 @@ using UnityEngine.AI;
 
 public abstract class EnemyBase : MonoBehaviour, IEnemy 
 { 
-    protected NavMeshAgent agent;
     protected Transform player;
-    public float health = 5f;
 
+    public float health = 5f;
     public float damage = 1;
 
     public virtual void Initialize(GameObject player)
     {
         this.player = player.transform;
-        agent = GetComponent<NavMeshAgent>();
     }
     public virtual void OnDeath()
     {

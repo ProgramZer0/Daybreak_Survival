@@ -12,7 +12,7 @@ public class GroundBuilder : MonoBehaviour
 
     public LayerMask doorLayer;
     public List<GameObject> weaponSpawnersObjs;
-    public List<GameObject> enemySpawnersObj;
+    public List<GameObject> enemySpawnersObj = new List<GameObject>();
     private List<GameObject> cubeObjs;
 
     private int cubesSpawned = 0;
@@ -22,7 +22,6 @@ public class GroundBuilder : MonoBehaviour
     {
         cubeObjs = new List<GameObject>();
         weaponSpawnersObjs = new List<GameObject>();
-        enemySpawnersObj = new List<GameObject>();
 
         Debug.Log("[PlanetBuilder] Awake initialized lists.");
     }

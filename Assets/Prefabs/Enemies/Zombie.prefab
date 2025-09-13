@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7196728935865381486}
   - component: {fileID: 2021802999723235815}
   - component: {fileID: 6361144125822816005}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: WalkUp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -74,8 +74,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -1627672657
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: -7145836423192700428, guid: 95f6bbcb54c58d24e9af3a99d2e06759, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -120,7 +120,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6995121918054399071}
   - component: {fileID: 8539572686224365857}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: ZombieSpriteMain
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -183,8 +183,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -1830679041
-  m_SortingLayer: 2
+  m_SortingLayerID: -1627672657
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: -4009781084192928080, guid: 24cd4accdf77b764cbf30b2a850b478c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -208,7 +208,7 @@ GameObject:
   - component: {fileID: 8821128789615880881}
   - component: {fileID: 2042907830370203709}
   - component: {fileID: 4565601377399414843}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: WalkLeft
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -271,8 +271,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -1627672657
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: -1787246824430337998, guid: 419d62ebb917fe847a85560cc4367efa, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -319,7 +319,7 @@ GameObject:
   - component: {fileID: 4082906360708055412}
   - component: {fileID: 976382905080844946}
   - component: {fileID: 5579093657413726375}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Zombie
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -406,11 +406,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 5
   damage: 1
-  range: 5
-  hearRange: 2
+  range: 12
+  hearRange: 5
   hitLayers:
     serializedVersion: 2
     m_Bits: 1865
+  fov: 90
+  rayCount: 7
+  moveSpeed: 25
+  idleMoveTimeRange: {x: 2, y: 3}
+  idleWaitTimeRange: {x: 1, y: 8}
+  searchRadius: 10
+  searchTime: 15
 --- !u!50 &5579093657413726375
 Rigidbody2D:
   serializedVersion: 5
@@ -449,7 +456,7 @@ GameObject:
   - component: {fileID: 1813743247356659656}
   - component: {fileID: 5818752546776234377}
   - component: {fileID: 9096961547437729052}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: WalkRight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -512,8 +519,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -1627672657
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: -9185848205484654989, guid: 752f484f7c0801a47af2141b5419aafe, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -559,7 +566,7 @@ GameObject:
   - component: {fileID: 7076764056226655004}
   - component: {fileID: 8454516681917125906}
   - component: {fileID: 1876213470834512608}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: WalkDown
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -622,8 +629,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -1627672657
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: 4498169561170889220, guid: e2caf3b53317d7348ac0a173ad814891, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
