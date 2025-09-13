@@ -18,11 +18,12 @@ public class PlayerInterface : MonoBehaviour
 
     [SerializeField] private MainGUIController GUI;
     [SerializeField] private SoundManager SM;
-    [SerializeField] private GameManager GM; 
+    [SerializeField] private GameManager GM;
     [SerializeField] private float speed = 4;
     [SerializeField] private float crouchSpeed = 1.5f;
     [SerializeField] private float dashCooldown = 10f;
     [SerializeField] private float interactRange = 2f;
+    [SerializeField] private float maxHP = 10f;
     [SerializeField] private LayerMask interactLayer;
     public LayerMask EnemyLayer;
     [SerializeField] private Animator Animator;
@@ -44,8 +45,8 @@ public class PlayerInterface : MonoBehaviour
 
     [SerializeField] private Weapon currentWeapon;
 
-    [SerializeField] int weaponAmmo = 0;
-    [SerializeField] int maxAmmo = 0;
+    [SerializeField] private int weaponAmmo = 0;
+    [SerializeField] private int maxAmmo = 0;
 
 
     private Rigidbody2D body;
@@ -63,16 +64,23 @@ public class PlayerInterface : MonoBehaviour
     private float inputV = 0f;
     private float currentHP = 10;
 
+    public float GetMaxHP() { return maxHP; }
+    public float GetCurrentHP() { return currentHP; }
+    public float GetCooldown() { return dashCooldown; }
 
     private void Awake()
     {
-        currentWeapon = GUI.ReturnEmptyWeapon();
         body = GetComponent<Rigidbody2D>();
-        downObj.SetActive(false);
-        upObj.SetActive(false);
-        leftObj.SetActive(false);
-        rightObj.SetActive(false);
-        mainPlayerObj.SetActive(true);
+        resetPlayerData();
+    }
+
+    public void resetPlayerData()
+    {
+        currentHP = maxHP;
+        weaponAmmo = 0;
+        maxAmmo = 0;
+        currentWeapon = GUI.ReturnEmptyWeapon();
+        DisableAllWalks();
     }
 
     private void Update()
@@ -387,9 +395,15 @@ public class PlayerInterface : MonoBehaviour
             //dash animation
             StartCoroutine(DashMovement(gunPoss[facingInt].transform.position));
             canDash = false;
+            FindFirstObjectByType<DashIndicator>().TriggerCooldown();
             StartCoroutine(WaitDash());
         }
         dashing = false;
+    }
+
+    public string GetAmmo()
+    {
+        return  weaponAmmo.ToString() + "/" + maxAmmo.ToString();
     }
 
     private void DisableAllWalks()
@@ -414,11 +428,13 @@ public class PlayerInterface : MonoBehaviour
         gunPoss[i].SetActive(true);
     }
 
+    //why bool?
     public bool AddWeapon(Weapon weapon)
     {
         currentWeapon = weapon;
         weaponAmmo = weapon.maxAmmo;
         maxAmmo = weapon.maxAmmo;
+        FindFirstObjectByType<WeaponHUD>().SetCurrentWeapon(currentWeapon);
         return true;
     }
     public bool AddAmmo(WeaponAmmoType type, int amount)
@@ -449,6 +465,7 @@ public class PlayerInterface : MonoBehaviour
         if (IframesDown)
         {
             currentHP -= damage;
+            FindFirstObjectByType<HPBar>().SetHP(currentHP);
             IframesDown = false;
             StartCoroutine(IFrameCooldown());
             StartCoroutine(Flash());
@@ -485,5 +502,19 @@ public class PlayerInterface : MonoBehaviour
     {
         yield return new WaitForSeconds(dashCooldown);
         canDash = true;
+    }
+
+    [ContextMenu("test Random Damge")]
+    public void RandomTestDamage()
+    {
+        float dam = Random.Range(1, 5);
+        Debug.Log("took " + dam  + " damage");
+        TakeDamage(dam);
+    }
+
+    [ContextMenu("test 1 Damge")]
+    public void TestDamage()
+    {
+        TakeDamage(1);
     }
 }

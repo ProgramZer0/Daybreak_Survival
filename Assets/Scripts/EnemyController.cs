@@ -61,4 +61,14 @@ public class EnemyController : MonoBehaviour
             enemies.Add(enemy);
         }
     }
+
+    public void SetIsDay(bool isDay)
+    {
+        foreach (var enemy in enemies.ToList())
+        {
+            if (enemy == null) continue;
+            EnemyBase enemyComp = enemy.GetComponent<EnemyBase>();
+            enemyComp.isDay = isDay;
+        }
+    }
 }

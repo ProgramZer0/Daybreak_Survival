@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: Assult Rifle
   prefab: {fileID: 6576119893973202260, guid: 3bcdd6a29afec0d4aaaaeae99a233bdd, type: 3}
+  sprite: {fileID: 21300000, guid: e734570fb9531064d8ccd9d4c920d4df, type: 3}
   maxAmmo: 32
   projectileDamage: 1
   projectileSpeed: 25
@@ -27,5 +28,7 @@ MonoBehaviour:
   projectileHasAnimation: 0
   splashDamage: 0
   splashRange: 0
+  appearTime: 0
+  fadeTime: 0.1
   projectilePrefab: {fileID: 8562623839093297936, guid: 9552de84965ae7d4ebe82b6f5d05d66c, type: 3}
   weaponAmmoType: 1

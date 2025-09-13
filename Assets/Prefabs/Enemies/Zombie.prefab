@@ -319,6 +319,7 @@ GameObject:
   - component: {fileID: 4082906360708055412}
   - component: {fileID: 976382905080844946}
   - component: {fileID: 5579093657413726375}
+  - component: {fileID: 7388135382139020625}
   m_Layer: 11
   m_Name: Zombie
   m_TagString: Untagged
@@ -406,18 +407,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 5
   damage: 1
+  isDay: 1
   range: 12
   hearRange: 5
+  fov: 90
+  rayCount: 5
   hitLayers:
     serializedVersion: 2
     m_Bits: 1865
-  fov: 90
-  rayCount: 7
-  moveSpeed: 25
-  idleMoveTimeRange: {x: 2, y: 3}
-  idleWaitTimeRange: {x: 1, y: 8}
+  hearMod: 3
+  idleMinTime: 5
+  idleMaxTime: 30
+  idleRadius: 10
+  searchDuration: 20
   searchRadius: 10
-  searchTime: 15
+  nightSpeedMod: 1.5
+  LOSSpeed: 3
+  idleSpeed: 2
 --- !u!50 &5579093657413726375
 Rigidbody2D:
   serializedVersion: 5
@@ -445,6 +451,28 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!195 &7388135382139020625
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5394958092232953006}
+  m_Enabled: 1
+  m_AgentTypeID: -1372625422
+  m_Radius: 0.5
+  m_Speed: 2.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 0.5
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!1 &6716886601622127159
 GameObject:
   m_ObjectHideFlags: 0

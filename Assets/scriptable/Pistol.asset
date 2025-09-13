@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: Pistol
   prefab: {fileID: 8132299374775609491, guid: 3b9685be30f055d43bb001085992bdc1, type: 3}
+  sprite: {fileID: -4854829337826818713, guid: 822a543ac98063c489cfc44c54c39072, type: 3}
   maxAmmo: 15
   projectileDamage: 1
   projectileSpeed: 20
@@ -27,5 +28,7 @@ MonoBehaviour:
   projectileHasAnimation: 0
   splashDamage: 0
   splashRange: 0
+  appearTime: 0
+  fadeTime: 0.1
   projectilePrefab: {fileID: 8562623839093297936, guid: 9552de84965ae7d4ebe82b6f5d05d66c, type: 3}
   weaponAmmoType: 0

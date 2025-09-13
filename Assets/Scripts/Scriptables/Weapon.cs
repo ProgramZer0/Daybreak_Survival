@@ -15,6 +15,7 @@ public class Weapon : ScriptableObject
 {
     public string weaponName;
     public GameObject prefab;
+    public Sprite sprite;
     public int maxAmmo;
     public float projectileDamage = 0f;
     public float projectileSpeed = 0f;

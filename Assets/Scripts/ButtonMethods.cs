@@ -23,7 +23,7 @@ public class ButtonMethods : MonoBehaviour
     }
     public void SettingsFromMenu_B()
     {
-        GUI.NoShowMM();
+        GUI.ShowNoMM();
         GUI.OpenSettingsMenuMM();
     }
 
@@ -36,7 +36,9 @@ public class ButtonMethods : MonoBehaviour
     public void StartGame_B()
     {
         GUI.ShowNoGUI();
-        GUI.NoShowMM();
+        GUI.ShowNoMM();
+        GUI.ShowAllHUDs();
+        GUI.SetHUDVals();
         GM.StartGame();
     }
 

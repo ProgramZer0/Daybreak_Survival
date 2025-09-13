@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: Sniper Rifle
   prefab: {fileID: 376086693869165803, guid: b8d92703d748db3488051ce50433812b, type: 3}
+  sprite: {fileID: 21300000, guid: 3d5b8a398aaf08e4fba2d7446b807ee8, type: 3}
   maxAmmo: 8
   projectileDamage: 10
   projectileSpeed: 80
@@ -27,5 +28,7 @@ MonoBehaviour:
   projectileHasAnimation: 0
   splashDamage: 0
   splashRange: 0
+  appearTime: 0
+  fadeTime: 0.1
   projectilePrefab: {fileID: 8562623839093297936, guid: 9552de84965ae7d4ebe82b6f5d05d66c, type: 3}
   weaponAmmoType: 2

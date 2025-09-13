@@ -5,19 +5,23 @@ using UnityEngine.UI;
 public class MainGUIController : MonoBehaviour
 {
 
-    [SerializeField] GameObject[] guis;
+    [SerializeField] private GameObject[] guis;
+    [SerializeField] private GameObject[] huds;
 
     [SerializeField] private GameObject HPBar;
-    [SerializeField] private GameObject PauseMenu;
+    [SerializeField] private GameObject dashIndicator;
+    [SerializeField] private GameObject weaponIndicator;
+    [SerializeField] private GameObject miniMap;
+    [SerializeField] private GameObject pauseMenu;
     [SerializeField] private GameObject settingMenuMM;
     [SerializeField] private GameObject settingMenuPM;
-    [SerializeField] private GameObject MainMenu;
+    [SerializeField] private GameObject mainMenu;
 
     [SerializeField] private Weapon empty;
     [SerializeField] private PlayerInterface player;
     [SerializeField] private GameManager GM;
 
-    private bool inUI = false;
+    private bool inUI = true;
     private bool escapePressed = false;
 
     private void Update()
@@ -33,6 +37,14 @@ public class MainGUIController : MonoBehaviour
 
             escapePressed = false;
         }
+
+        if (!inUI)
+            ShowAllHUDs();
+    }
+
+    public void ResetGUIData()
+    {
+        SetHUDVals();
     }
 
     public void ShowNoGUI()
@@ -45,11 +57,33 @@ public class MainGUIController : MonoBehaviour
         Time.timeScale = 1f;
     }
 
-    public void NoShowMM()
+    public void ShowNoHUD()
+    {
+        foreach (GameObject obj in huds)
+        {
+            obj.SetActive(false);
+        }
+    }
+    public void ShowAllHUDs()
+    {
+        foreach (GameObject obj in huds)
+        {
+            obj.SetActive(true);
+        }
+    }
+
+    public void SetHUDVals()
+    {
+        FindFirstObjectByType<HPBar>().SetMaxHP(player.GetMaxHP());
+        FindFirstObjectByType<HPBar>().SetHP(player.GetCurrentHP());
+        FindFirstObjectByType<DashIndicator>().SetCooldown(player.GetCooldown());
+    }
+
+    public void ShowNoMM()
     {
         inUI = false;
         player.LockMovement(false);
-        MainMenu.SetActive(false);
+        mainMenu.SetActive(false);
     }
 
     public Weapon ReturnEmptyWeapon()
@@ -70,30 +104,33 @@ public class MainGUIController : MonoBehaviour
 
     public void OpenPause()
     {
-        inUI = true;
-        player.LockMovement(true);
-        PauseMenu.SetActive(true);
+        setInUI();
+        pauseMenu.SetActive(true);
         Time.timeScale = 0f;
     }
     public void OpenSettingsMenuPM()
     {
-        inUI = true;
-        player.LockMovement(true);
+        setInUI();
         settingMenuPM.SetActive(true);
         Time.timeScale = 0f;
     }
     public void OpenSettingsMenuMM()
     {
-        inUI = true;
-        player.LockMovement(true);
+        setInUI();
         settingMenuMM.SetActive(true);
         Time.timeScale = 0f;
     }
     public void OpenMainMenu()
     {
+        setInUI();
+        mainMenu.SetActive(true);
+        GM.ResetGame();
+    }
+
+    private void setInUI()
+    {
         inUI = true;
         player.LockMovement(true);
-        MainMenu.SetActive(true);
-        GM.ResetGame();
+        ShowNoHUD();
     }
 }
