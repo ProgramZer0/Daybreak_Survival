@@ -5,10 +5,10 @@ public class RegularZombie : EnemyBase
 {
     [Header("Detection Settings")]
     [SerializeField] private float activeRange = 100;
-    [SerializeField] private float range = 8f;
+    [SerializeField] private float baseRange = 8f;
     [SerializeField] private float rangeNight = 4f;
-    [SerializeField] private float hearRange = 4f;
-    [SerializeField] private float fov = 90f;
+    [SerializeField] private float baseHearRange = 4f;
+    [SerializeField] private float baseFOV = 90f;
     [SerializeField] private float fovNight = 30f;
     [SerializeField] private int rayCount = 5;
     [SerializeField] private LayerMask hitLayers;
@@ -26,8 +26,8 @@ public class RegularZombie : EnemyBase
 
     [Header("Speed Settings")]
     [SerializeField] private float nightSpeedMod = 1.5f;
-    [SerializeField] private float LOSSpeed = 3f;
-    [SerializeField] private float idleSpeed = 2f;
+    [SerializeField] private float baseLOSSpeed = 3f;
+    [SerializeField] private float baseIdleSpeed = 2f;
 
     [Header("Performace Settings")]
     [SerializeField] private int detectionIntervalFrames = 5;
@@ -40,6 +40,11 @@ public class RegularZombie : EnemyBase
     private Vector2? lastKnownPlayerPos;
     private bool isSearching;
     private bool didSee = false;
+    private float LOSSpeed = 0;
+    private float idleSpeed = 0;
+    private float range = 0;
+    private float fov = 0;
+    private float hearRange = 0;
     //private bool isController = false;
 
     private void Awake()
@@ -65,27 +70,26 @@ public class RegularZombie : EnemyBase
 
         if (isDay)
         {
-
+            LOSSpeed = baseLOSSpeed;
+            idleSpeed = baseIdleSpeed;
+            range = baseRange;
+            fov = baseFOV;
+            hearRange = baseHearRange;
         }
         else
         {
-
+            LOSSpeed = baseLOSSpeed + nightSpeedMod;
+            idleSpeed = baseIdleSpeed + nightSpeedMod;
+            range = rangeNight;
+            fov = fovNight;
+            hearRange = hearNight;
         }
 
         if(didSee || isSearching)
-        {
-            if (isDay)
-                agent.speed = LOSSpeed;
-            else
-                agent.speed = LOSSpeed + nightSpeedMod;
-        }
+            agent.speed = LOSSpeed;
         else
-        {
-            if (isDay)
-                agent.speed = idleSpeed;
-            else
-                agent.speed = idleSpeed + nightSpeedMod;
-        }
+            agent.speed = idleSpeed;
+
         if (DetectPlayer())
         {
             agent.SetDestination(player.position);
