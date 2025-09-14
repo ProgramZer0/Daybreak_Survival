@@ -19,7 +19,7 @@ public class PlayerInterface : MonoBehaviour
     [SerializeField] private MainGUIController GUI;
     [SerializeField] private SoundManager SM;
     [SerializeField] private GameManager GM;
-    [SerializeField] private float speed = 4;
+    [SerializeField] private float speed = 4f;
     [SerializeField] private float crouchSpeed = 1.5f;
     [SerializeField] private float dashCooldown = 10f;
     [SerializeField] private float interactRange = 2f;
@@ -92,7 +92,7 @@ public class PlayerInterface : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.Mouse0)) attacking = false;
         if (Input.GetKeyDown(KeyCode.F)) interact = true;
         
-        if (!crouchToggle)
+        if (crouchToggle)
         {
             if (Input.GetKeyDown(KeyCode.C)) crouch = !crouch;
         }
@@ -131,7 +131,7 @@ public class PlayerInterface : MonoBehaviour
             TryInteract();
         }
 
-        Move(moveAmount, false, dashing);
+        Move(moveAmount, dashing);
     }
 
     private void TryAttacking()
@@ -175,7 +175,7 @@ public class PlayerInterface : MonoBehaviour
 
             o.GetComponent<Projectile>().SetValues(currentWeapon.projectileFallOffMultiplier, currentWeapon.projectileTime, 
                 currentWeapon.splashRange, currentWeapon.splashDamage, currentWeapon.projectileDamage, 
-                currentWeapon.projectileFallOffMultiplierTime, currentWeapon.projectileHasAnimation, currentWeapon.appearTime, currentWeapon.fadeTime);
+                currentWeapon.projectileFallOffMultiplierTime, currentWeapon.projectileHasAnimation, currentWeapon.appearTime, currentWeapon.fadeInTime);
             o.GetComponent<Rigidbody2D>().linearVelocity = moveDirection * currentWeapon.projectileSpeed;
         }
         
@@ -220,15 +220,16 @@ public class PlayerInterface : MonoBehaviour
         interact = false;
     }
 
-    private void Move(Vector2 move, bool crouch, bool dashed)
+    private void Move(Vector2 move, bool dashed)
     {
         bool moving = true;
         float speeds = speed;
-        int facingInt = 0;
         if (crouch)
             speeds = crouchSpeed;
+
         body.linearVelocity = move * speeds;
 
+        int facingInt = 0;
         if (inputH > 0)
         {
             if (inputV > 0)

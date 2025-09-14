@@ -14,7 +14,7 @@ public enum WeaponAmmoType
 public class Weapon : ScriptableObject
 {
     public string weaponName;
-    public GameObject prefab;
+    public GameObject prefab; 
     public Sprite sprite;
     public int maxAmmo;
     public float projectileDamage = 0f;
@@ -30,7 +30,7 @@ public class Weapon : ScriptableObject
     public bool splashDamage = false;
     public float splashRange = 0f;
     public float appearTime = 0f;
-    public float fadeTime = 0.1f;
+    public float fadeInTime = 0.1f;
     public GameObject projectilePrefab;
     public WeaponAmmoType weaponAmmoType;
 }
