@@ -408,22 +408,37 @@ MonoBehaviour:
   health: 5
   damage: 1
   isDay: 1
-  range: 12
-  hearRange: 5
-  fov: 90
+  activeRange: 100
+  baseRange: 8
+  rangeNight: 4
+  baseHearRange: 4
+  baseFOV: 90
+  fovNight: 30
   rayCount: 5
   hitLayers:
     serializedVersion: 2
     m_Bits: 1865
   hearMod: 3
+  hearNight: 1
   idleMinTime: 5
   idleMaxTime: 30
   idleRadius: 10
   searchDuration: 20
   searchRadius: 10
   nightSpeedMod: 1.5
-  LOSSpeed: 3
-  idleSpeed: 2
+  baseLOSSpeed: 3
+  baseIdleSpeed: 2
+  detectionIntervalFrames: 5
+  upObj: {fileID: 1119295459377863958}
+  downObj: {fileID: 7797244194381374741}
+  leftObj: {fileID: 3467614970188903818}
+  rightObj: {fileID: 6716886601622127159}
+  mainSprite: {fileID: 3015199001637403439}
+  spriteRenderer: {fileID: 8539572686224365857}
+  rightSprite: {fileID: 8379579363135513736, guid: 24cd4accdf77b764cbf30b2a850b478c, type: 3}
+  leftSprite: {fileID: 2864740595735961047, guid: 24cd4accdf77b764cbf30b2a850b478c, type: 3}
+  upSprite: {fileID: 9160073685392608064, guid: 24cd4accdf77b764cbf30b2a850b478c, type: 3}
+  downSprite: {fileID: -4009781084192928080, guid: 24cd4accdf77b764cbf30b2a850b478c, type: 3}
 --- !u!50 &5579093657413726375
 Rigidbody2D:
   serializedVersion: 5
@@ -436,7 +451,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 1
+  m_Mass: 5
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_GravityScale: 1

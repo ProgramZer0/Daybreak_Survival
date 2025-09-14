@@ -42,6 +42,7 @@ public class PlayerInterface : MonoBehaviour
     [SerializeField] private GameObject leftObj;
     [SerializeField] private GameObject rightObj;
     [SerializeField] private GameObject mainPlayerObj;
+    [SerializeField] private GameObject dashObj;
 
     [SerializeField] private Weapon currentWeapon;
 
@@ -391,9 +392,25 @@ public class PlayerInterface : MonoBehaviour
 
         if (dashed && canDash)
         {
+            int facingside = 0;
+
+            switch (facing)
+            {
+                case Direction.N: facingside = 0; break;
+                case Direction.NW: facingside = 1; break;
+                case Direction.W: facingside = 2; break;
+                case Direction.SW: facingside = 3; break;
+                case Direction.S: facingside = 4; break;
+                case Direction.SE: facingside = 5; break;
+                case Direction.E: facingside = 6; break;
+                case Direction.NE: facingside = 7; break;
+            }
+
             LockMovement(true);
             SM.Play("Dash");
-            //dash animation
+
+            GameObject o = GameObject.Instantiate(dashObj, transform.position, Quaternion.Euler(0, 0, (facingside * 45)));
+
             StartCoroutine(DashMovement(gunPoss[facingInt].transform.position));
             canDash = false;
             FindFirstObjectByType<DashIndicator>().TriggerCooldown();

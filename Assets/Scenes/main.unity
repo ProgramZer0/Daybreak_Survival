@@ -7856,7 +7856,7 @@ TilemapRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 515176279c5370b4b98b63394d27ed1f, type: 2}
+  - {fileID: 2100000, guid: 89ceb136357f0224fbf7f03d33a674c6, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -14999,6 +14999,7 @@ MonoBehaviour:
   leftObj: {fileID: 438875918}
   rightObj: {fileID: 1430131615}
   mainPlayerObj: {fileID: 935512250}
+  dashObj: {fileID: 5610716938179488122, guid: a68e798b5e0011f42a5a8dde1da4609f, type: 3}
   currentWeapon: {fileID: 0}
   weaponAmmo: 0
   maxAmmo: 0
@@ -18912,7 +18913,7 @@ MonoBehaviour:
   targetEnemyCount: 1
   updatesPerFrame: 5
   planetBuilder: {fileID: 1754269200}
-  spawningEnabled: 0
+  spawningEnabled: 1
 --- !u!1 &1756221241
 GameObject:
   m_ObjectHideFlags: 0

@@ -28,20 +28,20 @@ public class EnemyController : MonoBehaviour
         if (!spawningEnabled) return;
         enemies = enemies.Where(e => e != null).ToList();
 
-        if (enemies.Count == 0) return;
-
-        for (int i = 0; i < updatesPerFrame; i++)
-        {
-            enemies[index].GetComponent<EnemyBase>().Tick();
-            index = (index + 1) % enemies.Count;
-        }
-
         int nearbyCount = enemies.Count(e =>
             Vector2.Distance(player.position, e.transform.position) <= spawnRadius);
 
         if (nearbyCount < targetEnemyCount)
         {
             SpawnEnemyNearPlayer();
+        }
+
+        if (enemies.Count == 0) return;
+
+        for (int i = 0; i < updatesPerFrame; i++)
+        {
+            enemies[index].GetComponent<EnemyBase>().Tick();
+            index = (index + 1) % enemies.Count;
         }
     }
 

@@ -32,6 +32,18 @@ public class RegularZombie : EnemyBase
     [Header("Performace Settings")]
     [SerializeField] private int detectionIntervalFrames = 5;
 
+    [Header("Animation Stuff")]
+    [SerializeField] private GameObject upObj;
+    [SerializeField] private GameObject downObj;
+    [SerializeField] private GameObject leftObj;
+    [SerializeField] private GameObject rightObj;
+    [SerializeField] private GameObject mainSprite;
+    [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] private Sprite rightSprite;
+    [SerializeField] private Sprite leftSprite;
+    [SerializeField] private Sprite upSprite;
+    [SerializeField] private Sprite downSprite;
+
     //private RegularZombie hordeController;
     private int frameOffset;
     private float idleTimer;
@@ -109,6 +121,50 @@ public class RegularZombie : EnemyBase
             Vector2 moveDir = agent.desiredVelocity.normalized;
             if (moveDir != Vector2.zero)
                 facingDir = moveDir;
+
+            UpdateAnimations(moveDir);
+        }
+        else
+        {
+            UpdateAnimations(Vector2.zero);
+        }
+    }
+    private void UpdateAnimations(Vector2 moveDir)
+    {
+        // Hide all directional objects first
+        upObj.SetActive(false);
+        downObj.SetActive(false);
+        leftObj.SetActive(false);
+        rightObj.SetActive(false);
+
+        if (moveDir.sqrMagnitude > 0.01f) // zombie is moving
+        {
+            if (Mathf.Abs(moveDir.x) > Mathf.Abs(moveDir.y))
+            {
+                if (moveDir.x > 0)
+                    rightObj.SetActive(true);
+                else
+                    leftObj.SetActive(true);
+            }
+            else
+            {
+                if (moveDir.y > 0)
+                    upObj.SetActive(true);
+                else
+                    downObj.SetActive(true);
+            }
+        }
+        else // zombie stopped moving
+        {
+            // Use the last facingDir to pick idle sprite
+            if (Mathf.Abs(facingDir.x) > Mathf.Abs(facingDir.y))
+            {
+                spriteRenderer.sprite = facingDir.x > 0 ? rightSprite : leftSprite;
+            }
+            else
+            {
+                spriteRenderer.sprite = facingDir.y > 0 ? upSprite : downSprite;
+            }
         }
     }
 
