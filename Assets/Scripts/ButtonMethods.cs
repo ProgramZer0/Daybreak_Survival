@@ -32,7 +32,12 @@ public class ButtonMethods : MonoBehaviour
         GUI.ShowNoGUI();
         GUI.OpenPause();
     }
-
+    public void QuestView_B()
+    {
+        GUI.ShowNoGUI();
+        GUI.ShowNoHUDs();
+        GUI.OpenQuestView();
+    }
     public void StartGame_B()
     {
         GUI.ShowNoGUI();

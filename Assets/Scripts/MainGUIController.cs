@@ -13,6 +13,7 @@ public class MainGUIController : MonoBehaviour
     [SerializeField] private GameObject weaponIndicator;
     [SerializeField] private GameObject miniMap;
     [SerializeField] private GameObject pauseMenu;
+    [SerializeField] private GameObject questView;
     [SerializeField] private GameObject settingMenuMM;
     [SerializeField] private GameObject settingMenuPM;
     [SerializeField] private GameObject mainMenu;
@@ -57,7 +58,7 @@ public class MainGUIController : MonoBehaviour
         Time.timeScale = 1f;
     }
 
-    public void ShowNoHUD()
+    public void ShowNoHUDs()
     {
         foreach (GameObject obj in huds)
         {
@@ -102,6 +103,11 @@ public class MainGUIController : MonoBehaviour
         return inUI;
     }
 
+    public void OpenQuestView()
+    {
+        setInUI();
+        questView.SetActive(true);
+    }
     public void OpenPause()
     {
         setInUI();
@@ -131,6 +137,6 @@ public class MainGUIController : MonoBehaviour
     {
         inUI = true;
         player.LockMovement(true);
-        ShowNoHUD();
+        ShowNoHUDs();
     }
 }
