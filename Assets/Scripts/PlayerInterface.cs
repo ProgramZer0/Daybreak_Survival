@@ -44,16 +44,16 @@ public class PlayerInterface : MonoBehaviour
     [SerializeField] private GameObject leftObj;
     [SerializeField] private GameObject rightObj;
     [SerializeField] private GameObject mainPlayerObj;
+    [SerializeField] private GameObject dashIndObj;
     [SerializeField] private GameObject dashObj;
+
+    [SerializeField] private GameObject pickupObj;
 
     [SerializeField] private Weapon currentWeapon;
 
     [SerializeField] private int weaponAmmo = 0;
     [SerializeField] private int maxAmmo = 0;
 
-    [SerializeField] private GameObject pickupPrefab;
-
-    private GameObject pickupIcon;
     private Rigidbody2D body;
     private Direction facing = Direction.S;
     private bool attacking = false;
@@ -69,7 +69,7 @@ public class PlayerInterface : MonoBehaviour
     private float inputH = 0f;
     private float inputV = 0f;
     private float currentHP = 10;
-    public float pickupTimer = 0;
+    private float pickupTimer = 0;
     private pickup currentPick;
 
     public float GetMaxHP() { return maxHP; }
@@ -133,10 +133,7 @@ public class PlayerInterface : MonoBehaviour
         if (currentPick != null)
             TryPickUp();
         else
-        {
-            if(pickupIcon != null)
-                Destroy(pickupIcon);
-        }
+            FindFirstObjectByType<MainGUIController>().StopSeeingPickup();
 
         Vector2 moveAmount = new Vector2(inputH, inputV).normalized;
 
@@ -161,20 +158,22 @@ public class PlayerInterface : MonoBehaviour
             if (pickupKey)
             {
                 pickupTimer += Time.deltaTime;
-                if(pickupIcon == null)
+                if (!pickupObj.activeSelf)
                 {
-                    GameObject o = GameObject.Instantiate(pickupPrefab, transform.position, Quaternion.identity);
-                    o.GetComponent<PickupIconScript>().SetPickupTime(playerPickupTime);
-                    pickupIcon = o;
+                    pickupObj.SetActive(true);
+                    FindFirstObjectByType<MainGUIController>().SeePickup(playerPickupTime);
                 }
 
                 if (pickupTimer >= playerPickupTime)
+                {
                     currentPick.addPickup(gameObject);
+                    FindFirstObjectByType<MainGUIController>().StopSeeingPickup();
+                    pickupTimer = 0;
+                }
             }
             else
             {
-                if (pickupIcon != null)
-                    Destroy(pickupIcon);
+                FindFirstObjectByType<MainGUIController>().StopSeeingPickup();
                 pickupTimer = 0;
             }
         }
@@ -463,7 +462,9 @@ public class PlayerInterface : MonoBehaviour
 
             StartCoroutine(DashMovement(gunPoss[facingInt].transform.position));
             canDash = false;
-            FindFirstObjectByType<DashIndicator>().TriggerCooldown();
+            dashIndObj.SetActive(true);
+            dashIndObj.GetComponent<DashIndicator>().SetCooldown(dashCooldown);
+            dashIndObj.GetComponent<DashIndicator>().TriggerCooldown();
             StartCoroutine(WaitDash());
         }
         dashing = false;
@@ -542,7 +543,7 @@ public class PlayerInterface : MonoBehaviour
 
     public void SetCurrentPickup(pickup up)
     {
-        
+        currentPick = up;
     }
 
     private IEnumerator Flash()
@@ -574,6 +575,7 @@ public class PlayerInterface : MonoBehaviour
     private IEnumerator WaitDash()
     {
         yield return new WaitForSeconds(dashCooldown);
+        dashIndObj.SetActive(false);
         canDash = true;
     }
 

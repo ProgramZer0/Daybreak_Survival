@@ -4,32 +4,47 @@ using UnityEngine.UI;
 
 public class DashIndicator : MonoBehaviour
 {
-    [SerializeField] private Sprite[] dashSprites;
-    [SerializeField] private Image rend;
+    [SerializeField] private Slider DashFill;
 
     private float dashCooldown = 10f;
+    private bool dashTriggered = false;
+    private float dashTimer = 0;
     public void SetCooldown(float cooldown)
     {
         //Debug.Log("called");
         dashCooldown = cooldown;
-        rend.sprite = dashSprites[dashSprites.Length - 1];
+        DashFill.value = 0;
     }
 
     public void TriggerCooldown()
     {
-        float eachSpriteTime = dashCooldown / (dashSprites.Length - 1);
-        //timse = eachSpriteTime;
-        rend.sprite = dashSprites[0];
-        StartCoroutine(DoAnimation(eachSpriteTime));
+        dashTriggered = true;
     }
 
-    private IEnumerator DoAnimation(float time)
+    private void Update()
     {
-        for (int i = 1; i < dashSprites.Length; i++)
+        if (dashTriggered)
         {
-            yield return new WaitForSeconds(time);
-            rend.sprite = dashSprites[i];
-            //Debug.Log("waited for " + time + " set " + i);
+            dashTimer += Time.deltaTime;
+
+            if(dashTimer < 0 || dashCooldown <= 0)
+            {
+                dashTriggered = false;
+                return;
+            }
+
+            if(dashTimer >= dashCooldown)
+            {
+                dashTriggered = false;
+                return;
+            }
+
+            float val = (dashTimer / dashCooldown) * DashFill.maxValue;
+            DashFill.value = val;
         }
-    }    
+        else
+        {
+            dashTimer = 0;
+        }
+    }
 }

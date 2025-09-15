@@ -7,13 +7,14 @@ public class pickup : MonoBehaviour
     [SerializeField] private WeaponAmmoType weaponAmmoType;
     [SerializeField] private int ammoAmmount = 0;
 
-    void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         collision.gameObject.TryGetComponent<PlayerInterface>(out PlayerInterface player);
         if (player != null)
         {
             if (!isAmmo)
             {
+                Debug.Log("sending pickup");
                 player.SetCurrentPickup(this);
             }
             else

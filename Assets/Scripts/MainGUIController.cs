@@ -11,6 +11,7 @@ public class MainGUIController : MonoBehaviour
     [SerializeField] private GameObject HPBar;
     [SerializeField] private GameObject dashIndicator;
     [SerializeField] private GameObject weaponIndicator;
+    [SerializeField] private GameObject pickupIndicator;
     [SerializeField] private GameObject miniMap;
     [SerializeField] private GameObject pauseMenu;
     [SerializeField] private GameObject questView;
@@ -57,13 +58,16 @@ public class MainGUIController : MonoBehaviour
         SetInUI(false);
         Time.timeScale = 1f;
     }
-
+    
     public void ShowNoHUDs()
     {
         foreach (GameObject obj in huds)
         {
             obj.SetActive(false);
         }
+        dashIndicator.SetActive(false);
+        pickupIndicator.SetActive(false);
+        pickupIndicator.GetComponent<PickupIconScript>().stopPickup();  
     }
     public void ShowAllHUDs()
     {
@@ -77,7 +81,6 @@ public class MainGUIController : MonoBehaviour
     {
         FindFirstObjectByType<HPBar>().SetMaxHP(player.GetMaxHP());
         FindFirstObjectByType<HPBar>().SetHP(player.GetCurrentHP());
-        FindFirstObjectByType<DashIndicator>().SetCooldown(player.GetCooldown());
     }
 
     public void ShowNoMM()
@@ -91,7 +94,16 @@ public class MainGUIController : MonoBehaviour
     {
         return empty;
     }
-
+    public void StopSeeingPickup()
+    {
+        pickupIndicator.GetComponent<PickupIconScript>().stopPickup();
+        pickupIndicator.SetActive(false);
+    }
+    public void SeePickup(float time)
+    { 
+        pickupIndicator.SetActive(false);
+        pickupIndicator.GetComponent<PickupIconScript>().SetPickup(time);
+    }
     public void SetInUI(bool on)
     {
         player.LockMovement(on);

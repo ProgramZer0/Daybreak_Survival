@@ -35,7 +35,6 @@ public class ButtonMethods : MonoBehaviour
     public void QuestView_B()
     {
         GUI.ShowNoGUI();
-        GUI.ShowNoHUDs();
         GUI.OpenQuestView();
     }
     public void StartGame_B()
