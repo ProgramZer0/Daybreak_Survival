@@ -14,11 +14,7 @@ public class pickup : MonoBehaviour
         {
             if (!isAmmo)
             {
-                if (player.AddWeapon(weapon))
-                {
-
-                    Destroy(transform.gameObject);
-                }   
+                player.SetCurrentPickup(this);
             }
             else
             {
@@ -30,7 +26,20 @@ public class pickup : MonoBehaviour
                 {
                     //full
                 }
-            }   
+            }
+        }
+    }
+
+    public void addPickup(GameObject playerobj)
+    {
+        playerobj.TryGetComponent<PlayerInterface>(out PlayerInterface player);
+        if (player != null)
+        {
+            if (player.AddWeapon(weapon)) 
+            { 
+            
+                Destroy(transform.gameObject);
+            }
         }
     }
 }

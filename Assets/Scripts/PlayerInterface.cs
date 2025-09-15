@@ -23,6 +23,8 @@ public class PlayerInterface : MonoBehaviour
     [SerializeField] private float crouchSpeed = 1.5f;
     [SerializeField] private float dashCooldown = 10f;
     [SerializeField] private float interactRange = 2f;
+    [SerializeField] private float pickupRange = 1f;
+    [SerializeField] private float playerPickupTime = 3f;
     [SerializeField] private float maxHP = 10f;
     [SerializeField] private LayerMask interactLayer;
     public LayerMask EnemyLayer;
@@ -49,13 +51,16 @@ public class PlayerInterface : MonoBehaviour
     [SerializeField] private int weaponAmmo = 0;
     [SerializeField] private int maxAmmo = 0;
 
+    [SerializeField] private GameObject pickupPrefab;
 
+    private GameObject pickupIcon;
     private Rigidbody2D body;
     private Direction facing = Direction.S;
     private bool attacking = false;
     private bool interact = false;
     private bool dashing = false;
-    private bool crouch = false; 
+    private bool crouch = false;
+    private bool pickupKey = false;
     private bool canShoot = true;
     private bool canDash = true;
     private bool IframesDown = true;
@@ -64,6 +69,8 @@ public class PlayerInterface : MonoBehaviour
     private float inputH = 0f;
     private float inputV = 0f;
     private float currentHP = 10;
+    public float pickupTimer = 0;
+    private pickup currentPick;
 
     public float GetMaxHP() { return maxHP; }
     public float GetCurrentHP() { return currentHP; }
@@ -91,8 +98,12 @@ public class PlayerInterface : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Mouse0)) attacking = true;
         if (Input.GetKeyUp(KeyCode.Mouse0)) attacking = false;
-        if (Input.GetKeyDown(KeyCode.F)) interact = true;
-        
+        if (Input.GetKeyDown(KeyCode.E)) interact = true;
+
+        if (Input.GetKeyDown(KeyCode.F)) pickupKey = true;
+        if (Input.GetKeyUp(KeyCode.F)) pickupKey = false;
+
+
         if (crouchToggle)
         {
             if (Input.GetKeyDown(KeyCode.C)) crouch = !crouch;
@@ -117,7 +128,15 @@ public class PlayerInterface : MonoBehaviour
         {
             walkingSound.SetActive(false);
             return;
-        }         
+        }
+
+        if (currentPick != null)
+            TryPickUp();
+        else
+        {
+            if(pickupIcon != null)
+                Destroy(pickupIcon);
+        }
 
         Vector2 moveAmount = new Vector2(inputH, inputV).normalized;
 
@@ -133,6 +152,37 @@ public class PlayerInterface : MonoBehaviour
         }
 
         Move(moveAmount, dashing);
+    }
+
+    private void TryPickUp()
+    {
+        if (Vector2.Distance(currentPick.gameObject.transform.position, transform.position) <= pickupRange)
+        {
+            if (pickupKey)
+            {
+                pickupTimer += Time.deltaTime;
+                if(pickupIcon == null)
+                {
+                    GameObject o = GameObject.Instantiate(pickupPrefab, transform.position, Quaternion.identity);
+                    o.GetComponent<PickupIconScript>().SetPickupTime(playerPickupTime);
+                    pickupIcon = o;
+                }
+
+                if (pickupTimer >= playerPickupTime)
+                    currentPick.addPickup(gameObject);
+            }
+            else
+            {
+                if (pickupIcon != null)
+                    Destroy(pickupIcon);
+                pickupTimer = 0;
+            }
+        }
+        else
+        {
+            currentPick = null;
+            pickupTimer = 0;
+        }
     }
 
     private void TryAttacking()
@@ -488,6 +538,11 @@ public class PlayerInterface : MonoBehaviour
             StartCoroutine(IFrameCooldown());
             StartCoroutine(Flash());
         }
+    }
+
+    public void SetCurrentPickup(pickup up)
+    {
+        
     }
 
     private IEnumerator Flash()
