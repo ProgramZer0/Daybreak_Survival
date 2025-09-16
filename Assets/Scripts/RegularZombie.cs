@@ -15,6 +15,9 @@ public class RegularZombie : EnemyBase
     [SerializeField] private float sneakHearing = 3f;
     [SerializeField] private float gunshotHearing = 100f;
     [SerializeField] private float hearNight = 1f;
+
+    [Header("Horde Settings")]
+    [SerializeField] private float hordeAccuracy = 5f;
     [SerializeField] private float hordeHearing = 15f;
     [SerializeField] private float hordeMentality = 30f;
 
@@ -47,7 +50,7 @@ public class RegularZombie : EnemyBase
     [SerializeField] private Sprite upSprite;
     [SerializeField] private Sprite downSprite;
 
-    //private RegularZombie hordeController;
+    //private RegularZombie hordeController; 
     private int frameOffset;
     private float idleTimer;
     private float searchTimer;
@@ -111,11 +114,12 @@ public class RegularZombie : EnemyBase
         {
             if(distanceFromPlayer <= hordeHearing)
             {
-                detected = true;
+                Vector2 randomOffset = Random.insideUnitCircle * hordeAccuracy;
+                Vector2 playerGuessLocation = transform.position + (Vector3)randomOffset;
+                agent.SetDestination(playerGuessLocation);
             }
         }
-
-        if (detected)
+        else if (detected)
         {
             didSee = true;
             agent.SetDestination(player.position);

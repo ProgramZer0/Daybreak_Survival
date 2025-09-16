@@ -26,6 +26,7 @@ public class PlayerInterface : MonoBehaviour
     [SerializeField] private float pickupRange = 1f;
     [SerializeField] private float playerPickupTime = 3f;
     [SerializeField] private float maxHP = 10f;
+    [SerializeField] private float hordeForgetTime = 5f;
     [SerializeField] private LayerMask interactLayer;
     public LayerMask EnemyLayer;
     [SerializeField] private Animator Animator;
@@ -73,6 +74,7 @@ public class PlayerInterface : MonoBehaviour
     private float inputV = 0f;
     private float currentHP = 10;
     private float pickupTimer = 0;
+    private float chaseTimer = 0;
     private pickup currentPick;
 
     public float GetMaxHP() { return maxHP; }
@@ -118,6 +120,16 @@ public class PlayerInterface : MonoBehaviour
         }
 
         if (Input.GetKeyDown(KeyCode.LeftShift)) dashing = true;
+
+        if (isSeenAndChased)
+        {
+            chaseTimer += Time.deltaTime;
+        }
+        if(chaseTimer >= hordeForgetTime)
+        {
+            isSeenAndChased = false;
+            chaseTimer = 0;
+        }
     }
     
     public Weapon GetActiveWeapon()
@@ -127,6 +139,8 @@ public class PlayerInterface : MonoBehaviour
 
     private void FixedUpdate()
     {
+        
+
         if(currentHP < 0)
         {
             GM.EndGameFail();
