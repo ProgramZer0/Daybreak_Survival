@@ -54,6 +54,7 @@ public class PlayerInterface : MonoBehaviour
     [SerializeField] private int weaponAmmo = 0;
     [SerializeField] private int maxAmmo = 0;
 
+
     private Rigidbody2D body;
     private Direction facing = Direction.S;
     private bool attacking = false;
@@ -66,6 +67,8 @@ public class PlayerInterface : MonoBehaviour
     private bool IframesDown = true;
     private bool cannotMove = true;
     private bool crouchToggle = true;
+    private bool isShooting = false;
+    private bool isSeenAndChased = false;
     private float inputH = 0f;
     private float inputV = 0f;
     private float currentHP = 10;
@@ -117,6 +120,11 @@ public class PlayerInterface : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.LeftShift)) dashing = true;
     }
     
+    public Weapon GetActiveWeapon()
+    {
+        return currentWeapon;
+    }
+
     private void FixedUpdate()
     {
         if(currentHP < 0)
@@ -162,6 +170,7 @@ public class PlayerInterface : MonoBehaviour
                 {
                     pickupObj.SetActive(true);
                     FindFirstObjectByType<MainGUIController>().SeePickup(playerPickupTime);
+                    pickupObj.GetComponent<PickupIconScript>().triggerPickup();
                 }
 
                 if (pickupTimer >= playerPickupTime)
@@ -181,12 +190,13 @@ public class PlayerInterface : MonoBehaviour
         {
             currentPick = null;
             pickupTimer = 0;
+            FindFirstObjectByType<MainGUIController>().StopSeeingPickup();
         }
     }
 
     private void TryAttacking()
     {
-
+        isShooting = false;
         if (GUI.GetInUI())
             return;
         if (weaponAmmo <= 0)
@@ -210,9 +220,11 @@ public class PlayerInterface : MonoBehaviour
             case Direction.E: facingside = 6; break;
             case Direction.NE: facingside = 7; break;
         }
+        isShooting = true;
 
-        for(int i = 0; i < currentWeapon.projectileAmount; i++)
+        for (int i = 0; i < currentWeapon.projectileAmount; i++)
         {
+            
             Vector3 gunDirection = gunPoss[facingside].transform.position;
             Vector2 randomOffset = Random.insideUnitCircle * currentWeapon.spawnSpread;
             Vector2 spawnPos = transform.position + (Vector3)randomOffset;
@@ -226,7 +238,7 @@ public class PlayerInterface : MonoBehaviour
             o.GetComponent<Projectile>().SetValues(currentWeapon.projectileFallOffMultiplier, currentWeapon.projectileTime, 
                 currentWeapon.splashRange, currentWeapon.splashDamage, currentWeapon.projectileDamage, 
                 currentWeapon.projectileFallOffMultiplierTime, currentWeapon.projectileHasAnimation, currentWeapon.appearTime, currentWeapon.fadeInTime);
-            o.GetComponent<Rigidbody2D>().linearVelocity = moveDirection * currentWeapon.projectileSpeed;
+            o.GetComponent<Rigidbody2D>().linearVelocity = moveDirection * currentWeapon.projectileSpeed;  
         }
         
         canShoot = false;
@@ -249,6 +261,7 @@ public class PlayerInterface : MonoBehaviour
     {
         yield return new WaitForSeconds(cooldown);
         canShoot = true;
+        isShooting = false;
     }
     public void LockMovement(bool val)
     {
@@ -475,6 +488,10 @@ public class PlayerInterface : MonoBehaviour
         return  weaponAmmo.ToString() + "/" + maxAmmo.ToString();
     }
 
+    public bool GetIsSeenAndChased() { return isSeenAndChased; }
+    public void SetIsSeenAndChased(bool s) { isSeenAndChased = s; }
+
+    public bool GetShottingBool() { return isShooting; }
     private void DisableAllWalks()
     {
         downObj.SetActive(false);

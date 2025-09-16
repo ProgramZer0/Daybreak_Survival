@@ -10,7 +10,7 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private GameObject[] enemyPrefabs;
     [SerializeField] private float spawnRadius = 100f;
     [SerializeField] private int targetEnemyCount = 200;
-    [SerializeField] private int updatesPerFrame = 5;
+    [SerializeField] private int updatesPerFrame = 100;
     [SerializeField] private GroundBuilder planetBuilder;
 
     private List<GameObject> enemies = new List<GameObject>();
@@ -38,10 +38,9 @@ public class EnemyController : MonoBehaviour
 
         if (enemies.Count == 0) return;
 
-        for (int i = 0; i < updatesPerFrame; i++)
+        foreach(GameObject obj in enemies)
         {
-            enemies[index].GetComponent<EnemyBase>().Tick();
-            index = (index + 1) % enemies.Count;
+            obj.GetComponent<EnemyBase>().Tick();
         }
     }
 

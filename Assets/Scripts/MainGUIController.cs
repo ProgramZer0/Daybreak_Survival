@@ -101,7 +101,7 @@ public class MainGUIController : MonoBehaviour
     }
     public void SeePickup(float time)
     { 
-        pickupIndicator.SetActive(false);
+        pickupIndicator.SetActive(true);
         pickupIndicator.GetComponent<PickupIconScript>().SetPickup(time);
     }
     public void SetInUI(bool on)

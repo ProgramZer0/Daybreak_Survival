@@ -17,9 +17,9 @@ TagManager:
   - ground
   - envrioment
   - Enemies
-  - 
-  - 
-  - 
+  - EnvriomentAssets
+  - IgnoreNavMesh
+  - HitBox
   - 
   - 
   - 

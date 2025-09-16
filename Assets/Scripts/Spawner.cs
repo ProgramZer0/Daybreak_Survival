@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Spawner : MonoBehaviour
@@ -6,6 +7,10 @@ public class Spawner : MonoBehaviour
     public List<GameObject> spawns;
     [SerializeField] private int maxSpawns = 5;
 
+    private void Update()
+    {
+        spawns = spawns.Where(e => e != null).ToList();
+    }
     private void Awake()
     {
         spawns = new List<GameObject>();

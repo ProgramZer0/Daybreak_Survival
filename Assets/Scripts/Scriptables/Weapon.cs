@@ -31,6 +31,7 @@ public class Weapon : ScriptableObject
     public float splashRange = 0f;
     public float appearTime = 0f;
     public float fadeInTime = 0.1f;
+    public float soundMod = 0f;
     public GameObject projectilePrefab;
     public WeaponAmmoType weaponAmmoType;
 }

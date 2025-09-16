@@ -12,8 +12,11 @@ public class RegularZombie : EnemyBase
     [SerializeField] private float fovNight = 30f;
     [SerializeField] private int rayCount = 5;
     [SerializeField] private LayerMask hitLayers;
-    [SerializeField] private float hearMod = 3f;
+    [SerializeField] private float sneakHearing = 3f;
+    [SerializeField] private float gunshotHearing = 100f;
     [SerializeField] private float hearNight = 1f;
+    [SerializeField] private float hordeHearing = 15f;
+    [SerializeField] private float hordeMentality = 30f;
 
     [Header("Idle Settings")]
     [SerializeField] private float idleMinTime = 2f;
@@ -57,6 +60,7 @@ public class RegularZombie : EnemyBase
     private float range = 0;
     private float fov = 0;
     private float hearRange = 0;
+    private float distanceFromPlayer = 0;
     //private bool isController = false;
 
     private void Awake()
@@ -70,16 +74,8 @@ public class RegularZombie : EnemyBase
 
     public override void Tick()
     {
-        float dist = Vector2.Distance(player.position, transform.position);
-        if (dist > activeRange) return;
 
         bool detected = false;
-
-        if (ShouldDetectThisFrame())
-        {
-            detected = DetectPlayer(); 
-        }
-
         if (isDay)
         {
             LOSSpeed = baseLOSSpeed;
@@ -97,14 +93,33 @@ public class RegularZombie : EnemyBase
             hearRange = hearNight;
         }
 
-        if(didSee || isSearching)
+        if (didSee || isSearching)
             agent.speed = LOSSpeed;
         else
             agent.speed = idleSpeed;
 
-        if (DetectPlayer())
+        if (ShouldDetectThisFrame())
         {
+            distanceFromPlayer = Vector2.Distance(player.position, transform.position);
+            if (distanceFromPlayer > activeRange) return;
+            detected = DetectPlayer();
+        }
+        else
+            return;
+
+        if (player.GetComponent<PlayerInterface>().GetIsSeenAndChased())
+        {
+            if(distanceFromPlayer <= hordeHearing)
+            {
+                detected = true;
+            }
+        }
+
+        if (detected)
+        {
+            didSee = true;
             agent.SetDestination(player.position);
+            player.GetComponent<PlayerInterface>().SetIsSeenAndChased(true);
             isSearching = false;
         }
         else if (isSearching && lastKnownPlayerPos.HasValue)
@@ -170,18 +185,21 @@ public class RegularZombie : EnemyBase
 
     private bool DetectPlayer()
     {
-        float dist = Vector2.Distance(player.position, transform.position);
         float mod = 0f;
         if (player.GetComponent<PlayerInterface>().GetCrouch())
         {
-            mod = hearMod;
+            mod = hearRange - sneakHearing;
         }
-        if (dist <= hearRange - mod)
+        if (player.GetComponent<PlayerInterface>().GetShottingBool())
+        {
+            mod = gunshotHearing + player.GetComponent<PlayerInterface>().GetActiveWeapon().soundMod;
+        }
+        if (distanceFromPlayer <= mod)
         {
             didSee = true;
             return true;
         }
-        if (dist <= range && FanVisionCheck())
+        if (distanceFromPlayer <= range && FanVisionCheck())
         {
 
             didSee = true;
@@ -217,7 +235,7 @@ public class RegularZombie : EnemyBase
 
     private void HandleSearch()
     {
-        searchTimer -= Time.deltaTime;
+        searchTimer -= Time.deltaTime * detectionIntervalFrames;
 
         if (searchTimer > 0f)
         {
@@ -237,7 +255,7 @@ public class RegularZombie : EnemyBase
 
     private void HandleIdle()
     {
-        idleTimer -= Time.deltaTime;
+        idleTimer -= Time.deltaTime * detectionIntervalFrames;
 
         if (idleTimer <= 0f) 
         {
