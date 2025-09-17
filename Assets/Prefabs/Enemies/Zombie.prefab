@@ -500,6 +500,9 @@ MonoBehaviour:
   sneakHearing: 3
   gunshotHearing: 70
   hearNight: 1
+  hordeAccuracy: 2
+  hordeHearing: 50
+  hordeMentality: 30
   idleMinTime: 10
   idleMaxTime: 30
   idleRadius: 10

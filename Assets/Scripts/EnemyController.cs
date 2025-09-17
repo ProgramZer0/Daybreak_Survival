@@ -10,11 +10,9 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private GameObject[] enemyPrefabs;
     [SerializeField] private float spawnRadius = 100f;
     [SerializeField] private int targetEnemyCount = 200;
-    [SerializeField] private int updatesPerFrame = 100;
     [SerializeField] private GroundBuilder planetBuilder;
 
     private List<GameObject> enemies = new List<GameObject>();
-    private int index = 0;
 
     [SerializeField] private bool spawningEnabled = false;
 

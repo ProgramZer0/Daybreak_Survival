@@ -101,30 +101,27 @@ public class RegularZombie : EnemyBase
         else
             agent.speed = idleSpeed;
 
-        if (ShouldDetectThisFrame())
-        {
-            distanceFromPlayer = Vector2.Distance(player.position, transform.position);
-            if (distanceFromPlayer > activeRange) return;
-            detected = DetectPlayer();
-        }
-        else
+        if (!ShouldDetectThisFrame())
             return;
 
-        if (player.GetComponent<PlayerInterface>().GetIsSeenAndChased())
+        distanceFromPlayer = Vector2.Distance(player.position, transform.position);
+        if (distanceFromPlayer > activeRange) return;
+
+        if (DetectPlayer())
         {
-            if(distanceFromPlayer <= hordeHearing)
+            didSee = true;
+            agent.SetDestination(player.position);
+            playerInterface.SetIsSeenAndChased(true);
+            isSearching = false;
+        }
+        else if(playerInterface.GetIsSeenAndChased())
+        {
+            if(distanceFromPlayer <= hordeHearing && !agent.hasPath)
             {
                 Vector2 randomOffset = Random.insideUnitCircle * hordeAccuracy;
                 Vector2 playerGuessLocation = transform.position + (Vector3)randomOffset;
                 agent.SetDestination(playerGuessLocation);
             }
-        }
-        else if (detected)
-        {
-            didSee = true;
-            agent.SetDestination(player.position);
-            player.GetComponent<PlayerInterface>().SetIsSeenAndChased(true);
-            isSearching = false;
         }
         else if (isSearching && lastKnownPlayerPos.HasValue)
         {
@@ -190,13 +187,13 @@ public class RegularZombie : EnemyBase
     private bool DetectPlayer()
     {
         float mod = 0f;
-        if (player.GetComponent<PlayerInterface>().GetCrouch())
+        if (playerInterface.GetCrouch())
         {
             mod = hearRange - sneakHearing;
         }
-        if (player.GetComponent<PlayerInterface>().GetShottingBool())
+        if (playerInterface.GetShottingBool())
         {
-            mod = gunshotHearing + player.GetComponent<PlayerInterface>().GetActiveWeapon().soundMod;
+            mod = gunshotHearing + playerInterface.GetActiveWeapon().soundMod;
         }
         if (distanceFromPlayer <= mod)
         {

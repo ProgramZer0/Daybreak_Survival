@@ -5,6 +5,7 @@ public abstract class EnemyBase : MonoBehaviour, IEnemy
 {
     protected NavMeshAgent agent;
     protected Transform player;
+    protected PlayerInterface playerInterface;
 
     public float health = 5f;
     public float damage = 1;
@@ -16,6 +17,8 @@ public abstract class EnemyBase : MonoBehaviour, IEnemy
         agent = GetComponent<NavMeshAgent>();
         agent.updateRotation = false;
         agent.updateUpAxis = false;
+        playerInterface = player.GetComponent<PlayerInterface>();
+
     }
     public virtual void OnDeath()
     {
