@@ -151,3 +151,4 @@ MonoBehaviour:
   isAmmo: 0
   weaponAmmoType: 4
   ammoAmmount: 0
+  currentAmmo: 160

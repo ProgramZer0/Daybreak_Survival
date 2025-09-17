@@ -27,12 +27,16 @@ public class PlayerInterface : MonoBehaviour
     [SerializeField] private float playerPickupTime = 3f;
     [SerializeField] private float maxHP = 10f;
     [SerializeField] private float hordeForgetTime = 5f;
+
     [SerializeField] private LayerMask interactLayer;
     public LayerMask EnemyLayer;
+    [SerializeField] private LayerMask meleeHitLayer;
     [SerializeField] private Animator Animator;
     [SerializeField] private GameObject walkingSound;
     [SerializeField] private GameObject projectile;
     [SerializeField] private GameObject[] gunPoss;
+    [SerializeField] private GameObject[] shootingLights;
+    
 
     [SerializeField] private Sprite downSprite;
     [SerializeField] private Sprite upSprite;
@@ -59,11 +63,13 @@ public class PlayerInterface : MonoBehaviour
     private Rigidbody2D body;
     private Direction facing = Direction.S;
     private bool attacking = false;
+    private bool meleeing = false;
     private bool interact = false;
     private bool dashing = false;
     private bool crouch = false;
     private bool pickupKey = false;
     private bool canShoot = true;
+    private bool canMelee = true;
     private bool canDash = true;
     private bool IframesDown = true;
     private bool cannotMove = true;
@@ -103,6 +109,9 @@ public class PlayerInterface : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Mouse0)) attacking = true;
         if (Input.GetKeyUp(KeyCode.Mouse0)) attacking = false;
+
+        if (Input.GetKeyDown(KeyCode.Mouse1)) meleeing = true;
+
         if (Input.GetKeyDown(KeyCode.E)) interact = true;
 
         if (Input.GetKeyDown(KeyCode.F)) pickupKey = true;
@@ -158,6 +167,11 @@ public class PlayerInterface : MonoBehaviour
             FindFirstObjectByType<MainGUIController>().StopSeeingPickup();
 
         Vector2 moveAmount = new Vector2(inputH, inputV).normalized;
+        if (meleeing && canMelee)
+        {
+            TryMelee();
+            meleeing = false;
+        }
 
         if (attacking && canShoot)
         {
@@ -183,11 +197,11 @@ public class PlayerInterface : MonoBehaviour
                 if (!pickupObj.activeSelf)
                 {
                     pickupObj.SetActive(true);
-                    FindFirstObjectByType<MainGUIController>().SeePickup(playerPickupTime);
+                    FindFirstObjectByType<MainGUIController>().SeePickup(currentPick.weapon.pickupTime);
                     pickupObj.GetComponent<PickupIconScript>().triggerPickup();
                 }
 
-                if (pickupTimer >= playerPickupTime)
+                if (pickupTimer >= currentPick.weapon.pickupTime)
                 {
                     currentPick.addPickup(gameObject);
                     FindFirstObjectByType<MainGUIController>().StopSeeingPickup();
@@ -241,7 +255,13 @@ public class PlayerInterface : MonoBehaviour
             
             Vector3 gunDirection = gunPoss[facingside].transform.position;
             Vector2 randomOffset = Random.insideUnitCircle * currentWeapon.spawnSpread;
-            Vector2 spawnPos = transform.position + (Vector3)randomOffset;
+
+            Vector2 gunDir = (gunPoss[facingside].transform.position - transform.position).normalized;
+            Vector2 offset = gunDir * currentWeapon.offsetSpawnProjectile;
+
+            Vector2 playerPos = (Vector2)transform.position + offset;
+            Vector2 spawnPos = playerPos + randomOffset;
+
             GameObject o = GameObject.Instantiate(currentWeapon.projectilePrefab, spawnPos, Quaternion.Euler(0, 0, (facingside * 45)));
 
             Vector2 baseDir = (gunDirection - transform.position).normalized;
@@ -252,13 +272,76 @@ public class PlayerInterface : MonoBehaviour
             o.GetComponent<Projectile>().SetValues(currentWeapon.projectileFallOffMultiplier, currentWeapon.projectileTime, 
                 currentWeapon.splashRange, currentWeapon.splashDamage, currentWeapon.projectileDamage, 
                 currentWeapon.projectileFallOffMultiplierTime, currentWeapon.projectileHasAnimation, currentWeapon.appearTime, currentWeapon.fadeInTime);
+            
             o.GetComponent<Rigidbody2D>().linearVelocity = moveDirection * currentWeapon.projectileSpeed;  
+
         }
-        
+
+        if (currentWeapon.hasFlash)
+            StartCoroutine(EnableShootingLights(facingside));
+
         canShoot = false;
 
         weaponAmmo--;
         StartCoroutine(ShootingCoooldown(currentWeapon.projectileCooldown));
+    }
+
+    private void TryMelee()
+    {
+        if (GUI.GetInUI())
+            return;
+
+        if (!currentWeapon.canMelee && currentWeapon != null)
+            return;
+
+        SM.Play("Fire");
+        int facingside = 0;
+
+        switch (facing)
+        {
+            case Direction.N: facingside = 0; break;
+            case Direction.NW: facingside = 1; break;
+            case Direction.W: facingside = 2; break;
+            case Direction.SW: facingside = 3; break;
+            case Direction.S: facingside = 4; break;
+            case Direction.SE: facingside = 5; break;
+            case Direction.E: facingside = 6; break;
+            case Direction.NE: facingside = 7; break;
+        }
+
+        Vector2 dir = (gunPoss[facingside].transform.position - transform.position).normalized;
+
+        IEnemy en = FanCheck(dir);
+        if(en != null)
+        {
+            float damage = 0f;
+
+            if (currentWeapon == null)
+                damage = 1f;
+            else
+                damage = currentWeapon.meleeDamage;
+
+            en.TakeDamage(damage);
+            canMelee = false;
+
+            StartCoroutine(ShootingCoooldown(currentWeapon.meleeCooldown));
+        }   
+    }
+    private IEnemy FanCheck(Vector2 facingDir)
+    {
+        float startAngle = -currentWeapon.meleeFOV / 2f;
+        float step = currentWeapon.meleeFOV / (currentWeapon.meleeRays - 1);
+
+        for (int i = 0; i < currentWeapon.meleeRays; i++)
+        {
+            float angle = startAngle + step * i;
+            Vector2 dir = Quaternion.Euler(0, 0, angle) * facingDir;
+
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, dir, currentWeapon.meleeRange, meleeHitLayer);
+            if (hit && hit.transform.TryGetComponent<IEnemy>(out IEnemy enemy))
+                return enemy;
+        }
+        return null;
     }
     private Vector2 RandomMovement(Vector2 v, float degrees)
     {
@@ -270,6 +353,12 @@ public class PlayerInterface : MonoBehaviour
             v.x * sin + v.y * cos
         );
     }
+    private IEnumerator EnableShootingLights(int i)
+    {
+        shootingLights[i].SetActive(true);
+        yield return new WaitForSeconds(.007f);
+        shootingLights[i].SetActive(false);
+    }
 
     private IEnumerator ShootingCoooldown(float cooldown)
     {
@@ -277,6 +366,12 @@ public class PlayerInterface : MonoBehaviour
         canShoot = true;
         isShooting = false;
     }
+    private IEnumerator MeleeCoooldown(float cooldown)
+    {
+        yield return new WaitForSeconds(cooldown);
+        canMelee = true;
+    }
+
     public void LockMovement(bool val)
     {
         cannotMove = val;
@@ -529,12 +624,23 @@ public class PlayerInterface : MonoBehaviour
     }
 
     //why bool?
-    public bool AddWeapon(Weapon weapon)
+    public bool AddWeapon(Weapon weapon, int ammo)
     {
+        //Debug.Log("adding weapon");
+        if(currentWeapon != null && currentWeapon != FindFirstObjectByType<MainGUIController>().ReturnEmptyWeapon())
+        {
+            //Debug.Log("spawning weapon");
+            GameObject o = GameObject.Instantiate(currentWeapon.prefab, transform.position, Quaternion.identity);
+            o.GetComponent<pickup>().currentAmmo = weaponAmmo;
+        }
+
         currentWeapon = weapon;
-        weaponAmmo = weapon.maxAmmo;
+        weaponAmmo = ammo;
         maxAmmo = weapon.maxAmmo;
         FindFirstObjectByType<WeaponHUD>().SetCurrentWeapon(currentWeapon);
+        FindFirstObjectByType<CameraController>().maxScrollOut = weapon.weaponZoom;
+        FindFirstObjectByType<CameraController>().minScrollOut = weapon.weaponMinZoom;
+
         return true;
     }
     public bool AddAmmo(WeaponAmmoType type, int amount)

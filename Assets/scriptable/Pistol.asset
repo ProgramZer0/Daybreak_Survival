@@ -29,6 +29,10 @@ MonoBehaviour:
   splashDamage: 0
   splashRange: 0
   appearTime: 0
-  fadeTime: 0.1
+  fadeInTime: 0.1
+  soundMod: -30
+  weaponZoom: 8
+  weaponMinZoom: 3
+  pickupTime: 1
   projectilePrefab: {fileID: 8562623839093297936, guid: 9552de84965ae7d4ebe82b6f5d05d66c, type: 3}
   weaponAmmoType: 0

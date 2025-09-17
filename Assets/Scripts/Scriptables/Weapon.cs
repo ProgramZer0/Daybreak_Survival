@@ -10,6 +10,15 @@ public enum WeaponAmmoType
     shells
 }
 
+public enum Rarity
+{
+    common,
+    uncommon,
+    Rare,
+    VeryRare,
+    Impossible
+}
+
 [CreateAssetMenu(fileName = "Weapon", menuName = "Weapon")]
 public class Weapon : ScriptableObject
 {
@@ -17,6 +26,13 @@ public class Weapon : ScriptableObject
     public GameObject prefab; 
     public Sprite sprite;
     public int maxAmmo;
+    public bool canShoot = true;
+    public bool canMelee = true;
+    public float meleeDamage = 1f;
+    public float meleeRange = .4f;
+    public float meleeFOV = 70f;
+    public int meleeRays = 7;
+    public float meleeCooldown = .5f;
     public float projectileDamage = 0f;
     public float projectileSpeed = 0f;
     public float projectileAmount = 0f;
@@ -32,6 +48,12 @@ public class Weapon : ScriptableObject
     public float appearTime = 0f;
     public float fadeInTime = 0.1f;
     public float soundMod = 0f;
+    public float weaponZoom = 10f;
+    public float weaponMinZoom = 3f;
+    public float pickupTime = 2f;
+    public bool hasFlash = true;
+    public float offsetSpawnProjectile = 0f;
+    public Rarity rarity = Rarity.common;
     public GameObject projectilePrefab;
     public WeaponAmmoType weaponAmmoType;
 }

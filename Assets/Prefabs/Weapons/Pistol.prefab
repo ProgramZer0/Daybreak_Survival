@@ -105,6 +105,7 @@ MonoBehaviour:
   isAmmo: 0
   weaponAmmoType: 0
   ammoAmmount: 0
+  currentAmmo: 15
 --- !u!61 &5060377661861475005
 BoxCollider2D:
   m_ObjectHideFlags: 0

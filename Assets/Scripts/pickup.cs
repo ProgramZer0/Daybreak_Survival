@@ -2,10 +2,12 @@ using UnityEngine;
 
 public class pickup : MonoBehaviour
 {
-    [SerializeField] private Weapon weapon;
+    public Weapon weapon;
     [SerializeField] private bool isAmmo = false;
     [SerializeField] private WeaponAmmoType weaponAmmoType;
     [SerializeField] private int ammoAmmount = 0;
+    public int currentAmmo = 0;
+
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -36,9 +38,9 @@ public class pickup : MonoBehaviour
         playerobj.TryGetComponent<PlayerInterface>(out PlayerInterface player);
         if (player != null)
         {
-            if (player.AddWeapon(weapon)) 
+            if (player.AddWeapon(weapon, currentAmmo)) 
             { 
-            
+                
                 Destroy(transform.gameObject);
             }
         }

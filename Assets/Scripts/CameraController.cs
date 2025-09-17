@@ -11,11 +11,16 @@ public class CameraController : MonoBehaviour
     {
         scrollData = Input.mouseScrollDelta;
 
-        if (scrollData.y > 0)
-        {
-            if (GetComponent<Camera>().orthographicSize > minScrollOut)
-                GetComponent<Camera>().orthographicSize = GetComponent<Camera>().orthographicSize - scrollSpeed;
-        }
+        if (GetComponent<Camera>().orthographicSize > maxScrollOut)
+            GetComponent<Camera>().orthographicSize = maxScrollOut;
+        if (GetComponent<Camera>().orthographicSize < minScrollOut)
+            GetComponent<Camera>().orthographicSize = minScrollOut;
+
+            if (scrollData.y > 0)
+            {
+                if (GetComponent<Camera>().orthographicSize > minScrollOut)
+                    GetComponent<Camera>().orthographicSize = GetComponent<Camera>().orthographicSize - scrollSpeed;
+            }
         if (scrollData.y < 0)
         {
             if (GetComponent<Camera>().orthographicSize < maxScrollOut)

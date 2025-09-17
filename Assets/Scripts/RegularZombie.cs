@@ -77,8 +77,6 @@ public class RegularZombie : EnemyBase
 
     public override void Tick()
     {
-
-        bool detected = false;
         if (isDay)
         {
             LOSSpeed = baseLOSSpeed;
@@ -256,8 +254,9 @@ public class RegularZombie : EnemyBase
 
     private void HandleIdle()
     {
-        idleTimer -= Time.deltaTime * detectionIntervalFrames;
-
+        if (!agent.hasPath || agent.velocity.sqrMagnitude == 0f)
+            idleTimer -= Time.deltaTime * detectionIntervalFrames;
+        
         if (idleTimer <= 0f) 
         {
             Vector2 randomOffset = Random.insideUnitCircle * idleRadius;

@@ -41,4 +41,9 @@ public abstract class EnemyBase : MonoBehaviour, IEnemy
         health -= damage;
         if (health <= 0) OnDeath();
     }
+
+    public GameObject GetGameObj()
+    {
+        return gameObject;
+    }
 }
