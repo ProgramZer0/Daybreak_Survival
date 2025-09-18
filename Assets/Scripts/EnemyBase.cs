@@ -40,6 +40,8 @@ public abstract class EnemyBase : MonoBehaviour, IEnemy
     {
         health -= damage;
         if (health <= 0) OnDeath();
+        if (agent != null && player != null)
+            agent.SetDestination(player.position);
     }
 
     public GameObject GetGameObj()

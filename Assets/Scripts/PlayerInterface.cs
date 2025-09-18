@@ -24,13 +24,11 @@ public class PlayerInterface : MonoBehaviour
     [SerializeField] private float dashCooldown = 10f;
     [SerializeField] private float interactRange = 2f;
     [SerializeField] private float pickupRange = 1f;
-    [SerializeField] private float playerPickupTime = 3f;
     [SerializeField] private float maxHP = 10f;
     [SerializeField] private float hordeForgetTime = 5f;
 
     [SerializeField] private LayerMask interactLayer;
     public LayerMask EnemyLayer;
-    [SerializeField] private LayerMask meleeHitLayer;
     [SerializeField] private Animator Animator;
     [SerializeField] private GameObject walkingSound;
     [SerializeField] private GameObject projectile;
@@ -310,11 +308,10 @@ public class PlayerInterface : MonoBehaviour
         }
 
         Vector2 dir = (gunPoss[facingside].transform.position - transform.position).normalized;
-
         IEnemy en = FanCheck(dir);
         if(en != null)
         {
-            float damage = 0f;
+            float damage;
 
             if (currentWeapon == null)
                 damage = 1f;
@@ -324,25 +321,39 @@ public class PlayerInterface : MonoBehaviour
             en.TakeDamage(damage);
             canMelee = false;
 
-            StartCoroutine(ShootingCoooldown(currentWeapon.meleeCooldown));
+            StartCoroutine(MeleeCoooldown(currentWeapon.meleeCooldown));
         }   
     }
     private IEnemy FanCheck(Vector2 facingDir)
     {
-        float startAngle = -currentWeapon.meleeFOV / 2f;
-        float step = currentWeapon.meleeFOV / (currentWeapon.meleeRays - 1);
+        Collider2D[] hits = Physics2D.OverlapCircleAll(
+            transform.position,
+            currentWeapon.meleeRange,
+            EnemyLayer
+        );
 
-        for (int i = 0; i < currentWeapon.meleeRays; i++)
+        foreach (Collider2D hit in hits)
         {
-            float angle = startAngle + step * i;
-            Vector2 dir = Quaternion.Euler(0, 0, angle) * facingDir;
+            if (hit.TryGetComponent<IEnemy>(out IEnemy enemy))
+            {
+                Vector2 toTarget = (hit.transform.position - transform.position).normalized;
+                float angle = Vector2.Angle(facingDir, toTarget);
 
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, dir, currentWeapon.meleeRange, meleeHitLayer);
-            if (hit && hit.transform.TryGetComponent<IEnemy>(out IEnemy enemy))
-                return enemy;
+                if (angle <= currentWeapon.meleeFOV / 2f)
+                {
+                    Debug.DrawLine(transform.position, hit.transform.position, Color.green, 0.2f);
+                    return enemy; 
+                }
+                else
+                {
+                    Debug.DrawLine(transform.position, hit.transform.position, Color.yellow, 0.2f);
+                }
+            }
         }
+
         return null;
     }
+
     private Vector2 RandomMovement(Vector2 v, float degrees)
     {
         float rad = degrees * Mathf.Deg2Rad;

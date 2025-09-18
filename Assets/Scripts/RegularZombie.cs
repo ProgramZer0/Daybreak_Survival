@@ -20,6 +20,7 @@ public class RegularZombie : EnemyBase
     [SerializeField] private float hordeAccuracy = 5f;
     [SerializeField] private float hordeHearing = 15f;
     [SerializeField] private float hordeMentality = 30f;
+    [SerializeField] private float hordeCooldown = 10f;
 
     [Header("Idle Settings")]
     [SerializeField] private float idleMinTime = 2f;
@@ -64,6 +65,8 @@ public class RegularZombie : EnemyBase
     private float fov = 0;
     private float hearRange = 0;
     private float distanceFromPlayer = 0;
+    private float hordeAssistTimer = 0f;
+
     //private bool isController = false;
 
     private void Awake()
@@ -77,6 +80,15 @@ public class RegularZombie : EnemyBase
 
     public override void Tick()
     {
+        if (!ShouldDetectThisFrame())
+            return;
+
+        distanceFromPlayer = Vector2.Distance(player.position, transform.position);
+        if (distanceFromPlayer > activeRange) return;
+
+        if (hordeAssistTimer > 0f)
+            hordeAssistTimer -= Time.deltaTime * detectionIntervalFrames;
+
         if (isDay)
         {
             LOSSpeed = baseLOSSpeed;
@@ -99,12 +111,6 @@ public class RegularZombie : EnemyBase
         else
             agent.speed = idleSpeed;
 
-        if (!ShouldDetectThisFrame())
-            return;
-
-        distanceFromPlayer = Vector2.Distance(player.position, transform.position);
-        if (distanceFromPlayer > activeRange) return;
-
         if (DetectPlayer())
         {
             didSee = true;
@@ -114,11 +120,14 @@ public class RegularZombie : EnemyBase
         }
         else if(playerInterface.GetIsSeenAndChased())
         {
-            if(distanceFromPlayer <= hordeHearing && !agent.hasPath)
+
+            if (distanceFromPlayer <= hordeHearing && hordeAssistTimer <= 0f)
             {
                 Vector2 randomOffset = Random.insideUnitCircle * hordeAccuracy;
-                Vector2 playerGuessLocation = transform.position + (Vector3)randomOffset;
+                Vector2 playerGuessLocation = (Vector2)player.position + randomOffset;
+
                 agent.SetDestination(playerGuessLocation);
+                hordeAssistTimer = hordeCooldown;
             }
         }
         else if (isSearching && lastKnownPlayerPos.HasValue)
@@ -145,14 +154,17 @@ public class RegularZombie : EnemyBase
     }
     private void UpdateAnimations(Vector2 moveDir)
     {
-        // Hide all directional objects first
         upObj.SetActive(false);
         downObj.SetActive(false);
         leftObj.SetActive(false);
         rightObj.SetActive(false);
 
-        if (moveDir.sqrMagnitude > 0.01f) // zombie is moving
+        const float moveThreshold = 0.05f;
+
+        if (moveDir.sqrMagnitude > moveThreshold) 
         {
+            mainSprite.SetActive(false);
+
             if (Mathf.Abs(moveDir.x) > Mathf.Abs(moveDir.y))
             {
                 if (moveDir.x > 0)
@@ -167,10 +179,13 @@ public class RegularZombie : EnemyBase
                 else
                     downObj.SetActive(true);
             }
+
+            facingDir = moveDir; 
         }
-        else // zombie stopped moving
+        else
         {
-            // Use the last facingDir to pick idle sprite
+            mainSprite.SetActive(true);
+
             if (Mathf.Abs(facingDir.x) > Mathf.Abs(facingDir.y))
             {
                 spriteRenderer.sprite = facingDir.x > 0 ? rightSprite : leftSprite;
@@ -254,8 +269,7 @@ public class RegularZombie : EnemyBase
 
     private void HandleIdle()
     {
-        if (!agent.hasPath || agent.velocity.sqrMagnitude == 0f)
-            idleTimer -= Time.deltaTime * detectionIntervalFrames;
+        idleTimer -= Time.deltaTime * detectionIntervalFrames;
         
         if (idleTimer <= 0f) 
         {
