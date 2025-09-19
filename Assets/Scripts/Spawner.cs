@@ -47,6 +47,23 @@ public class Spawner : MonoBehaviour
 
     }
 
+    public GameObject Spawn(GameObject prefab, Transform player, bool isDay)
+    {
+        if (spawns.Count >= maxSpawns) return null;
+
+        GameObject o = Instantiate(prefab, transform.position, Quaternion.identity);
+        spawns.Add(o);
+
+        IEnemy enemy = o.GetComponent<IEnemy>();
+        if (enemy != null)
+        {
+            enemy.Initialize(player.gameObject, isDay);
+        }
+
+        return o;
+
+    }
+
     public void Despawn(GameObject obj)
     {
         if (spawns.Contains(obj)) spawns.Remove(obj);

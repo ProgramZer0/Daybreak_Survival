@@ -15,6 +15,7 @@ public class EnemyController : MonoBehaviour
     private List<GameObject> enemies = new List<GameObject>();
 
     [SerializeField] private bool spawningEnabled = false;
+    private bool isDay = true;
 
     public void enableSpawning()
     {
@@ -54,20 +55,21 @@ public class EnemyController : MonoBehaviour
 
         GameObject enemyPrefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
 
-        GameObject enemy = spawnerObj.GetComponent<Spawner>().Spawn(enemyPrefab, player);
+        GameObject enemy = spawnerObj.GetComponent<Spawner>().Spawn(enemyPrefab, player, isDay);
         if (enemy != null)
         {
             enemies.Add(enemy);
         }
     }
 
-    public void SetIsDay(bool isDay)
+    public void SetIsDay(bool _isDay)
     {
+        isDay = _isDay;
         foreach (var enemy in enemies.ToList())
         {
             if (enemy == null) continue;
             EnemyBase enemyComp = enemy.GetComponent<EnemyBase>();
-            enemyComp.isDay = isDay;
+            enemyComp.isDay = _isDay;
         }
     }
 }

@@ -15,6 +15,7 @@ public class RegularZombie : EnemyBase
     [SerializeField] private float sneakHearing = 3f;
     [SerializeField] private float gunshotHearing = 100f;
     [SerializeField] private float hearNight = 1f;
+    [SerializeField] private float dummmyLOSTime = 2f;
 
     [Header("Horde Settings")]
     [SerializeField] private float hordeAccuracy = 5f;
@@ -66,6 +67,9 @@ public class RegularZombie : EnemyBase
     private float hearRange = 0;
     private float distanceFromPlayer = 0;
     private float hordeAssistTimer = 0f;
+    private GameObject activeDirectionObj;
+    private float losTimer = 0f;
+    private bool lostLOS = false;
 
     //private bool isController = false;
 
@@ -154,36 +158,42 @@ public class RegularZombie : EnemyBase
     }
     private void UpdateAnimations(Vector2 moveDir)
     {
-        upObj.SetActive(false);
-        downObj.SetActive(false);
-        leftObj.SetActive(false);
-        rightObj.SetActive(false);
-
         const float moveThreshold = 0.05f;
 
-        if (moveDir.sqrMagnitude > moveThreshold) 
+        if (moveDir.sqrMagnitude > moveThreshold)
         {
             mainSprite.SetActive(false);
 
+            GameObject newActive;
+
             if (Mathf.Abs(moveDir.x) > Mathf.Abs(moveDir.y))
             {
-                if (moveDir.x > 0)
-                    rightObj.SetActive(true);
-                else
-                    leftObj.SetActive(true);
+                newActive = moveDir.x > 0 ? rightObj : leftObj;
             }
             else
             {
-                if (moveDir.y > 0)
-                    upObj.SetActive(true);
-                else
-                    downObj.SetActive(true);
+                newActive = moveDir.y > 0 ? upObj : downObj;
             }
 
-            facingDir = moveDir; 
+            if (newActive != activeDirectionObj)
+            {
+                if (activeDirectionObj != null)
+                    activeDirectionObj.SetActive(false);
+
+                newActive.SetActive(true);
+                activeDirectionObj = newActive;
+            }
+
+            facingDir = moveDir.normalized;
         }
         else
         {
+            if (activeDirectionObj != null)
+            {
+                activeDirectionObj.SetActive(false);
+                activeDirectionObj = null;
+            }
+
             mainSprite.SetActive(true);
 
             if (Mathf.Abs(facingDir.x) > Mathf.Abs(facingDir.y))
@@ -201,32 +211,50 @@ public class RegularZombie : EnemyBase
     {
         float mod = 0f;
         if (playerInterface.GetCrouch())
-        {
             mod = hearRange - sneakHearing;
-        }
         if (playerInterface.GetShottingBool())
-        {
             mod = gunshotHearing + playerInterface.GetActiveWeapon().soundMod;
-        }
+
         if (distanceFromPlayer <= mod)
         {
             didSee = true;
+            lostLOS = false;
             return true;
         }
         if (distanceFromPlayer <= range && FanVisionCheck())
         {
 
             didSee = true;
+            lostLOS = false;
             return true;
         }
 
-        if (didSee)
+        if (didSee && !lostLOS)
         {
+            lostLOS = true;
+            losTimer = dummmyLOSTime;
             lastKnownPlayerPos = player.position;
-            isSearching = true;
-            searchTimer = searchDuration;
-            didSee = false;
         }
+
+        if (lostLOS)
+        {
+            losTimer -= Time.deltaTime * detectionIntervalFrames;
+
+            if (losTimer > 0f)
+            {
+                if (lastKnownPlayerPos.HasValue)
+                    agent.SetDestination(lastKnownPlayerPos.Value);
+                return true; 
+            }
+            else
+            {
+                isSearching = true;
+                searchTimer = searchDuration;
+                didSee = false;
+                lostLOS = false;
+            }
+        }
+
         return false;
     }
 
@@ -255,8 +283,15 @@ public class RegularZombie : EnemyBase
         {
             if (!agent.hasPath || agent.remainingDistance < 0.2f)
             {
-                Vector2 randomOffset = Random.insideUnitCircle * searchRadius;
-                Vector3 targetPos = lastKnownPlayerPos.Value + randomOffset;
+                float t = 1f - (searchTimer / searchDuration);
+                float currentRadius = Mathf.Lerp(searchRadius, 1f, t);
+
+                Vector2 toPlayer = ((Vector2)player.position - lastKnownPlayerPos.Value).normalized;
+                Vector2 biasedCenter = lastKnownPlayerPos.Value + toPlayer * (currentRadius * 0.7f);
+
+                Vector2 randomOffset = Random.insideUnitCircle * (currentRadius * 0.3f);
+                Vector3 targetPos = biasedCenter + randomOffset;
+
                 agent.SetDestination(targetPos);
             }
         }

@@ -10,7 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 8734267326790374658}
   - component: {fileID: 5038654660253685820}
-  m_Layer: 11
+  - component: {fileID: 3357117591817730496}
+  m_Layer: 14
   m_Name: HitBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -66,7 +67,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.014112942, y: 0.02804114}
+  m_Offset: {x: -0.02566646, y: -0.00084263086}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -76,8 +77,21 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.12724118, y: 0.304626}
+  m_Size: {x: 0.37885085, y: 0.59603095}
   m_EdgeRadius: 0
+--- !u!114 &3357117591817730496
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2560671369103726070}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 782b3d2feb65a9747842f77a82da6785, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyHit: {fileID: 5394958092232953006}
 --- !u!1 &2659497165490750332
 GameObject:
   m_ObjectHideFlags: 0
@@ -89,7 +103,7 @@ GameObject:
   - component: {fileID: 5279431079623714122}
   - component: {fileID: 169935795749810016}
   - component: {fileID: 6886505204296545266}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: ZombieWalkDown
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -261,8 +275,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -1627672657
-  m_SortingLayer: 4
+  m_SortingLayerID: -1722988613
+  m_SortingLayer: 5
   m_SortingOrder: 0
   m_Sprite: {fileID: -4009781084192928080, guid: 24cd4accdf77b764cbf30b2a850b478c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -286,7 +300,7 @@ GameObject:
   - component: {fileID: 8858899182675720437}
   - component: {fileID: 3008908902584750341}
   - component: {fileID: 1125671796179027038}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: ZombieWalkUp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -394,11 +408,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6927556069156098143}
-  - component: {fileID: 4082906360708055412}
   - component: {fileID: 976382905080844946}
   - component: {fileID: 5579093657413726375}
   - component: {fileID: 7388135382139020625}
-  m_Layer: 14
+  - component: {fileID: 8847433615300808411}
+  m_Layer: 11
   m_Name: Zombie
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -413,7 +427,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5394958092232953006}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -425,8 +439,109 @@ Transform:
   - {fileID: 6995121918054399071}
   - {fileID: 8734267326790374658}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
---- !u!61 &4082906360708055412
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &976382905080844946
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5394958092232953006}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6812c4d41a26d4743bc2d194fdee1db7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: 5
+  damage: 1
+  isDay: 1
+  activeRange: 100
+  baseRange: 8
+  rangeNight: 4
+  baseHearRange: 4
+  baseFOV: 90
+  fovNight: 30
+  rayCount: 5
+  hitLayers:
+    serializedVersion: 2
+    m_Bits: 1865
+  sneakHearing: 3
+  gunshotHearing: 70
+  hearNight: 1
+  dummmyLOSTime: 2
+  hordeAccuracy: 2
+  hordeHearing: 20
+  hordeMentality: 30
+  hordeCooldown: 5
+  idleMinTime: 10
+  idleMaxTime: 60
+  idleRadius: 10
+  searchDuration: 30
+  searchRadius: 20
+  nightSpeedMod: 1.5
+  baseLOSSpeed: 3
+  baseIdleSpeed: 2
+  detectionIntervalFrames: 5
+  upObj: {fileID: 3795176218493307200}
+  downObj: {fileID: 2659497165490750332}
+  leftObj: {fileID: 6585216904261436022}
+  rightObj: {fileID: 7070908574091099049}
+  mainSprite: {fileID: 3015199001637403439}
+  spriteRenderer: {fileID: 8539572686224365857}
+  rightSprite: {fileID: 8379579363135513736, guid: 24cd4accdf77b764cbf30b2a850b478c, type: 3}
+  leftSprite: {fileID: 2864740595735961047, guid: 24cd4accdf77b764cbf30b2a850b478c, type: 3}
+  upSprite: {fileID: 9160073685392608064, guid: 24cd4accdf77b764cbf30b2a850b478c, type: 3}
+  downSprite: {fileID: -4009781084192928080, guid: 24cd4accdf77b764cbf30b2a850b478c, type: 3}
+--- !u!50 &5579093657413726375
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5394958092232953006}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 5
+  m_LinearDamping: 1
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 6200000, guid: 4d442edb716051f4b824a821d42111ca, type: 2}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 4
+--- !u!195 &7388135382139020625
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5394958092232953006}
+  m_Enabled: 1
+  m_AgentTypeID: -1372625422
+  m_Radius: 0.2
+  m_Speed: 2.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 0.3
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 3
+--- !u!61 &8847433615300808411
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -460,7 +575,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.024270147, y: 0.0021864474}
+  m_Offset: {x: -0.025551438, y: -0.0058965087}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -470,108 +585,8 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.40240878, y: 0.6370433}
+  m_Size: {x: 0.12732053, y: 0.28849113}
   m_EdgeRadius: 0
---- !u!114 &976382905080844946
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5394958092232953006}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6812c4d41a26d4743bc2d194fdee1db7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  health: 5
-  damage: 1
-  isDay: 1
-  activeRange: 100
-  baseRange: 8
-  rangeNight: 4
-  baseHearRange: 4
-  baseFOV: 90
-  fovNight: 30
-  rayCount: 5
-  hitLayers:
-    serializedVersion: 2
-    m_Bits: 1865
-  sneakHearing: 3
-  gunshotHearing: 70
-  hearNight: 1
-  hordeAccuracy: 2
-  hordeHearing: 50
-  hordeMentality: 30
-  hordeCooldown: 5
-  idleMinTime: 10
-  idleMaxTime: 30
-  idleRadius: 10
-  searchDuration: 20
-  searchRadius: 10
-  nightSpeedMod: 1.5
-  baseLOSSpeed: 3
-  baseIdleSpeed: 2
-  detectionIntervalFrames: 5
-  upObj: {fileID: 3795176218493307200}
-  downObj: {fileID: 2659497165490750332}
-  leftObj: {fileID: 6585216904261436022}
-  rightObj: {fileID: 7070908574091099049}
-  mainSprite: {fileID: 3015199001637403439}
-  spriteRenderer: {fileID: 8539572686224365857}
-  rightSprite: {fileID: 8379579363135513736, guid: 24cd4accdf77b764cbf30b2a850b478c, type: 3}
-  leftSprite: {fileID: 2864740595735961047, guid: 24cd4accdf77b764cbf30b2a850b478c, type: 3}
-  upSprite: {fileID: 9160073685392608064, guid: 24cd4accdf77b764cbf30b2a850b478c, type: 3}
-  downSprite: {fileID: -4009781084192928080, guid: 24cd4accdf77b764cbf30b2a850b478c, type: 3}
---- !u!50 &5579093657413726375
-Rigidbody2D:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5394958092232953006}
-  m_BodyType: 2
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 5
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
-  m_GravityScale: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 4
---- !u!195 &7388135382139020625
-NavMeshAgent:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5394958092232953006}
-  m_Enabled: 1
-  m_AgentTypeID: -1372625422
-  m_Radius: 0.2
-  m_Speed: 2.5
-  m_Acceleration: 8
-  avoidancePriority: 50
-  m_AngularSpeed: 120
-  m_StoppingDistance: 0
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
-  m_AutoRepath: 1
-  m_Height: 0.3
-  m_BaseOffset: 0
-  m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 3
 --- !u!1 &6585216904261436022
 GameObject:
   m_ObjectHideFlags: 0
@@ -583,7 +598,7 @@ GameObject:
   - component: {fileID: 5780169142512937524}
   - component: {fileID: 2419692492593969910}
   - component: {fileID: 1489190599103945630}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: ZombieWalkSideSheetL
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -693,7 +708,7 @@ GameObject:
   - component: {fileID: 6091464668807279959}
   - component: {fileID: 5121497742958983095}
   - component: {fileID: 7658991306027734800}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: ZombieWalkSideSheetR
   m_TagString: Untagged
   m_Icon: {fileID: 0}

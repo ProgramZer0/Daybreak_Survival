@@ -19,9 +19,13 @@ public class PlayerInterface : MonoBehaviour
     [SerializeField] private MainGUIController GUI;
     [SerializeField] private SoundManager SM;
     [SerializeField] private GameManager GM;
-    [SerializeField] private float speed = 4f;
+    [SerializeField] private float normSpeed = 3f;
+    [SerializeField] private float sprintSpeed = 4f;
     [SerializeField] private float crouchSpeed = 1.5f;
     [SerializeField] private float dashCooldown = 10f;
+    [SerializeField] private float sprintTime = 10f;
+    [SerializeField] private float sprintCooldown = 2f;
+    [SerializeField] private float maxSprintDebuffTime = 5f;
     [SerializeField] private float interactRange = 2f;
     [SerializeField] private float pickupRange = 1f;
     [SerializeField] private float maxHP = 10f;
@@ -65,6 +69,7 @@ public class PlayerInterface : MonoBehaviour
     private bool interact = false;
     private bool dashing = false;
     private bool crouch = false;
+    private bool sprinting = false;
     private bool pickupKey = false;
     private bool canShoot = true;
     private bool canMelee = true;
@@ -73,12 +78,15 @@ public class PlayerInterface : MonoBehaviour
     private bool cannotMove = true;
     private bool crouchToggle = true;
     private bool isShooting = false;
+    private bool canSprint = true;
+    private bool wentOverSprint = false;
     private bool isSeenAndChased = false;
     private float inputH = 0f;
     private float inputV = 0f;
     private float currentHP = 10;
     private float pickupTimer = 0;
     private float chaseTimer = 0;
+    private float sprintTimer = 0;
     private pickup currentPick;
 
     public float GetMaxHP() { return maxHP; }
@@ -96,9 +104,32 @@ public class PlayerInterface : MonoBehaviour
         currentHP = maxHP;
         weaponAmmo = 0;
         maxAmmo = 0;
+        inputH = 0f;
+        inputV = 0f;
+        currentHP = 10;
+        pickupTimer = 0;
+        chaseTimer = 0;
+        sprintTimer = 0;
         currentWeapon = GUI.ReturnEmptyWeapon();
+        facing = Direction.S;
         DisableAllWalks();
-    }
+        attacking = false;
+        meleeing = false;
+        interact = false;
+        dashing = false;
+        crouch = false;
+        sprinting = false;
+        pickupKey = false;
+        canShoot = true;
+        canMelee = true;
+        canDash = true;
+        IframesDown = true;
+        cannotMove = true;
+        crouchToggle = true;
+        isShooting = false;
+        canSprint = true;
+        isSeenAndChased = false;
+}
 
     private void Update()
     {
@@ -126,7 +157,23 @@ public class PlayerInterface : MonoBehaviour
             if (Input.GetKeyUp(KeyCode.C)) crouch = false;
         }
 
-        if (Input.GetKeyDown(KeyCode.LeftShift)) dashing = true;
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            if (canSprint && sprintTimer < sprintTime)
+                sprinting = true;
+        }
+        
+        if (Input.GetKeyUp(KeyCode.LeftShift)) 
+        {
+            if(sprintTimer < sprintTime)
+            {
+                canSprint = false;
+                sprinting = false;
+                StartCoroutine(SprintingCooldown());
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space)) dashing = true;
 
         if (isSeenAndChased)
         {
@@ -137,6 +184,25 @@ public class PlayerInterface : MonoBehaviour
             isSeenAndChased = false;
             chaseTimer = 0;
         }
+
+
+
+        if (sprinting)
+            sprintTimer += Time.deltaTime;
+        else if (canSprint && sprintTimer > 0) 
+            sprintTimer -= Time.deltaTime;
+
+        if(sprintTimer >= sprintTime && canSprint && !wentOverSprint)
+        {
+            canSprint = false;
+            sprinting = false;
+            wentOverSprint = true;
+            sprintTimer += maxSprintDebuffTime;
+            StartCoroutine(SprintingCooldown());
+        }
+
+        if (sprintTimer < sprintTime)
+            wentOverSprint = false;
     }
     
     public Weapon GetActiveWeapon()
@@ -146,8 +212,6 @@ public class PlayerInterface : MonoBehaviour
 
     private void FixedUpdate()
     {
-        
-
         if(currentHP < 0)
         {
             GM.EndGameFail();
@@ -182,7 +246,9 @@ public class PlayerInterface : MonoBehaviour
             TryInteract();
         }
 
-        Move(moveAmount, dashing);
+        
+
+        Move(moveAmount, dashing, sprinting);
     }
 
     private void TryPickUp()
@@ -370,7 +436,11 @@ public class PlayerInterface : MonoBehaviour
         yield return new WaitForSeconds(.007f);
         shootingLights[i].SetActive(false);
     }
-
+    private IEnumerator SprintingCooldown()
+    {
+        yield return new WaitForSeconds(sprintCooldown);
+        canSprint = true;
+    }
     private IEnumerator ShootingCoooldown(float cooldown)
     {
         yield return new WaitForSeconds(cooldown);
@@ -403,12 +473,14 @@ public class PlayerInterface : MonoBehaviour
         interact = false;
     }
 
-    private void Move(Vector2 move, bool dashed)
+    private void Move(Vector2 move, bool dashed, bool isSprinting)
     {
         bool moving = true;
-        float speeds = speed;
+        float speeds = normSpeed;
         if (crouch)
             speeds = crouchSpeed;
+        else if (isSprinting && canSprint)
+            speeds = sprintSpeed;
 
         body.linearVelocity = move * speeds;
 
@@ -681,8 +753,13 @@ public class PlayerInterface : MonoBehaviour
     {
         if (IframesDown)
         {
+            HPBar bar = FindFirstObjectByType<HPBar>();
+            if (bar != null)
+                bar.SetHP(currentHP - damage);
+            else
+                return;
+
             currentHP -= damage;
-            FindFirstObjectByType<HPBar>().SetHP(currentHP);
             IframesDown = false;
             StartCoroutine(IFrameCooldown());
             StartCoroutine(Flash());

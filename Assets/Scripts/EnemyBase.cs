@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-public abstract class EnemyBase : MonoBehaviour, IEnemy 
+public abstract class EnemyBase : MonoBehaviour, IEnemy
 {
     protected NavMeshAgent agent;
     protected Transform player;
@@ -11,15 +11,24 @@ public abstract class EnemyBase : MonoBehaviour, IEnemy
     public float damage = 1;
     public bool isDay = true;
 
-    public virtual void Initialize(GameObject player)
+    public virtual void Initialize(GameObject player, bool _isDay)
     {
         this.player = player.transform;
         agent = GetComponent<NavMeshAgent>();
         agent.updateRotation = false;
         agent.updateUpAxis = false;
         playerInterface = player.GetComponent<PlayerInterface>();
-
+        isDay = _isDay;
     }
+    public void Initialize(GameObject player)
+    {
+        this.player = player.transform;
+        agent = GetComponent<NavMeshAgent>();
+        agent.updateRotation = false;
+        agent.updateUpAxis = false;
+        playerInterface = player.GetComponent<PlayerInterface>();
+    }
+
     public virtual void OnDeath()
     {
         Destroy(gameObject);

@@ -76,10 +76,10 @@ public class Projectile : MonoBehaviour
     void OnCollisionEnter2D(Collision2D collision)
     {
         //Debug.Log(collision.gameObject.name);
-        collision.gameObject.TryGetComponent<IEnemy>(out IEnemy enemy);
-        if(enemy != null)
+        collision.gameObject.TryGetComponent<hitboxScript>(out hitboxScript hitB);
+        if(hitB != null)
         {
-            enemy.TakeDamage(fallDamage);
+            hitB.GetComponent<IEnemy>().TakeDamage(fallDamage);
         }
 
         gameObject.GetComponent<Collider2D>().enabled = false;
@@ -108,10 +108,11 @@ public class Projectile : MonoBehaviour
     {
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, splashRange, FindFirstObjectByType<PlayerInterface>().EnemyLayer);
         foreach (Collider2D hit in hits)
-        {   
-            if (hit.TryGetComponent<IEnemy>(out IEnemy enemy))
+        {
+            hit.gameObject.TryGetComponent<hitboxScript>(out hitboxScript hitB);
+            if (hitB != null)
             {
-                enemy.TakeDamage(fallDamage); 
+                hitB.GetComponent<IEnemy>().TakeDamage(fallDamage);
             }
         }
     }
