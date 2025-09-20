@@ -8,6 +8,7 @@ public class Sound
     public AudioClip clip;
 
     public bool loop;
+    public bool isMusic = false;
 
     [Range(0f,1f)]
     public float volume = .2f;

@@ -25,6 +25,13 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float colorStart = 0.7f;
     [SerializeField] private Color deathColor;
 
+    [Header("Sound settings")]
+    [SerializeField] private string[] mainSongs;
+    [SerializeField] private string[] nightSongs;
+    [SerializeField] private string[] daySongs;
+    [SerializeField] private string[] nightNearDeathSongs;
+    [SerializeField] private string[] dayNearDeathSongs;
+
     private float cycleTimer = 0;
     private float deathTimer = 0f;
     private bool isDay = true;
@@ -79,12 +86,12 @@ public class GameManager : MonoBehaviour
 
             if (isDay)
             {
-                setNight();
+                SetNight();
                 isDay = false;
             }
             else
             {
-                setDay();
+                SetDay();
                 isDay = true;
             }
         }
@@ -107,7 +114,8 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
-
+        SetEnvMusic(0.5f);
+        SetAmbiance();
     }
 
     public void EndGameFail()
@@ -120,13 +128,40 @@ public class GameManager : MonoBehaviour
 
     }
 
-    private void setDay()
+    private void SetDay()
     {
         enemyController.SetIsDay(true);
+        SM.FadeOutSound("nightAmbiance");
+        SM.FadeInSound("dayAmbiance");
+
     }
 
-    private void setNight()
+    private void SetNight()
     {
         enemyController.SetIsDay(false);
+        SM.FadeOutSound("dayAmbiance");
+        SM.FadeInSound("nightAmbiance");
+    }
+
+    private void SetAmbiance()
+    {
+        if (isDay)
+            SetDay();
+        else
+            SetNight();
+    }
+    public void SetEnvMusic(float fade)
+    {
+        float deathProgress = Mathf.Clamp01(deathTimer / deathTime);
+        if (isDay)
+            SM.PlayRandomMusic(daySongs, fade);
+        else if (!isDay)
+            SM.PlayRandomMusic(nightSongs, fade);
+        else if (isDay && deathProgress >= .9)
+            SM.PlayRandomMusic(dayNearDeathSongs, fade);
+        else if (!isDay && deathProgress >= .9)
+            SM.PlayRandomMusic(nightNearDeathSongs, fade);
+        else
+            SM.PlayRandomMusic(mainSongs, fade);
     }
 }

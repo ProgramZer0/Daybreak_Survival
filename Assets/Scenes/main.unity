@@ -9367,51 +9367,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sounds:
-  - name: Interact
+  - name: wat
     clip: {fileID: 0}
     loop: 0
-    volume: 0
-    pitch: 0
-    source: {fileID: 0}
-  - name: Click
-    clip: {fileID: 0}
-    loop: 0
-    volume: 0
-    pitch: 0
-    source: {fileID: 0}
-  - name: Fire
-    clip: {fileID: 0}
-    loop: 0
-    volume: 0
-    pitch: 0
-    source: {fileID: 0}
-  - name: Dash
-    clip: {fileID: 0}
-    loop: 0
-    volume: 0
-    pitch: 0
-    source: {fileID: 0}
-  - name: Pickup
-    clip: {fileID: 0}
-    loop: 0
-    volume: 0
-    pitch: 0
-    source: {fileID: 0}
-  - name: Hit
-    clip: {fileID: 0}
-    loop: 0
-    volume: 0
-    pitch: 0
-    source: {fileID: 0}
-  - name: Die
-    clip: {fileID: 0}
-    loop: 0
-    volume: 0
-    pitch: 0
-    source: {fileID: 0}
-  - name: Reload
-    clip: {fileID: 0}
-    loop: 0
+    isMusic: 0
     volume: 0
     pitch: 0
     source: {fileID: 0}
@@ -9423,12 +9382,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 276416483}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0.053387444, y: 0.08988246, z: -8.339932}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 868446134}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &278462048
 GameObject:
@@ -95346,6 +95305,7 @@ Transform:
   - {fileID: 1110907243}
   - {fileID: 1671812071}
   - {fileID: 91718225}
+  - {fileID: 276416485}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &868446135
@@ -95389,7 +95349,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 18432
   Animator: {fileID: 935512253}
-  walkingSound: {fileID: 1110907242}
   projectile: {fileID: 8562623839093297936, guid: 9552de84965ae7d4ebe82b6f5d05d66c, type: 3}
   gunPoss:
   - {fileID: 759029933}
@@ -95422,7 +95381,6 @@ MonoBehaviour:
   currentWeapon: {fileID: 0}
   weaponAmmo: 0
   maxAmmo: 0
-  debugMeleeGizmos: 1
   baseRange: 0.7
   baseFOV: 110
   meleeRangeOffset: 0.5
@@ -102540,6 +102498,11 @@ MonoBehaviour:
   deathTime: 3600
   colorStart: 0.38
   deathColor: {r: 0.12156863, g: 0.4627451, b: 0.15294118, a: 1}
+  mainSongs: []
+  nightSongs: []
+  daySongs: []
+  nightNearDeathSongs: []
+  dayNearDeathSongs: []
 --- !u!114 &1754269202
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -102553,6 +102516,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GM: {fileID: 1754269201}
+  SM: {fileID: 276416484}
   player: {fileID: 868446134}
   enemyPrefabs:
   - {fileID: 5394958092232953006, guid: 53c7ffdc9b740d647806c99cade168fb, type: 3}
@@ -126200,7 +126164,6 @@ SceneRoots:
   - {fileID: 1754269199}
   - {fileID: 1460363063}
   - {fileID: 445052781}
-  - {fileID: 276416485}
   - {fileID: 118211638}
   - {fileID: 1023427269}
   - {fileID: 664198155}

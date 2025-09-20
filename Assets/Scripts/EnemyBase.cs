@@ -7,17 +7,19 @@ public abstract class EnemyBase : MonoBehaviour, IEnemy
     protected Transform player;
     protected bool isStunned = false;
     protected PlayerInterface playerInterface;
+    protected SoundManager SM;
     public float health = 5f;
     public float damage = 1;
     public bool isDay = true;
 
-    public virtual void Initialize(GameObject player, bool _isDay)
+    public virtual void Initialize(GameObject player, bool _isDay, SoundManager _SM)
     {
         this.player = player.transform;
         agent = GetComponent<NavMeshAgent>();
         agent.updateRotation = false;
         agent.updateUpAxis = false;
         playerInterface = player.GetComponent<PlayerInterface>();
+        SM = _SM;
         isDay = _isDay;
     }
     public void Initialize(GameObject player)

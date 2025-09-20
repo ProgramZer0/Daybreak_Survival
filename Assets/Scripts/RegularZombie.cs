@@ -13,6 +13,7 @@ public class RegularZombie : EnemyBase
     [SerializeField] private int rayCount = 5;
     [SerializeField] private LayerMask hitLayers;
     [SerializeField] private float sneakHearing = 3f;
+    [SerializeField] private float sprintHearing = 10f;
     [SerializeField] private float gunshotHearing = 100f;
     [SerializeField] private float hearNight = 1f;
     [SerializeField] private float dummmyLOSTime = 2f;
@@ -56,7 +57,11 @@ public class RegularZombie : EnemyBase
     [SerializeField] private float stunTime = 1f;
     [SerializeField] private float stunChance = 1f;
 
-    //private RegularZombie hordeController; 
+    [Header("Sound settings")]
+    [SerializeField] private float randomSoundInterval = 15f;
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioSource hurtSound;
+
     private int frameOffset;
     private float idleTimer;
     private float searchTimer;
@@ -71,12 +76,12 @@ public class RegularZombie : EnemyBase
     private float hearRange = 0;
     private float distanceFromPlayer = 0;
     private float hordeAssistTimer = 0f;
+    private float nextSound = 0f;
     private GameObject activeDirectionObj;
     private float losTimer = 0f;
     private float stunTimer = 0f;
+    private float soundTimer = 0f;
     private bool lostLOS = false;
-
-    //private bool isController = false;
 
     private void Awake()
     {
@@ -97,7 +102,15 @@ public class RegularZombie : EnemyBase
 
         if (hordeAssistTimer > 0f)
             hordeAssistTimer -= Time.deltaTime * detectionIntervalFrames;
-
+        if(nextSound == 0)
+            nextSound = Random.Range(1, randomSoundInterval);
+        if(soundTimer >= nextSound)
+        {
+            nextSound = 0;
+            float finalVolume = audioSource.volume * SM.GetSoundMod();
+            audioSource.volume = finalVolume;
+            audioSource.Play();
+        }
         if (isDay)
         {
             LOSSpeed = baseLOSSpeed;
@@ -136,6 +149,7 @@ public class RegularZombie : EnemyBase
 
         if (DetectPlayer())
         {
+            SM.PlayIfAlreadyNotPlaying("seePlayer");
             didSee = true;
             agent.SetDestination(player.position);
             playerInterface.SetIsSeenAndChased(true);
@@ -178,7 +192,15 @@ public class RegularZombie : EnemyBase
     public override void TakeDamage(float damage, bool _isStunned)
     {
         health -= damage;
-        if (health <= 0) OnDeath();
+
+        float finalVolume = audioSource.volume * SM.GetSoundMod();
+        audioSource.volume = finalVolume;
+        hurtSound.Play();
+
+        if (health <= 0)
+        {
+            OnDeath();
+        }
         if (agent != null && player != null)
             agent.SetDestination(player.position);
         float rand = Random.Range(0, 1);
@@ -252,6 +274,8 @@ public class RegularZombie : EnemyBase
         float mod = 0f;
         if (playerInterface.GetCrouch())
             mod = hearRange - sneakHearing;
+        else if (playerInterface.GetShottingBool())
+            mod = hearRange + sprintHearing;
         if (playerInterface.GetShottingBool())
             mod = gunshotHearing + playerInterface.GetActiveWeapon().soundMod;
 

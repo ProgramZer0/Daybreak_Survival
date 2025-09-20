@@ -47,7 +47,7 @@ public class Spawner : MonoBehaviour
 
     }
 
-    public GameObject Spawn(GameObject prefab, Transform player, bool isDay)
+    public GameObject Spawn(GameObject prefab, Transform player, bool isDay, SoundManager SM)
     {
         if (spawns.Count >= maxSpawns) return null;
 
@@ -57,7 +57,7 @@ public class Spawner : MonoBehaviour
         IEnemy enemy = o.GetComponent<IEnemy>();
         if (enemy != null)
         {
-            enemy.Initialize(player.gameObject, isDay);
+            enemy.Initialize(player.gameObject, isDay, SM);
         }
 
         return o;

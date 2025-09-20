@@ -6,6 +6,7 @@ using System.Linq;
 public class EnemyController : MonoBehaviour
 {
     [SerializeField] private GameManager GM;
+    [SerializeField] protected SoundManager SM;
     [SerializeField] private Transform player;
     [SerializeField] private GameObject[] enemyPrefabs;
     [SerializeField] private float spawnRadius = 100f;
@@ -55,7 +56,7 @@ public class EnemyController : MonoBehaviour
 
         GameObject enemyPrefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
 
-        GameObject enemy = spawnerObj.GetComponent<Spawner>().Spawn(enemyPrefab, player, isDay);
+        GameObject enemy = spawnerObj.GetComponent<Spawner>().Spawn(enemyPrefab, player, isDay, SM);
         if (enemy != null)
         {
             enemies.Add(enemy);

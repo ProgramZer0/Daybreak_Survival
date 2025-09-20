@@ -40,7 +40,6 @@ public class PlayerInterface : MonoBehaviour
     [SerializeField] private LayerMask interactLayer;
     public LayerMask EnemyLayer;
     [SerializeField] private Animator Animator;
-    [SerializeField] private GameObject walkingSound;
     [SerializeField] private GameObject projectile;
     [SerializeField] private GameObject[] gunPoss;
     [SerializeField] private GameObject[] shootingLights;
@@ -64,12 +63,10 @@ public class PlayerInterface : MonoBehaviour
     [SerializeField] private int weaponAmmo = 0;
     [SerializeField] private int maxAmmo = 0;
 
-    [SerializeField] private bool debugMeleeGizmos = true;
-
     [SerializeField] private float baseRange = 1f;
     [SerializeField] private float baseFOV = 70f;
     [SerializeField] private float meleeRangeOffset = 0.3f;
-
+    
     private Rigidbody2D body;
     private Direction facing = Direction.S;
     private bool attacking = false;
@@ -96,10 +93,6 @@ public class PlayerInterface : MonoBehaviour
     private float chaseTimer = 0;
     private float sprintTimer = 0;
     private pickup currentPick;
-
-    private Vector2 lastMeleeDir = Vector2.right;
-    private float lastMeleeRange = 1f;
-    private float lastMeleeFOV = 45f;
 
     public float GetMaxHP() { return maxHP; }
     public float GetCurrentHP() { return currentHP; }
@@ -151,7 +144,8 @@ public class PlayerInterface : MonoBehaviour
         inputV = Input.GetAxisRaw("Vertical");
 
         if (Input.GetKeyDown(KeyCode.Mouse0)) attacking = true;
-        if (Input.GetKeyUp(KeyCode.Mouse0)) attacking = false;
+        if(weaponAmmo > 0)
+            if (Input.GetKeyUp(KeyCode.Mouse0)) attacking = false;
 
         if (Input.GetKeyDown(KeyCode.Mouse1)) meleeing = true;
 
@@ -192,22 +186,29 @@ public class PlayerInterface : MonoBehaviour
 
         if (isSeenAndChased)
         {
+            SM.PlayMusic("chaseMusic", 0.3f);
             chaseTimer += Time.deltaTime;
         }
-        if(chaseTimer >= hordeForgetTime)
+        if (chaseTimer >= hordeForgetTime)
         {
             isSeenAndChased = false;
             chaseTimer = 0;
+            GM.SetEnvMusic(4);
         }
 
-
-
         if (sprinting)
+        {
             sprintTimer += Time.deltaTime;
-        else if (canSprint && sprintTimer > 0) 
+        }
+        else if (canSprint && sprintTimer > 0)
+        {
             sprintTimer -= Time.deltaTime;
+        }
 
-        if(sprintTimer >= sprintTime && canSprint && !wentOverSprint)
+        if(!sprinting)
+            SM.Stop("Sprinting");
+
+        if (sprintTimer >= sprintTime && canSprint && !wentOverSprint)
         {
             canSprint = false;
             sprinting = false;
@@ -234,10 +235,11 @@ public class PlayerInterface : MonoBehaviour
 
         if (cannotMove) 
         {
-
             animator.SetBool("isSneaking", false);
             animator.SetBool("isMoving", false);
-            walkingSound.SetActive(false);
+            SM.Stop("Sprinting");
+            SM.Stop("walking");
+            SM.Stop("sneaking");
             return;
         }
 
@@ -273,6 +275,7 @@ public class PlayerInterface : MonoBehaviour
         {
             if (pickupKey)
             {
+                SM.Play("pickingUpSound");
                 pickupTimer += Time.deltaTime;
                 if (!pickupObj.activeSelf)
                 {
@@ -283,6 +286,8 @@ public class PlayerInterface : MonoBehaviour
 
                 if (pickupTimer >= currentPick.weapon.pickupTime)
                 {
+                    SM.Stop("pickingUpSound");
+                    SM.Play("pickup");
                     currentPick.addPickup(gameObject);
                     GUI.StopSeeingPickup();
                     pickupTimer = 0;
@@ -290,12 +295,14 @@ public class PlayerInterface : MonoBehaviour
             }
             else
             {
+                SM.Stop("pickingUpSound");
                 GUI.StopSeeingPickup();
                 pickupTimer = 0;
             }
         }
         else
         {
+            SM.Stop("pickingUpSound");
             currentPick = null;
             pickupTimer = 0;
             GUI.StopSeeingPickup();
@@ -309,12 +316,12 @@ public class PlayerInterface : MonoBehaviour
             return;
         if (weaponAmmo <= 0)
         {
-            SM.Play("Click");
+            SM.Play("emptyAmmo");
             currentWeapon = GUI.ReturnEmptyWeapon();
+            attacking = false;
             return;
         }
 
-        SM.Play("Fire");
         int facingside = 0;
 
         switch(facing)
@@ -332,7 +339,6 @@ public class PlayerInterface : MonoBehaviour
 
         for (int i = 0; i < currentWeapon.projectileAmount; i++)
         {
-            
             Vector3 gunDirection = gunPoss[facingside].transform.position;
             Vector2 randomOffset = Random.insideUnitCircle * currentWeapon.spawnSpread;
 
@@ -357,6 +363,7 @@ public class PlayerInterface : MonoBehaviour
 
         }
 
+        SM.Play("GunShot");
         if (currentWeapon.hasFlash)
             StartCoroutine(EnableShootingLights(facingside));
 
@@ -374,7 +381,7 @@ public class PlayerInterface : MonoBehaviour
         if (!currentWeapon.canMelee && currentWeapon != null)
             return;
 
-        SM.Play("Fire");
+        SM.Play("MeleeSoundEffect");
         int facingside = 0;
 
         switch (facing)
@@ -434,10 +441,6 @@ public class PlayerInterface : MonoBehaviour
 
     private IEnemy FanCheck(Vector2 facingDir)
     {
-        lastMeleeDir = facingDir;
-        lastMeleeRange = currentWeapon.meleeRange;
-        lastMeleeFOV = currentWeapon.meleeFOV;
-
         Collider2D[] hits = Physics2D.OverlapCircleAll(
             transform.position,
             currentWeapon.meleeRange,
@@ -650,10 +653,20 @@ public class PlayerInterface : MonoBehaviour
 
         DisableCrossEnablex(facingInt);
 
-        if (moving)
-            walkingSound.SetActive(true);
+        if (moving && crouch)
+            SM.Play("sneaking");
         else
-            walkingSound.SetActive(false);
+            SM.Stop("sneaking");
+
+        if (moving && isSprinting)
+            SM.Play("sprinting");
+        else
+            SM.Stop("sprinting");
+
+        if (moving && !isSprinting && !crouch)
+            SM.Play("walking");
+        else
+            SM.Stop("walking");
 
         if (dashed && canDash)
         {
@@ -693,7 +706,13 @@ public class PlayerInterface : MonoBehaviour
     public bool GetIsSeenAndChased() { return isSeenAndChased; }
     public void SetIsSeenAndChased(bool s) { isSeenAndChased = s; }
 
-    public bool GetShottingBool() { return isShooting; }
+    public bool GetShottingBool() 
+    {
+        if (weaponAmmo > 0)
+            return isShooting;
+        else
+            return false;
+    }
 
     private void DisableCrossEnablex(int i)
     {
@@ -711,6 +730,7 @@ public class PlayerInterface : MonoBehaviour
     //why bool?
     public bool AddWeapon(Weapon weapon, int ammo)
     {
+        SM.Play("weaponEquip");
         //Debug.Log("adding weapon");
         if(currentWeapon != null && currentWeapon != GUI.ReturnEmptyWeapon())
         {
@@ -730,6 +750,7 @@ public class PlayerInterface : MonoBehaviour
     }
     public bool AddAmmo(WeaponAmmoType type, int amount)
     {
+        SM.Play("ammoPickup");
         if (type != currentWeapon.weaponAmmoType)
             return false;
         if (weaponAmmo == maxAmmo)
@@ -756,7 +777,7 @@ public class PlayerInterface : MonoBehaviour
         if (IframesDown)
         {
             HpBar.SetHP(currentHP - damage);
-
+            SM.Play("PlayerHit");
             currentHP -= damage;
             IframesDown = false;
             StartCoroutine(IFrameCooldown());
