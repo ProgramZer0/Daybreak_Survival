@@ -157,11 +157,12 @@ public class GameManager : MonoBehaviour
             SM.PlayRandomMusic(daySongs, fade);
         else if (!isDay)
             SM.PlayRandomMusic(nightSongs, fade);
-        else if (isDay && deathProgress >= .9)
-            SM.PlayRandomMusic(dayNearDeathSongs, fade);
-        else if (!isDay && deathProgress >= .9)
-            SM.PlayRandomMusic(nightNearDeathSongs, fade);
         else
             SM.PlayRandomMusic(mainSongs, fade);
+
+        if (deathProgress >= .9)
+            SM.FadeInSound("deathComming");
+        else
+            SM.Stop("deathComming");
     }
 }

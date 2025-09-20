@@ -7,38 +7,45 @@ public class ButtonMethods : MonoBehaviour
 
     public void ResumeGame_B()
     {
+        FindAnyObjectByType<SoundManager>().Play("buttonClick");
         GUI.ShowNoGUI();
     }
 
     public void BackMainMenu_B()
     {
+        FindAnyObjectByType<SoundManager>().Play("buttonClick");
         GUI.ShowNoGUI();
         GUI.OpenMainMenu();
     }
 
     public void SettingsFromPause_B()
     {
+        FindAnyObjectByType<SoundManager>().Play("buttonClick");
         GUI.ShowNoGUI();
         GUI.OpenSettingsMenuPM();
     }
     public void SettingsFromMenu_B()
     {
+        FindAnyObjectByType<SoundManager>().Play("buttonClick");
         GUI.ShowNoMM();
         GUI.OpenSettingsMenuMM();
     }
 
     public void PauseMenu_B()
     {
+        FindAnyObjectByType<SoundManager>().Play("buttonClick");
         GUI.ShowNoGUI();
         GUI.OpenPause();
     }
     public void QuestView_B()
     {
+        FindAnyObjectByType<SoundManager>().Play("buttonClick");
         GUI.ShowNoGUI();
         GUI.OpenQuestView();
     }
     public void StartGame_B()
     {
+        FindAnyObjectByType<SoundManager>().Play("buttonClick");
         GUI.ShowNoGUI();
         GUI.ShowNoMM();
         GUI.ShowAllHUDs();

@@ -11,6 +11,8 @@ public abstract class EnemyBase : MonoBehaviour, IEnemy
     public float health = 5f;
     public float damage = 1;
     public bool isDay = true;
+    public AudioSource AD;
+    public Sound deathSound;
 
     public virtual void Initialize(GameObject player, bool _isDay, SoundManager _SM)
     {
@@ -33,6 +35,7 @@ public abstract class EnemyBase : MonoBehaviour, IEnemy
 
     public virtual void OnDeath()
     {
+
         Destroy(gameObject);
     }
 
@@ -60,5 +63,16 @@ public abstract class EnemyBase : MonoBehaviour, IEnemy
     public GameObject GetGameObj()
     {
         return gameObject;
+    }
+
+    public void PlaySound(Sound s)
+    {
+        s.source = AD;
+        s.source.clip = s.clip;
+        s.source.loop = s.loop;
+
+        s.source.volume = s.volume * SM.GetSoundMod();
+        s.source.pitch = s.pitch;
+        s.source.Play();
     }
 }

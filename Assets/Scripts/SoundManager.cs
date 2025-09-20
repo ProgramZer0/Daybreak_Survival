@@ -44,7 +44,17 @@ public class SoundManager : MonoBehaviour
         s.source.volume = finalVolume;
         s.source.Play();
     }
+    public void PlayRandomSound(string[] soundNames)
+    {
+        if (soundNames == null || soundNames.Length == 0)
+        {
+            Debug.LogWarning("No sound names provided for random selection!");
+            return;
+        }
 
+        string chosen = soundNames[UnityEngine.Random.Range(0, soundNames.Length)];
+        Play(chosen);
+    }
     public void Play(string name)
     {
         Sound s = Array.Find(sounds, sound => sound.name.Equals(name, StringComparison.OrdinalIgnoreCase));

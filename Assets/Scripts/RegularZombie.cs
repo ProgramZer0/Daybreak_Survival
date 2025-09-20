@@ -59,8 +59,8 @@ public class RegularZombie : EnemyBase
 
     [Header("Sound settings")]
     [SerializeField] private float randomSoundInterval = 15f;
-    [SerializeField] private AudioSource audioSource;
-    [SerializeField] private AudioSource hurtSound;
+    [SerializeField] private Sound[] zombieSounds;
+    [SerializeField] private Sound[] hurtSounds;
 
     private int frameOffset;
     private float idleTimer;
@@ -107,9 +107,7 @@ public class RegularZombie : EnemyBase
         if(soundTimer >= nextSound)
         {
             nextSound = 0;
-            float finalVolume = audioSource.volume * SM.GetSoundMod();
-            audioSource.volume = finalVolume;
-            audioSource.Play();
+            PlaySound(zombieSounds[Random.Range(0, zombieSounds.Length)]);
         }
         if (isDay)
         {
@@ -193,9 +191,7 @@ public class RegularZombie : EnemyBase
     {
         health -= damage;
 
-        float finalVolume = audioSource.volume * SM.GetSoundMod();
-        audioSource.volume = finalVolume;
-        hurtSound.Play();
+        PlaySound(hurtSounds[Random.Range(0, hurtSounds.Length)]);
 
         if (health <= 0)
         {
