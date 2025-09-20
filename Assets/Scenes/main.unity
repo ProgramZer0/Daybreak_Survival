@@ -2353,11 +2353,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3267928490320308862, guid: 5634e1c0eee7e75429134686de118e99, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.75
+      value: 0.492
       objectReference: {fileID: 0}
     - target: {fileID: 3267928490320308862, guid: 5634e1c0eee7e75429134686de118e99, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.91
+      value: 1.898
       objectReference: {fileID: 0}
     - target: {fileID: 3267928490320308862, guid: 5634e1c0eee7e75429134686de118e99, type: 3}
       propertyPath: m_LocalPosition.z
@@ -2511,11 +2511,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8288873606090705827, guid: b8d92703d748db3488051ce50433812b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.822
+      value: 0.871
       objectReference: {fileID: 0}
     - target: {fileID: 8288873606090705827, guid: b8d92703d748db3488051ce50433812b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.838
+      value: -0.66
       objectReference: {fileID: 0}
     - target: {fileID: 8288873606090705827, guid: b8d92703d748db3488051ce50433812b, type: 3}
       propertyPath: m_LocalPosition.z
@@ -7794,11 +7794,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7012939805948801106, guid: 3bcdd6a29afec0d4aaaaeae99a233bdd, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.652
+      value: 4.451
       objectReference: {fileID: 0}
     - target: {fileID: 7012939805948801106, guid: 3bcdd6a29afec0d4aaaaeae99a233bdd, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.298
+      value: 0.82
       objectReference: {fileID: 0}
     - target: {fileID: 7012939805948801106, guid: 3bcdd6a29afec0d4aaaaeae99a233bdd, type: 3}
       propertyPath: m_LocalPosition.z
@@ -9367,12 +9367,194 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sounds:
-  - name: wat
-    clip: {fileID: 0}
+  - name: walking
+    clip: {fileID: 8300000, guid: 19e82294e11dd5d4aa30bac9ca51ad55, type: 3}
+    loop: 1
+    isMusic: 0
+    volume: 0.272
+    pitch: 1
+    source: {fileID: 0}
+  - name: sneaking
+    clip: {fileID: 8300000, guid: a0a4e403c440bdb4ca5cba9af18220cd, type: 3}
+    loop: 1
+    isMusic: 0
+    volume: 0.272
+    pitch: 1
+    source: {fileID: 0}
+  - name: buttonClick
+    clip: {fileID: 8300000, guid: ee34ece69c2372545a520b2e9db2efe0, type: 3}
     loop: 0
     isMusic: 0
-    volume: 0
-    pitch: 0
+    volume: 0.272
+    pitch: 1
+    source: {fileID: 0}
+  - name: nightAmbiance
+    clip: {fileID: 8300000, guid: 459f6aadd39be9e4ca2eb6baf249b119, type: 3}
+    loop: 1
+    isMusic: 0
+    volume: 0.19
+    pitch: 1
+    source: {fileID: 0}
+  - name: dayAmbiance
+    clip: {fileID: 8300000, guid: 1072c48b21be8614dbc4adc56a975cad, type: 3}
+    loop: 1
+    isMusic: 0
+    volume: 0.19
+    pitch: 1
+    source: {fileID: 0}
+  - name: dash
+    clip: {fileID: 8300000, guid: f7e3c2dcf5020a844afbab2a85b7bd46, type: 3}
+    loop: 0
+    isMusic: 0
+    volume: 0.19
+    pitch: 1
+    source: {fileID: 0}
+  - name: MeleeSoundEffect1
+    clip: {fileID: 8300000, guid: 3f9ffbc919552fc428040a816ab4c9fd, type: 3}
+    loop: 0
+    isMusic: 0
+    volume: 0.19
+    pitch: 1
+    source: {fileID: 0}
+  - name: MeleeSoundEffect2
+    clip: {fileID: 8300000, guid: f5e91606a8b143a40884a89857b2867c, type: 3}
+    loop: 0
+    isMusic: 0
+    volume: 0.19
+    pitch: 1
+    source: {fileID: 0}
+  - name: emptyAmmo
+    clip: {fileID: 8300000, guid: 181cbc1e2815c3847a4be53e6c3bcbff, type: 3}
+    loop: 0
+    isMusic: 0
+    volume: 0.19
+    pitch: 1
+    source: {fileID: 0}
+  - name: pickingUpSound
+    clip: {fileID: 8300000, guid: d5aefebd1ace7144a9ebec3c41de857e, type: 3}
+    loop: 1
+    isMusic: 0
+    volume: 0.19
+    pitch: 1
+    source: {fileID: 0}
+  - name: Sprinting
+    clip: {fileID: 8300000, guid: 74811f7b395252c448d977c84cec7387, type: 3}
+    loop: 1
+    isMusic: 0
+    volume: 0.19
+    pitch: 1
+    source: {fileID: 0}
+  - name: DayMusic4
+    clip: {fileID: 8300000, guid: e360a811bccaae54593717f7abac9e8b, type: 3}
+    loop: 1
+    isMusic: 1
+    volume: 0.266
+    pitch: 1
+    source: {fileID: 0}
+  - name: DayMusic5
+    clip: {fileID: 8300000, guid: 93e2807e926a1ab45833e63458d449ae, type: 3}
+    loop: 1
+    isMusic: 1
+    volume: 0.266
+    pitch: 1
+    source: {fileID: 0}
+  - name: DayMusic3
+    clip: {fileID: 8300000, guid: 20974793b56f7ea4db682693c3d2618d, type: 3}
+    loop: 1
+    isMusic: 1
+    volume: 0.266
+    pitch: 1
+    source: {fileID: 0}
+  - name: DayMusic2
+    clip: {fileID: 8300000, guid: 4c18f87f134e195489200e009472aa7f, type: 3}
+    loop: 1
+    isMusic: 1
+    volume: 0.266
+    pitch: 1
+    source: {fileID: 0}
+  - name: DayMusic1
+    clip: {fileID: 8300000, guid: 2061842a8a54f244192f14887e53a7ba, type: 3}
+    loop: 1
+    isMusic: 1
+    volume: 0.266
+    pitch: 1
+    source: {fileID: 0}
+  - name: Interact
+    clip: {fileID: 8300000, guid: 271e241392a3f3d4cad04ebafcfd6db9, type: 3}
+    loop: 0
+    isMusic: 0
+    volume: 0.192
+    pitch: 1
+    source: {fileID: 0}
+  - name: pickup
+    clip: {fileID: 8300000, guid: d5aefebd1ace7144a9ebec3c41de857e, type: 3}
+    loop: 0
+    isMusic: 0
+    volume: 0.192
+    pitch: 1
+    source: {fileID: 0}
+  - name: weaponEquip
+    clip: {fileID: 8300000, guid: d5aefebd1ace7144a9ebec3c41de857e, type: 3}
+    loop: 0
+    isMusic: 0
+    volume: 0.192
+    pitch: 1
+    source: {fileID: 0}
+  - name: GunShot
+    clip: {fileID: 8300000, guid: ea54bf7c0ec24b04a82eb23a73ec9966, type: 3}
+    loop: 0
+    isMusic: 0
+    volume: 0.285
+    pitch: 1
+    source: {fileID: 0}
+  - name: NightMusic1
+    clip: {fileID: 8300000, guid: 1bebdc475cd31044c8ea2cc534816919, type: 3}
+    loop: 1
+    isMusic: 1
+    volume: 0.172
+    pitch: 1
+    source: {fileID: 0}
+  - name: NightMusic2
+    clip: {fileID: 8300000, guid: 8e9ed872498435c489ec6d6a3516e6a8, type: 3}
+    loop: 1
+    isMusic: 1
+    volume: 0.172
+    pitch: 1
+    source: {fileID: 0}
+  - name: NightMusic3
+    clip: {fileID: 8300000, guid: 5a6d3bea9bb270645a818852eb4565d6, type: 3}
+    loop: 1
+    isMusic: 1
+    volume: 0.172
+    pitch: 1
+    source: {fileID: 0}
+  - name: mainMusic1
+    clip: {fileID: 8300000, guid: ae887475a694d8143a1a66d222103966, type: 3}
+    loop: 1
+    isMusic: 1
+    volume: 0.172
+    pitch: 1
+    source: {fileID: 0}
+  - name: mainMusic2
+    clip: {fileID: 8300000, guid: e1b1d12f18bd5c3488dcff44bcec5452, type: 3}
+    loop: 1
+    isMusic: 1
+    volume: 0.172
+    pitch: 1
+    source: {fileID: 0}
+  - name: chaseMusic
+    clip: {fileID: 8300000, guid: 0ae2b19a3a3dccf4091fe68af75c2520, type: 3}
+    loop: 1
+    isMusic: 1
+    volume: 0.132
+    pitch: 1
+    source: {fileID: 0}
+  - name: deathComming
+    clip: {fileID: 8300000, guid: c03f186843f956542923bb0af41b361f, type: 3}
+    loop: 1
+    isMusic: 0
+    volume: 0.113
+    pitch: 1
     source: {fileID: 0}
 --- !u!4 &276416485
 Transform:
@@ -86826,11 +87008,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8345782994908592673, guid: 3b9685be30f055d43bb001085992bdc1, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.799
+      value: 2.202
       objectReference: {fileID: 0}
     - target: {fileID: 8345782994908592673, guid: 3b9685be30f055d43bb001085992bdc1, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.6
+      value: 0.305
       objectReference: {fileID: 0}
     - target: {fileID: 8345782994908592673, guid: 3b9685be30f055d43bb001085992bdc1, type: 3}
       propertyPath: m_LocalPosition.z
@@ -95369,6 +95551,9 @@ MonoBehaviour:
   - {fileID: 1373262936}
   - {fileID: 1640836810}
   slashPrefab: {fileID: 1690282794877663999, guid: 70ae45a9a297da64da9b43bbadc25311, type: 3}
+  meleeSounds:
+  - MeleeSoundEffect1
+  - MeleeSoundEffect2
   downSprite: {fileID: -4897527774221934256, guid: 3a167429bf63011438dedd84c78022b5, type: 3}
   upSprite: {fileID: 4829646986413942380, guid: 3a167429bf63011438dedd84c78022b5, type: 3}
   leftSprite: {fileID: -5961622216893257571, guid: 3a167429bf63011438dedd84c78022b5, type: 3}
@@ -95944,11 +96129,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8973544109719591185, guid: d644aca0f721a9047b41eb0d55f55b00, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.338
+      value: -0.556
       objectReference: {fileID: 0}
     - target: {fileID: 8973544109719591185, guid: d644aca0f721a9047b41eb0d55f55b00, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.929
+      value: -1.95
       objectReference: {fileID: 0}
     - target: {fileID: 8973544109719591185, guid: d644aca0f721a9047b41eb0d55f55b00, type: 3}
       propertyPath: m_LocalPosition.z
@@ -102498,11 +102683,21 @@ MonoBehaviour:
   deathTime: 3600
   colorStart: 0.38
   deathColor: {r: 0.12156863, g: 0.4627451, b: 0.15294118, a: 1}
-  mainSongs: []
-  nightSongs: []
-  daySongs: []
-  nightNearDeathSongs: []
-  dayNearDeathSongs: []
+  mainSongs:
+  - mainMusic1
+  - mainMusic2
+  nightSongs:
+  - NightMusic1
+  - NightMusic2
+  - NightMusic3
+  daySongs:
+  - DayMusic1
+  - DayMusic2
+  - DayMusic3
+  - DayMusic4
+  - DayMusic5
+  minNoMusic: 30
+  maxNoMusic: 90
 --- !u!114 &1754269202
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -102520,9 +102715,11 @@ MonoBehaviour:
   player: {fileID: 868446134}
   enemyPrefabs:
   - {fileID: 5394958092232953006, guid: 53c7ffdc9b740d647806c99cade168fb, type: 3}
-  spawnRadius: 200
-  targetEnemyCount: 100
   planetBuilder: {fileID: 1754269200}
+  minSpawnRadius: 80
+  spawnRadius: 200
+  minEnemyCount: 40
+  maxEnemyCount: 200
   spawningEnabled: 0
 --- !u!1 &1756221241
 GameObject:
@@ -125767,11 +125964,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7045550320913924360, guid: 6fc54dcebbdd86649821824ef48c4d24, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.269
+      value: -1.115
       objectReference: {fileID: 0}
     - target: {fileID: 7045550320913924360, guid: 6fc54dcebbdd86649821824ef48c4d24, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.08
+      value: -1.301
       objectReference: {fileID: 0}
     - target: {fileID: 7045550320913924360, guid: 6fc54dcebbdd86649821824ef48c4d24, type: 3}
       propertyPath: m_LocalPosition.z
@@ -125881,11 +126078,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 5938551598216901240, guid: c2e63f218ce2196419b2afcf332d70a5, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.744
+      value: 1.886
       objectReference: {fileID: 0}
     - target: {fileID: 5938551598216901240, guid: c2e63f218ce2196419b2afcf332d70a5, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.485
+      value: -1.747
       objectReference: {fileID: 0}
     - target: {fileID: 5938551598216901240, guid: c2e63f218ce2196419b2afcf332d70a5, type: 3}
       propertyPath: m_LocalPosition.z
@@ -126056,11 +126253,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9126237105320251806, guid: e6ca69295426347489cec629028cfede, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.2352908
+      value: 1.161
       objectReference: {fileID: 0}
     - target: {fileID: 9126237105320251806, guid: e6ca69295426347489cec629028cfede, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.5155077
+      value: -0.263
       objectReference: {fileID: 0}
     - target: {fileID: 9126237105320251806, guid: e6ca69295426347489cec629028cfede, type: 3}
       propertyPath: m_LocalPosition.z

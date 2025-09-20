@@ -16,6 +16,7 @@ public class ButtonMethods : MonoBehaviour
         FindAnyObjectByType<SoundManager>().Play("buttonClick");
         GUI.ShowNoGUI();
         GUI.OpenMainMenu();
+        GM.MainMenu();
     }
 
     public void SettingsFromPause_B()

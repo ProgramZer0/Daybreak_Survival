@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
@@ -29,16 +30,18 @@ public class GameManager : MonoBehaviour
     [SerializeField] private string[] mainSongs;
     [SerializeField] private string[] nightSongs;
     [SerializeField] private string[] daySongs;
-    [SerializeField] private string[] nightNearDeathSongs;
-    [SerializeField] private string[] dayNearDeathSongs;
+    [SerializeField] private float minNoMusic;
+    [SerializeField] private float maxNoMusic;
 
     private float cycleTimer = 0;
     private float deathTimer = 0f;
     private bool isDay = true;
+    private bool inMenu = true;
 
     private void Start()
     {
         ResetDNCycle();
+        StartCoroutine(PlayLate(1,1));
     }
 
     private void ResetDNCycle()
@@ -75,6 +78,10 @@ public class GameManager : MonoBehaviour
             playerRenderer.color = Color.Lerp(Color.white, deathColor, colorProgress);
         }
 
+        if (deathProgress >= .9)
+            SM.FadeInSound("deathComming");
+            
+
         float cycleDuration = isDay ? daylightTimeSec : nightTimeSec;
 
         float progress = cycleTimer / cycleDuration;
@@ -107,6 +114,14 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void MainMenu()
+    {
+        inMenu = true;
+        cycleEnabled = false;
+        SM.StopAll();
+        PlayRandomEnvMusic(0.3f);
+    }
+
     public void ResetGame()
     {
 
@@ -114,6 +129,8 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
+        inMenu = false;
+        cycleEnabled = true;
         SetEnvMusic(0.5f);
         SetAmbiance();
     }
@@ -133,7 +150,8 @@ public class GameManager : MonoBehaviour
         enemyController.SetIsDay(true);
         SM.FadeOutSound("nightAmbiance");
         SM.FadeInSound("dayAmbiance");
-
+        SM.FadeOutCurrentMusic();
+        SetEnvMusic(1, false);
     }
 
     private void SetNight()
@@ -141,6 +159,8 @@ public class GameManager : MonoBehaviour
         enemyController.SetIsDay(false);
         SM.FadeOutSound("dayAmbiance");
         SM.FadeInSound("nightAmbiance");
+        SM.FadeOutCurrentMusic();
+        SetEnvMusic(1, false);
     }
 
     private void SetAmbiance()
@@ -150,19 +170,27 @@ public class GameManager : MonoBehaviour
         else
             SetNight();
     }
-    public void SetEnvMusic(float fade)
+    public void SetEnvMusic(float fade, bool startNow = true)
     {
-        float deathProgress = Mathf.Clamp01(deathTimer / deathTime);
-        if (isDay)
+        if (!startNow)
+            StartCoroutine(PlayLate(Random.Range(minNoMusic, maxNoMusic), fade));
+        else
+            PlayRandomEnvMusic(fade);
+    }
+
+    private IEnumerator PlayLate(float time, float fade)
+    {
+        yield return new WaitForSeconds(time);
+        PlayRandomEnvMusic(fade);
+    }
+
+    private void PlayRandomEnvMusic(float fade)
+    {
+        if (isDay && !inMenu)
             SM.PlayRandomMusic(daySongs, fade);
-        else if (!isDay)
+        else if (!isDay && !inMenu)
             SM.PlayRandomMusic(nightSongs, fade);
         else
             SM.PlayRandomMusic(mainSongs, fade);
-
-        if (deathProgress >= .9)
-            SM.FadeInSound("deathComming");
-        else
-            SM.Stop("deathComming");
     }
 }

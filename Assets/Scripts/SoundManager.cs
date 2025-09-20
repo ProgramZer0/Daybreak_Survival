@@ -9,7 +9,7 @@ public class SoundManager : MonoBehaviour
     private float modSound = 0.6f;
     private float musicSound = 0.3f;
 
-    private Sound currentMusic;   // track currently playing music
+    private Sound currentMusic;   
     private Coroutine musicFadeCoroutine;
 
     private void Awake()
@@ -23,6 +23,7 @@ public class SoundManager : MonoBehaviour
             s.source.volume = s.volume;
             s.source.pitch = s.pitch;
         }
+        //Debug.Log("finished SM init");
     }
 
     public float GetSoundMod() { return modSound; }
@@ -109,7 +110,9 @@ public class SoundManager : MonoBehaviour
         }
 
         s.source.Stop();
-        s.source.volume = s.volume * (s.isMusic ? musicSound : modSound); // reset for next play
+        s.source.volume = s.volume * (s.isMusic ? musicSound : modSound); 
+        if (s == currentMusic)
+            currentMusic = null;
     }
     private IEnumerator FadeInCoroutine(Sound s, float fadeTime)
     {
@@ -130,7 +133,7 @@ public class SoundManager : MonoBehaviour
             yield return null;
         }
 
-        s.source.volume = targetVolume; // ensure final value
+        s.source.volume = targetVolume; 
     }
     public void PlayMusic(string name, float fadeTime = 1f)
     {
@@ -216,9 +219,16 @@ public class SoundManager : MonoBehaviour
 
     public void StopAll()
     {
-        foreach (Sound s in sounds)
-            s.source.Stop();
+        foreach (Sound s in sounds) 
+        {
+            if(s != currentMusic)
+                s.source.Stop();
+        }
+    }
 
+    public void FadeOutCurrentMusic()
+    {
+        StartCoroutine(FadeOutCoroutine(currentMusic, 1));
         currentMusic = null;
     }
     public string GetCurrentMusicName()

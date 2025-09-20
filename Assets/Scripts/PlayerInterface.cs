@@ -45,7 +45,7 @@ public class PlayerInterface : MonoBehaviour
     [SerializeField] private GameObject[] shootingLights;
     [SerializeField] private GameObject slashPrefab;
 
-
+    [SerializeField] private string[] meleeSounds;
     [SerializeField] private Sprite downSprite;
     [SerializeField] private Sprite upSprite;
     [SerializeField] private Sprite leftSprite;
@@ -380,8 +380,9 @@ public class PlayerInterface : MonoBehaviour
 
         if (!currentWeapon.canMelee && currentWeapon != null)
             return;
+        
+        SM.PlayRandomSound(meleeSounds);
 
-        SM.Play("MeleeSoundEffect");
         int facingside = 0;
 
         switch (facing)
@@ -654,17 +655,17 @@ public class PlayerInterface : MonoBehaviour
         DisableCrossEnablex(facingInt);
 
         if (moving && crouch)
-            SM.Play("sneaking");
+            SM.PlayIfAlreadyNotPlaying("sneaking");
         else
             SM.Stop("sneaking");
 
         if (moving && isSprinting)
-            SM.Play("sprinting");
+            SM.PlayIfAlreadyNotPlaying("sprinting");
         else
             SM.Stop("sprinting");
 
         if (moving && !isSprinting && !crouch)
-            SM.Play("walking");
+            SM.PlayIfAlreadyNotPlaying("walking");
         else
             SM.Stop("walking");
 

@@ -61,6 +61,8 @@ public class RegularZombie : EnemyBase
     [SerializeField] private float randomSoundInterval = 15f;
     [SerializeField] private Sound[] zombieSounds;
     [SerializeField] private Sound[] hurtSounds;
+    [SerializeField] private Sound[] foundSounds;
+    [SerializeField] private GameObject walkingSound;
 
     private int frameOffset;
     private float idleTimer;
@@ -147,7 +149,8 @@ public class RegularZombie : EnemyBase
 
         if (DetectPlayer())
         {
-            SM.PlayIfAlreadyNotPlaying("seePlayer");
+            if(!didSee)
+                PlaySound(foundSounds[Random.Range(0, foundSounds.Length)]);
             didSee = true;
             agent.SetDestination(player.position);
             playerInterface.SetIsSeenAndChased(true);
@@ -242,6 +245,7 @@ public class RegularZombie : EnemyBase
                 activeDirectionObj = newActive;
             }
 
+            walkingSound.SetActive(true);
             facingDir = moveDir.normalized;
         }
         else
@@ -251,7 +255,7 @@ public class RegularZombie : EnemyBase
                 activeDirectionObj.SetActive(false);
                 activeDirectionObj = null;
             }
-
+            walkingSound.SetActive(false);
             mainSprite.SetActive(true);
 
             if (Mathf.Abs(facingDir.x) > Mathf.Abs(facingDir.y))
