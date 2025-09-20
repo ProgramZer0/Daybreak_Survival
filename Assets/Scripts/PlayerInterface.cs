@@ -44,7 +44,8 @@ public class PlayerInterface : MonoBehaviour
     [SerializeField] private GameObject projectile;
     [SerializeField] private GameObject[] gunPoss;
     [SerializeField] private GameObject[] shootingLights;
-    
+    [SerializeField] private GameObject slashPrefab;
+
 
     [SerializeField] private Sprite downSprite;
     [SerializeField] private Sprite upSprite;
@@ -63,6 +64,11 @@ public class PlayerInterface : MonoBehaviour
     [SerializeField] private int weaponAmmo = 0;
     [SerializeField] private int maxAmmo = 0;
 
+    [SerializeField] private bool debugMeleeGizmos = true;
+
+    [SerializeField] private float baseRange = 1f;
+    [SerializeField] private float baseFOV = 70f;
+    [SerializeField] private float meleeRangeOffset = 0.3f;
 
     private Rigidbody2D body;
     private Direction facing = Direction.S;
@@ -90,6 +96,10 @@ public class PlayerInterface : MonoBehaviour
     private float chaseTimer = 0;
     private float sprintTimer = 0;
     private pickup currentPick;
+
+    private Vector2 lastMeleeDir = Vector2.right;
+    private float lastMeleeRange = 1f;
+    private float lastMeleeFOV = 45f;
 
     public float GetMaxHP() { return maxHP; }
     public float GetCurrentHP() { return currentHP; }
@@ -149,6 +159,7 @@ public class PlayerInterface : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.F)) pickupKey = true;
         if (Input.GetKeyUp(KeyCode.F)) pickupKey = false;
+
 
 
         if (crouchToggle)
@@ -377,8 +388,13 @@ public class PlayerInterface : MonoBehaviour
             case Direction.E: facingside = 6; break;
             case Direction.NE: facingside = 7; break;
         }
-
         Vector2 dir = (gunPoss[facingside].transform.position - transform.position).normalized;
+
+        float offset = currentWeapon.meleeRange * meleeRangeOffset; 
+        Vector3 spawnPos = transform.position + (Vector3)dir * offset;
+
+        MeleeAnimation(facingside, spawnPos);
+
         IEnemy en = FanCheck(dir);
         if(en != null)
         {
@@ -395,8 +411,33 @@ public class PlayerInterface : MonoBehaviour
             StartCoroutine(MeleeCoooldown(currentWeapon.meleeCooldown));
         }   
     }
+
+    private void MeleeAnimation(int facingInt, Vector2 spawnPos)
+    {
+        if (slashPrefab != null)
+        {
+            GameObject slash = Instantiate(
+                slashPrefab,
+                spawnPos,
+                Quaternion.Euler(0, 0, facingInt * 45f),
+                transform
+            );
+
+            float fovScale = currentWeapon.meleeFOV / baseFOV;
+            float scaleFactor = currentWeapon.meleeRange / baseRange;
+
+            slash.transform.localScale = new Vector3(fovScale, scaleFactor, 1f);
+
+            Destroy(slash, 0.4f);
+        }   
+    }
+
     private IEnemy FanCheck(Vector2 facingDir)
     {
+        lastMeleeDir = facingDir;
+        lastMeleeRange = currentWeapon.meleeRange;
+        lastMeleeFOV = currentWeapon.meleeFOV;
+
         Collider2D[] hits = Physics2D.OverlapCircleAll(
             transform.position,
             currentWeapon.meleeRange,
@@ -619,17 +660,17 @@ public class PlayerInterface : MonoBehaviour
             LockMovement(true);
             SM.Play("Dash");
 
+            float playerSize = 0.5f;
             Vector2 dir = ((Vector2)gunPoss[facingInt].transform.position - (Vector2)transform.position ).normalized;
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, dir, dashRange, dashMask);
-            if(hit)
-            {
-                Vector2 teleportPos = hit.point - dir * 0.5f;
-                transform.position = teleportPos;
-            }
+            RaycastHit2D hit = Physics2D.CircleCast(transform.position, playerSize, dir, dashRange, dashMask);
+            Vector2 dashTarget;
+
+            if (hit)
+                dashTarget = hit.point - dir * dashOffset;
             else
-            {
-                transform.position = transform.position + (Vector3)(dir * dashRange);
-            }
+                dashTarget = transform.position + (Vector3)(dir * dashRange);
+
+            transform.position = dashTarget;
 
             animator.SetBool("isDashing", true);
             StartCoroutine(DashAnimationCooldown());
@@ -749,8 +790,10 @@ public class PlayerInterface : MonoBehaviour
     }
     private IEnumerator DashAnimationCooldown()
     {
-        yield return new WaitForSeconds(.05f);
+        yield return new WaitForSeconds(.1f);
         animator.SetBool("isDashing", false);
+        yield return new WaitForSeconds(.1f);
+        LockMovement(false);
     }
     private IEnumerator WaitDash()
     {

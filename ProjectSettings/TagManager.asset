@@ -53,6 +53,12 @@ TagManager:
   - name: Pickups
     uniqueID: 2667294639
     locked: 0
+  - name: Zombie
+    uniqueID: 2013893531
+    locked: 0
+  - name: Others
+    uniqueID: 631469551
+    locked: 0
   - name: Player
     uniqueID: 2571978683
     locked: 0

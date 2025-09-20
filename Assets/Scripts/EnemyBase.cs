@@ -7,7 +7,6 @@ public abstract class EnemyBase : MonoBehaviour, IEnemy
     protected Transform player;
     protected bool isStunned = false;
     protected PlayerInterface playerInterface;
-
     public float health = 5f;
     public float damage = 1;
     public bool isDay = true;
@@ -54,14 +53,7 @@ public abstract class EnemyBase : MonoBehaviour, IEnemy
             agent.SetDestination(player.position);
     }
 
-    public void TakeDamage(float damage, bool _isStunned)
-    {
-        health -= damage;
-        if (health <= 0) OnDeath();
-        if (agent != null && player != null)
-            agent.SetDestination(player.position);
-        isStunned = _isStunned; 
-    }
+    public abstract void TakeDamage(float damage, bool _isStunned);
 
     public GameObject GetGameObj()
     {

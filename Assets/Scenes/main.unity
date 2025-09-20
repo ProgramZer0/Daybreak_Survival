@@ -398,7 +398,7 @@ TilemapRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1922352313
-  m_SortingLayer: 7
+  m_SortingLayer: 9
   m_SortingOrder: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
@@ -2826,7 +2826,7 @@ ParticleSystemRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1538829915
-  m_SortingLayer: 6
+  m_SortingLayer: 8
   m_SortingOrder: 0
   m_RenderMode: 0
   m_MeshDistribution: 0
@@ -8192,7 +8192,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1922352313
-  m_SortingLayer: 7
+  m_SortingLayer: 9
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 4f8b14906f855ce468c34897c5d87c8a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -8595,7 +8595,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1922352313
-  m_SortingLayer: 7
+  m_SortingLayer: 9
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 4f8b14906f855ce468c34897c5d87c8a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -9117,7 +9117,7 @@ MonoBehaviour:
   m_Intensity: 0.06
   m_LightVolumeIntensity: 1
   m_LightVolumeEnabled: 0
-  m_ApplyToSortingLayers: 00000000a98429d7ff0de292bb474d99473b6b8dafaffb9e3f08c8e55baeb85b
+  m_ApplyToSortingLayers: 00000000a98429d7ff0de292bb474d99473b6b8dafaffb9e3f08c8e55baeb85b9b930978ef75a325
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0
@@ -9262,7 +9262,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1922352313
-  m_SortingLayer: 7
+  m_SortingLayer: 9
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 4f8b14906f855ce468c34897c5d87c8a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -9846,7 +9846,7 @@ TilemapRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1922352313
-  m_SortingLayer: 7
+  m_SortingLayer: 9
   m_SortingOrder: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
@@ -11016,7 +11016,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1922352313
-  m_SortingLayer: 7
+  m_SortingLayer: 9
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 4f8b14906f855ce468c34897c5d87c8a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -86986,7 +86986,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1922352313
-  m_SortingLayer: 7
+  m_SortingLayer: 9
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 4f8b14906f855ce468c34897c5d87c8a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -88231,7 +88231,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1922352313
-  m_SortingLayer: 7
+  m_SortingLayer: 9
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 4f8b14906f855ce468c34897c5d87c8a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -88437,7 +88437,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1922352313
-  m_SortingLayer: 7
+  m_SortingLayer: 9
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 4f8b14906f855ce468c34897c5d87c8a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -95363,10 +95363,18 @@ MonoBehaviour:
   GUI: {fileID: 1460363059}
   SM: {fileID: 276416484}
   GM: {fileID: 1754269201}
+  HpBar: {fileID: 1256714497}
+  weaponHUD: {fileID: 701536587}
+  CC: {fileID: 278462053}
   normSpeed: 3.5
   sprintSpeed: 4.5
   crouchSpeed: 2
-  dashCooldown: 10
+  dashCooldown: 1
+  dashRange: 3
+  dashOffset: 0.5
+  dashMask:
+    serializedVersion: 2
+    m_Bits: 5889
   sprintTime: 10
   sprintCooldown: 2
   maxSprintDebuffTime: 5
@@ -95401,6 +95409,7 @@ MonoBehaviour:
   - {fileID: 741359793}
   - {fileID: 1373262936}
   - {fileID: 1640836810}
+  slashPrefab: {fileID: 1690282794877663999, guid: 70ae45a9a297da64da9b43bbadc25311, type: 3}
   downSprite: {fileID: -4897527774221934256, guid: 3a167429bf63011438dedd84c78022b5, type: 3}
   upSprite: {fileID: 4829646986413942380, guid: 3a167429bf63011438dedd84c78022b5, type: 3}
   leftSprite: {fileID: -5961622216893257571, guid: 3a167429bf63011438dedd84c78022b5, type: 3}
@@ -95413,6 +95422,10 @@ MonoBehaviour:
   currentWeapon: {fileID: 0}
   weaponAmmo: 0
   maxAmmo: 0
+  debugMeleeGizmos: 1
+  baseRange: 0.7
+  baseFOV: 110
+  meleeRangeOffset: 0.5
 --- !u!70 &868446136
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -95778,7 +95791,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1722988613
-  m_SortingLayer: 5
+  m_SortingLayer: 7
   m_SortingOrder: 0
   m_Sprite: {fileID: -4897527774221934256, guid: 3a167429bf63011438dedd84c78022b5, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -96130,7 +96143,7 @@ MonoBehaviour:
   m_Intensity: 0.06
   m_LightVolumeIntensity: 1
   m_LightVolumeEnabled: 0
-  m_ApplyToSortingLayers: 00000000a98429d7ff0de2923f08c8e5afaffb9ebb474d995baeb85b473b6b8d
+  m_ApplyToSortingLayers: 00000000a98429d7ff0de2923f08c8e5afaffb9ebb474d995baeb85b473b6b8d9b930978ef75a325
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0
@@ -97849,7 +97862,7 @@ MonoBehaviour:
   m_Intensity: 0.75
   m_LightVolumeIntensity: 1
   m_LightVolumeEnabled: 0
-  m_ApplyToSortingLayers: 00000000a98429d7ff0de292bb474d99473b6b8dafaffb9e3f08c8e55baeb85b
+  m_ApplyToSortingLayers: 00000000a98429d7ff0de292bb474d99473b6b8dafaffb9e3f08c8e55baeb85b9b930978ef75a325
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0
@@ -102514,16 +102527,19 @@ MonoBehaviour:
   GUI: {fileID: 1460363059}
   builder: {fileID: 1754269200}
   player: {fileID: 868446135}
+  playerRenderer: {fileID: 935512252}
   enemyController: {fileID: 1754269202}
   SM: {fileID: 276416484}
   daylight: {fileID: 1400728149}
   daylightTimeSec: 800
   nightTimeSec: 500
-  debugTimemMult: 5
+  debugTimeMult: 20
   daylightMax: 0.75
   nightDarkness: 0
-  dawnSpeed: 2
   cycleEnabled: 0
+  deathTime: 3600
+  colorStart: 0.38
+  deathColor: {r: 0.12156863, g: 0.4627451, b: 0.15294118, a: 1}
 --- !u!114 &1754269202
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -124770,7 +124786,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1922352313
-  m_SortingLayer: 7
+  m_SortingLayer: 9
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 4f8b14906f855ce468c34897c5d87c8a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private MainGUIController GUI;
     [SerializeField] private GroundBuilder builder;
     [SerializeField] private PlayerInterface player;
+    [SerializeField] private SpriteRenderer playerRenderer;
     [SerializeField] private EnemyController enemyController;
     [SerializeField] private SoundManager SM;
     [SerializeField] private Light2D daylight;
@@ -14,15 +15,19 @@ public class GameManager : MonoBehaviour
     [Header("night/day cycle")]
     [SerializeField] private float daylightTimeSec = 800f;
     [SerializeField] private float nightTimeSec = 500f;
-    [SerializeField] private float debugTimemMult = 10;
+    [SerializeField] private float debugTimeMult = 10;
     [SerializeField] private float daylightMax = 0.75f;
     [SerializeField] private float nightDarkness = 0f;
-    [SerializeField] private float dawnSpeed = 2.5f;
     [SerializeField] private bool cycleEnabled = false;
 
-    private float cycleTimer = 0;
-    private bool isDay = true;
+    [Header("Main Game Settings")]
+    [SerializeField] private float deathTime = 3600;
+    [SerializeField] private float colorStart = 0.7f;
+    [SerializeField] private Color deathColor;
 
+    private float cycleTimer = 0;
+    private float deathTimer = 0f;
+    private bool isDay = true;
 
     private void Start()
     {
@@ -39,16 +44,31 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if(cycleEnabled)
-            cycleTimer += Time.deltaTime * debugTimemMult;
+        if (cycleEnabled)
+        {
+            cycleTimer += Time.deltaTime * debugTimeMult;
+            deathTimer += Time.deltaTime * debugTimeMult;
+        }
     }
 
     private void FixedUpdate()
     {
         if (!cycleEnabled) return;
 
+
+        if (deathTimer >= deathTime)
+        {
+            EndGameFail();
+        }
+        float deathProgress = Mathf.Clamp01(deathTimer / deathTime); 
+        if (deathProgress > colorStart)
+        {
+            float colorProgress = Mathf.SmoothStep(0f, 1f, (deathProgress - colorStart) / (1f - colorStart));
+
+            playerRenderer.color = Color.Lerp(Color.white, deathColor, colorProgress);
+        }
+
         float cycleDuration = isDay ? daylightTimeSec : nightTimeSec;
-        cycleTimer += Time.fixedDeltaTime * debugTimemMult;
 
         float progress = cycleTimer / cycleDuration;
 
@@ -91,6 +111,11 @@ public class GameManager : MonoBehaviour
     }
 
     public void EndGameFail()
+    {
+
+    }
+
+    public void SaveGame()
     {
 
     }

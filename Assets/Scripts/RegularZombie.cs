@@ -175,7 +175,7 @@ public class RegularZombie : EnemyBase
             UpdateAnimations(Vector2.zero);
         }
     }
-    public void TakeDamage(float damage, bool _isStunned)
+    public override void TakeDamage(float damage, bool _isStunned)
     {
         health -= damage;
         if (health <= 0) OnDeath();

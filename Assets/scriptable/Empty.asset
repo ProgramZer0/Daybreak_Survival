@@ -14,7 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: Empty
   prefab: {fileID: 0}
+  sprite: {fileID: 0}
   maxAmmo: 0
+  canShoot: 1
+  canMelee: 1
+  meleeDamage: 1
+  meleeRange: 0.4
+  meleeFOV: 70
+  meleeRays: 7
+  meleeCooldown: 0.5
   projectileDamage: 0
   projectileSpeed: 0
   projectileAmount: 0
@@ -27,5 +35,15 @@ MonoBehaviour:
   projectileHasAnimation: 0
   splashDamage: 0
   splashRange: 0
+  appearTime: 0
+  fadeInTime: 0.1
+  soundMod: 0
+  weaponZoom: 10
+  weaponMinZoom: 3
+  pickupTime: 2
+  hasFlash: 1
+  meleeStun: 0
+  offsetSpawnProjectile: 0
+  rarity: 0
   projectilePrefab: {fileID: 0}
   weaponAmmoType: 0
