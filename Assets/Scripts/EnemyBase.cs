@@ -5,6 +5,7 @@ public abstract class EnemyBase : MonoBehaviour, IEnemy
 {
     protected NavMeshAgent agent;
     protected Transform player;
+    protected bool isStunned = false;
     protected PlayerInterface playerInterface;
 
     public float health = 5f;
@@ -51,6 +52,15 @@ public abstract class EnemyBase : MonoBehaviour, IEnemy
         if (health <= 0) OnDeath();
         if (agent != null && player != null)
             agent.SetDestination(player.position);
+    }
+
+    public void TakeDamage(float damage, bool _isStunned)
+    {
+        health -= damage;
+        if (health <= 0) OnDeath();
+        if (agent != null && player != null)
+            agent.SetDestination(player.position);
+        isStunned = _isStunned; 
     }
 
     public GameObject GetGameObj()

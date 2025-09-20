@@ -52,6 +52,7 @@ public class Weapon : ScriptableObject
     public float weaponMinZoom = 3f;
     public float pickupTime = 2f;
     public bool hasFlash = true;
+    public bool meleeStun = false;
     public float offsetSpawnProjectile = 0f;
     public Rarity rarity = Rarity.common;
     public GameObject projectilePrefab;

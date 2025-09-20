@@ -19,10 +19,16 @@ public class PlayerInterface : MonoBehaviour
     [SerializeField] private MainGUIController GUI;
     [SerializeField] private SoundManager SM;
     [SerializeField] private GameManager GM;
+    [SerializeField] private HPBar HpBar;
+    [SerializeField] private WeaponHUD weaponHUD;
+    [SerializeField] private CameraController CC;
     [SerializeField] private float normSpeed = 3f;
     [SerializeField] private float sprintSpeed = 4f;
     [SerializeField] private float crouchSpeed = 1.5f;
     [SerializeField] private float dashCooldown = 10f;
+    [SerializeField] private float dashRange = 3f;
+    [SerializeField] private float dashOffset = 0.5f;
+    [SerializeField] private LayerMask dashMask;
     [SerializeField] private float sprintTime = 10f;
     [SerializeField] private float sprintCooldown = 2f;
     [SerializeField] private float maxSprintDebuffTime = 5f;
@@ -44,13 +50,9 @@ public class PlayerInterface : MonoBehaviour
     [SerializeField] private Sprite upSprite;
     [SerializeField] private Sprite leftSprite;
     [SerializeField] private Sprite rightSprite;
+    [SerializeField] private Animator animator;
     [SerializeField] private SpriteRenderer spriteRenderer;
 
-    [SerializeField] private GameObject downObj;
-    [SerializeField] private GameObject upObj;
-    [SerializeField] private GameObject leftObj;
-    [SerializeField] private GameObject rightObj;
-    [SerializeField] private GameObject mainPlayerObj;
     [SerializeField] private GameObject dashIndObj;
     [SerializeField] private GameObject dashObj;
 
@@ -83,7 +85,7 @@ public class PlayerInterface : MonoBehaviour
     private bool isSeenAndChased = false;
     private float inputH = 0f;
     private float inputV = 0f;
-    private float currentHP = 10;
+    private float currentHP;
     private float pickupTimer = 0;
     private float chaseTimer = 0;
     private float sprintTimer = 0;
@@ -112,7 +114,6 @@ public class PlayerInterface : MonoBehaviour
         sprintTimer = 0;
         currentWeapon = GUI.ReturnEmptyWeapon();
         facing = Direction.S;
-        DisableAllWalks();
         attacking = false;
         meleeing = false;
         interact = false;
@@ -133,6 +134,9 @@ public class PlayerInterface : MonoBehaviour
 
     private void Update()
     {
+        if (cannotMove)
+            return;
+
         inputH = Input.GetAxis("Horizontal");
         inputV = Input.GetAxisRaw("Vertical");
 
@@ -219,6 +223,9 @@ public class PlayerInterface : MonoBehaviour
 
         if (cannotMove) 
         {
+
+            animator.SetBool("isSneaking", false);
+            animator.SetBool("isMoving", false);
             walkingSound.SetActive(false);
             return;
         }
@@ -226,7 +233,7 @@ public class PlayerInterface : MonoBehaviour
         if (currentPick != null)
             TryPickUp();
         else
-            FindFirstObjectByType<MainGUIController>().StopSeeingPickup();
+            GUI.StopSeeingPickup();
 
         Vector2 moveAmount = new Vector2(inputH, inputV).normalized;
         if (meleeing && canMelee)
@@ -246,8 +253,6 @@ public class PlayerInterface : MonoBehaviour
             TryInteract();
         }
 
-        
-
         Move(moveAmount, dashing, sprinting);
     }
 
@@ -261,20 +266,20 @@ public class PlayerInterface : MonoBehaviour
                 if (!pickupObj.activeSelf)
                 {
                     pickupObj.SetActive(true);
-                    FindFirstObjectByType<MainGUIController>().SeePickup(currentPick.weapon.pickupTime);
+                    GUI.SeePickup(currentPick.weapon.pickupTime);
                     pickupObj.GetComponent<PickupIconScript>().triggerPickup();
                 }
 
                 if (pickupTimer >= currentPick.weapon.pickupTime)
                 {
                     currentPick.addPickup(gameObject);
-                    FindFirstObjectByType<MainGUIController>().StopSeeingPickup();
+                    GUI.StopSeeingPickup();
                     pickupTimer = 0;
                 }
             }
             else
             {
-                FindFirstObjectByType<MainGUIController>().StopSeeingPickup();
+                GUI.StopSeeingPickup();
                 pickupTimer = 0;
             }
         }
@@ -282,7 +287,7 @@ public class PlayerInterface : MonoBehaviour
         {
             currentPick = null;
             pickupTimer = 0;
-            FindFirstObjectByType<MainGUIController>().StopSeeingPickup();
+            GUI.StopSeeingPickup();
         }
     }
 
@@ -384,7 +389,7 @@ public class PlayerInterface : MonoBehaviour
             else
                 damage = currentWeapon.meleeDamage;
 
-            en.TakeDamage(damage);
+            en.TakeDamage(damage, currentWeapon);
             canMelee = false;
 
             StartCoroutine(MeleeCoooldown(currentWeapon.meleeCooldown));
@@ -478,9 +483,17 @@ public class PlayerInterface : MonoBehaviour
         bool moving = true;
         float speeds = normSpeed;
         if (crouch)
+        {
             speeds = crouchSpeed;
+            animator.speed = Mathf.Max(0.5f, crouchSpeed / normSpeed);
+        }
         else if (isSprinting && canSprint)
+        {
             speeds = sprintSpeed;
+            animator.speed = sprintSpeed / normSpeed;
+        }
+        else
+            animator.speed = 1;
 
         body.linearVelocity = move * speeds;
 
@@ -531,141 +544,97 @@ public class PlayerInterface : MonoBehaviour
             }
         }
 
+        animator.SetBool("isSneaking", crouch);
+        animator.SetBool("isMoving", moving);
+
         switch (facing)
         {
-            case (Direction.E):
-                if (moving)
-                {
-                    downObj.SetActive(false);
-                    upObj.SetActive(false);
-                    rightObj.SetActive(true);
-                    leftObj.SetActive(false);
-                }
-                else
-                    spriteRenderer.sprite = rightSprite;
-                facingInt = 6;
+            case (Direction.N):
+                animator.SetBool("FacingRight", false);
+                animator.SetBool("FacingLeft", false);
+                animator.SetBool("FacingUp", true);
+                animator.SetBool("FacingDown", false);
+                facingInt = 0;
                 break;
-            case (Direction.SE):
-                if (moving)
-                {
-                    downObj.SetActive(true);
-                    upObj.SetActive(false);
-                    rightObj.SetActive(false);
-                    leftObj.SetActive(false);
-                }
-                else
-                    spriteRenderer.sprite = downSprite;
-                facingInt = 5;
-                break;
-            case (Direction.NE):
-                if (moving)
-                {
-                    downObj.SetActive(false);
-                    upObj.SetActive(true);
-                    rightObj.SetActive(false);
-                    leftObj.SetActive(false);
-                }
-                else
-                    spriteRenderer.sprite = upSprite;
-                facingInt = 7;
+            case (Direction.NW):
+                animator.SetBool("FacingRight", false);
+                animator.SetBool("FacingLeft", false);
+                animator.SetBool("FacingUp", true);
+                animator.SetBool("FacingDown", false);
+                facingInt = 1;
                 break;
             case (Direction.W):
-                if (moving)
-                {
-                    downObj.SetActive(false);
-                    upObj.SetActive(false);
-                    rightObj.SetActive(false);
-                    leftObj.SetActive(true);
-                }
-                else
-                    spriteRenderer.sprite = leftSprite;
+                animator.SetBool("FacingRight", false);
+                animator.SetBool("FacingLeft", true);
+                animator.SetBool("FacingUp", false);
+                animator.SetBool("FacingDown", false);
                 facingInt = 2;
                 break;
             case (Direction.SW):
-                if (moving)
-                {
-                    downObj.SetActive(true);
-                    upObj.SetActive(false);
-                    rightObj.SetActive(false);
-                    leftObj.SetActive(false);
-                }
-                else
-                    spriteRenderer.sprite = downSprite;
+                animator.SetBool("FacingRight", false);
+                animator.SetBool("FacingLeft", false);
+                animator.SetBool("FacingUp", false);
+                animator.SetBool("FacingDown", true);
                 facingInt = 3;
                 break;
-            case (Direction.NW):
-                if (moving)
-                {
-                    downObj.SetActive(false);
-                    upObj.SetActive(true);
-                    rightObj.SetActive(false);
-                    leftObj.SetActive(false);
-                }
-                else
-                    spriteRenderer.sprite = upSprite;
-                facingInt = 1;
-                break;
             case (Direction.S):
-                if (moving)
-                {
-                    downObj.SetActive(true);
-                    upObj.SetActive(false);
-                    rightObj.SetActive(false);
-                    leftObj.SetActive(false);
-                }
-                else
-                    spriteRenderer.sprite = downSprite;
+                animator.SetBool("FacingRight", false);
+                animator.SetBool("FacingLeft", false);
+                animator.SetBool("FacingUp", false);
+                animator.SetBool("FacingDown", true);
                 facingInt = 4;
                 break;
-            case (Direction.N):
-                if (moving)
-                {
-                    downObj.SetActive(false);
-                    upObj.SetActive(true);
-                    rightObj.SetActive(false);
-                    leftObj.SetActive(false);
-                }
-                else
-                    spriteRenderer.sprite = upSprite;
-                facingInt = 0;
+            case (Direction.SE):
+                animator.SetBool("FacingRight", false);
+                animator.SetBool("FacingLeft", false);
+                animator.SetBool("FacingUp", false);
+                animator.SetBool("FacingDown", true);
+                facingInt = 5;
+                break;
+            case (Direction.E):
+                animator.SetBool("FacingRight", true);
+                animator.SetBool("FacingLeft", false);
+                animator.SetBool("FacingUp", false);
+                animator.SetBool("FacingDown", false);  
+                facingInt = 6;
+                break;
+            case (Direction.NE):
+                animator.SetBool("FacingRight", false);
+                animator.SetBool("FacingLeft", false);
+                animator.SetBool("FacingUp", true);
+                animator.SetBool("FacingDown", false);
+                facingInt = 7;
                 break;
         }
 
         DisableCrossEnablex(facingInt);
 
         if (moving)
-        {
-            mainPlayerObj.SetActive(false);
             walkingSound.SetActive(true);
-        }
         else
-        {
-            DisableAllWalks();
             walkingSound.SetActive(false);
-        }
 
         if (dashed && canDash)
         {
-            int facingside = 0;
-
-            switch (facing)
-            {
-                case Direction.N: facingside = 0; break;
-                case Direction.NW: facingside = 1; break;
-                case Direction.W: facingside = 2; break;
-                case Direction.SW: facingside = 3; break;
-                case Direction.S: facingside = 4; break;
-                case Direction.SE: facingside = 5; break;
-                case Direction.E: facingside = 6; break;
-                case Direction.NE: facingside = 7; break;
-            }
-
             LockMovement(true);
             SM.Play("Dash");
 
-            GameObject o = GameObject.Instantiate(dashObj, transform.position, Quaternion.Euler(0, 0, (facingside * 45)));
+            Vector2 dir = ((Vector2)gunPoss[facingInt].transform.position - (Vector2)transform.position ).normalized;
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, dir, dashRange, dashMask);
+            if(hit)
+            {
+                Vector2 teleportPos = hit.point - dir * 0.5f;
+                transform.position = teleportPos;
+            }
+            else
+            {
+                transform.position = transform.position + (Vector3)(dir * dashRange);
+            }
 
-            StartCoroutine(DashMovement(gunPoss[facingInt].transform.position));
+            animator.SetBool("isDashing", true);
+            StartCoroutine(DashAnimationCooldown());
+
+            GameObject o = GameObject.Instantiate(dashObj, transform.position, Quaternion.Euler(0, 0, (facingInt * 45)));
             canDash = false;
             dashIndObj.SetActive(true);
             dashIndObj.GetComponent<DashIndicator>().SetCooldown(dashCooldown);
@@ -684,14 +653,6 @@ public class PlayerInterface : MonoBehaviour
     public void SetIsSeenAndChased(bool s) { isSeenAndChased = s; }
 
     public bool GetShottingBool() { return isShooting; }
-    private void DisableAllWalks()
-    {
-        downObj.SetActive(false);
-        upObj.SetActive(false);
-        rightObj.SetActive(false);
-        leftObj.SetActive(false);
-        mainPlayerObj.SetActive(true);
-    }
 
     private void DisableCrossEnablex(int i)
     {
@@ -710,7 +671,7 @@ public class PlayerInterface : MonoBehaviour
     public bool AddWeapon(Weapon weapon, int ammo)
     {
         //Debug.Log("adding weapon");
-        if(currentWeapon != null && currentWeapon != FindFirstObjectByType<MainGUIController>().ReturnEmptyWeapon())
+        if(currentWeapon != null && currentWeapon != GUI.ReturnEmptyWeapon())
         {
             //Debug.Log("spawning weapon");
             GameObject o = GameObject.Instantiate(currentWeapon.prefab, transform.position, Quaternion.identity);
@@ -720,9 +681,9 @@ public class PlayerInterface : MonoBehaviour
         currentWeapon = weapon;
         weaponAmmo = ammo;
         maxAmmo = weapon.maxAmmo;
-        FindFirstObjectByType<WeaponHUD>().SetCurrentWeapon(currentWeapon);
-        FindFirstObjectByType<CameraController>().maxScrollOut = weapon.weaponZoom;
-        FindFirstObjectByType<CameraController>().minScrollOut = weapon.weaponMinZoom;
+        weaponHUD.SetCurrentWeapon(currentWeapon);
+        CC.maxScrollOut = weapon.weaponZoom;
+        CC.minScrollOut = weapon.weaponMinZoom;
 
         return true;
     }
@@ -753,11 +714,7 @@ public class PlayerInterface : MonoBehaviour
     {
         if (IframesDown)
         {
-            HPBar bar = FindFirstObjectByType<HPBar>();
-            if (bar != null)
-                bar.SetHP(currentHP - damage);
-            else
-                return;
+            HpBar.SetHP(currentHP - damage);
 
             currentHP -= damage;
             IframesDown = false;
@@ -790,12 +747,10 @@ public class PlayerInterface : MonoBehaviour
         yield return new WaitForSeconds(.6f);
         IframesDown = true;
     }
-    private IEnumerator DashMovement(Vector2 dashLoc)
+    private IEnumerator DashAnimationCooldown()
     {
         yield return new WaitForSeconds(.05f);
-        transform.position = dashLoc;
-        if(!GUI.GetInUI())
-            LockMovement(false);
+        animator.SetBool("isDashing", false);
     }
     private IEnumerator WaitDash()
     {

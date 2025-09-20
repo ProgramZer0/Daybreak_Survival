@@ -52,6 +52,10 @@ public class RegularZombie : EnemyBase
     [SerializeField] private Sprite upSprite;
     [SerializeField] private Sprite downSprite;
 
+    [Header("Stats Settings")]
+    [SerializeField] private float stunTime = 1f;
+    [SerializeField] private float stunChance = 1f;
+
     //private RegularZombie hordeController; 
     private int frameOffset;
     private float idleTimer;
@@ -69,6 +73,7 @@ public class RegularZombie : EnemyBase
     private float hordeAssistTimer = 0f;
     private GameObject activeDirectionObj;
     private float losTimer = 0f;
+    private float stunTimer = 0f;
     private bool lostLOS = false;
 
     //private bool isController = false;
@@ -115,6 +120,20 @@ public class RegularZombie : EnemyBase
         else
             agent.speed = idleSpeed;
 
+
+        if (isStunned)
+        {
+            stunTimer += Time.deltaTime * detectionIntervalFrames;
+            if(stunTimer >= stunTime)
+            {
+                isStunned = false;
+                stunTimer = 0;
+            }
+            else
+                return;
+        }
+
+
         if (DetectPlayer())
         {
             didSee = true;
@@ -154,6 +173,27 @@ public class RegularZombie : EnemyBase
         else
         {
             UpdateAnimations(Vector2.zero);
+        }
+    }
+    public void TakeDamage(float damage, bool _isStunned)
+    {
+        health -= damage;
+        if (health <= 0) OnDeath();
+        if (agent != null && player != null)
+            agent.SetDestination(player.position);
+        float rand = Random.Range(0, 1);
+        if (!_isStunned)
+            return;
+
+        if(rand <= stunChance)
+        {
+            isStunned = true;
+            stunTimer = 0f;
+        }
+        else
+        {
+            isStunned = false;
+            stunTimer = 0f;
         }
     }
     private void UpdateAnimations(Vector2 moveDir)
