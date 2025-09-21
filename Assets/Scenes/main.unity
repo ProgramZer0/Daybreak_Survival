@@ -99963,7 +99963,7 @@ MonoBehaviour:
   guis:
   - {fileID: 849792965}
   - {fileID: 696122992}
-  - {fileID: 0}
+  - {fileID: 822607971}
   - {fileID: 701536583}
   - {fileID: 12179056}
   - {fileID: 1466125693}
@@ -100867,7 +100867,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1561376989
 RectTransform:
   m_ObjectHideFlags: 0
