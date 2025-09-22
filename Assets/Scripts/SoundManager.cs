@@ -71,6 +71,24 @@ public class SoundManager : MonoBehaviour
         s.source.volume = finalVolume;
         s.source.Play();
     }
+
+    public void PlayrRandomPitch(string name, float plus_minusP)
+    {
+        Sound s = Array.Find(sounds, sound => sound.name.Equals(name, StringComparison.OrdinalIgnoreCase));
+
+        if (s == null)
+        {
+            Debug.LogWarning($"Sound '{name}' not found!");
+            return;
+        }
+        
+        float finalVolume = s.volume * (s.isMusic ? musicSound : modSound);
+        float finalPitch = s.pitch + UnityEngine.Random.Range((0-plus_minusP), plus_minusP);
+        
+        s.source.volume = finalVolume;
+        s.source.pitch = finalPitch;
+        s.source.Play();
+    }
     public void FadeInSound(string name, float fadeTime = 1f)
     {
         Sound s = Array.Find(sounds, sound => sound.name.Equals(name, StringComparison.OrdinalIgnoreCase));

@@ -142,7 +142,7 @@ public class MainGUIController : MonoBehaviour
     {
         setInUI();
         mainMenu.SetActive(true);
-        GM.ResetGame();
+        GM.MainMenu();
     }
 
     private void setInUI()

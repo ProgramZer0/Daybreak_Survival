@@ -63,10 +63,4 @@ public class Spawner : MonoBehaviour
         return o;
 
     }
-
-    public void Despawn(GameObject obj)
-    {
-        if (spawns.Contains(obj)) spawns.Remove(obj);
-        Destroy(obj);
-    }
 }

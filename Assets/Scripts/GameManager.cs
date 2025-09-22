@@ -52,6 +52,12 @@ public class GameManager : MonoBehaviour
         cycleEnabled = false;
     }
 
+    private void ResetPlayer()
+    {
+        player.transform.position = Vector2.zero;
+        player.ResetPlayerData();
+    }
+
     private void Update()
     {
         if (cycleEnabled)
@@ -116,21 +122,27 @@ public class GameManager : MonoBehaviour
 
     public void MainMenu()
     {
+        if (inMenu) return;
+        ResetGame();
         inMenu = true;
-        cycleEnabled = false;
-        SM.StopAll();
         PlayRandomEnvMusic(0.3f);
     }
 
     public void ResetGame()
     {
-
+        ResetDNCycle();
+        ResetPlayer();
+        enemyController.enableSpawning(false);
+        enemyController.DespawnAllEnemies();
+        SM.StopAll();
     }
 
     public void StartGame()
     {
         inMenu = false;
         cycleEnabled = true;
+        ResetGame();
+        enemyController.enableSpawning(true);
         SetEnvMusic(0.5f);
         SetAmbiance();
     }

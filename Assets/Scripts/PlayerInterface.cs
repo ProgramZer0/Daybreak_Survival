@@ -29,7 +29,7 @@ public class PlayerInterface : MonoBehaviour
     [SerializeField] private float crouchSpeed = 1.5f;
     [SerializeField] private float dashCooldown = 10f;
     [SerializeField] private float dashRange = 3f;
-    [SerializeField] private float dashOffset = 0.5f;
+    [SerializeField] private float dashOffset = 1f;
     [SerializeField] private float sprintTime = 10f;
     [SerializeField] private float sprintCooldown = 2f;
     [SerializeField] private float maxSprintDebuffTime = 5f;
@@ -87,6 +87,7 @@ public class PlayerInterface : MonoBehaviour
     private bool canSprint = true;
     private bool wentOverSprint = false;
     private bool isSeenAndChased = false;
+    private bool stepActive = false;
     private float inputH = 0f;
     private float inputV = 0f;
     private float currentHP;
@@ -144,17 +145,17 @@ public class PlayerInterface : MonoBehaviour
     private void Awake()
     {
         body = GetComponent<Rigidbody2D>();
-        resetPlayerData();
+        ResetPlayerData();
     }
 
-    public void resetPlayerData()
+    public void ResetPlayerData()
     {
+        body.linearVelocity = Vector2.zero;
         currentHP = (maxHP + ModMaxHP);
         weaponAmmo = 0;
         maxAmmo = 0;
         inputH = 0f;
         inputV = 0f;
-        currentHP = 10;
         pickupTimer = 0;
         chaseTimer = 0;
         sprintTimer = 0;
@@ -171,11 +172,10 @@ public class PlayerInterface : MonoBehaviour
         canMelee = true;
         canDash = true;
         IframesDown = true;
-        cannotMove = true;
-        crouchToggle = true;
         isShooting = false;
         canSprint = true;
         isSeenAndChased = false;
+        stepActive = false;
         ResetModValues();
 }
 
@@ -249,9 +249,6 @@ public class PlayerInterface : MonoBehaviour
             sprintTimer -= Time.deltaTime;
         }
 
-        if(!sprinting)
-            SM.Stop("Sprinting");
-
         if (sprintTimer >= (sprintTime + ModSprintTime) && canSprint && !wentOverSprint)
         {
             canSprint = false;
@@ -281,9 +278,7 @@ public class PlayerInterface : MonoBehaviour
         {
             animator.SetBool("isSneaking", false);
             animator.SetBool("isMoving", false);
-            SM.Stop("Sprinting");
-            SM.Stop("walking");
-            SM.Stop("sneaking");
+            SM.Stop("footStep");
             return;
         }
 
@@ -698,33 +693,37 @@ public class PlayerInterface : MonoBehaviour
 
         DisableCrossEnablex(facingInt);
 
+        if(!moving)
+        {
+            dashing = false;
+            return;
+        }
+
+        float speedTime = 0.3f;
         if (moving && crouch)
-            SM.PlayIfAlreadyNotPlaying("sneaking");
-        else
-            SM.Stop("sneaking");
+            speedTime = .6f;
 
         if (moving && isSprinting)
-            SM.PlayIfAlreadyNotPlaying("sprinting");
-        else
-            SM.Stop("sprinting");
+            speedTime = 0.2f;
 
         if (moving && !isSprinting && !crouch)
-            SM.PlayIfAlreadyNotPlaying("walking");
-        else
-            SM.Stop("walking");
+            speedTime = 0.3f;
+
+        if (!stepActive && moving)
+            StartCoroutine(PlayStep(speedTime));
 
         if (dashed && canDash)
         {
             LockMovement(true);
             SM.Play("Dash");
 
-            float playerSize = 0.5f;
+            float playerSize = 0.2f;
             Vector2 dir = ((Vector2)gunPoss[facingInt].transform.position - (Vector2)transform.position ).normalized;
             RaycastHit2D hit = Physics2D.CircleCast(transform.position, playerSize, dir, (dashRange+ ModDashRange), dashMask);
             Vector2 dashTarget;
 
             if (hit)
-                dashTarget = hit.point - dir * (dashOffset + ModDashOffset);
+                dashTarget = hit.point - dir * dashOffset;
             else
                 dashTarget = transform.position + (Vector3)(dir * (dashRange+ ModDashRange));
 
@@ -743,6 +742,13 @@ public class PlayerInterface : MonoBehaviour
         dashing = false;
     }
 
+    private IEnumerator PlayStep(float wait)
+    {
+        stepActive = true;
+        SM.PlayrRandomPitch("footStep", .1f);
+        yield return new WaitForSeconds(wait);
+        stepActive = false;
+    }
     public string GetAmmo()
     {
         return  weaponAmmo.ToString() + "/" + maxAmmo.ToString();

@@ -20,10 +20,7 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private bool spawningEnabled = false;
     private bool isDay = true;
 
-    public void enableSpawning()
-    {
-        spawningEnabled = true;
-    }
+    public void enableSpawning(bool enabled) { spawningEnabled = enabled; }
 
     private void Update()
     {
@@ -70,7 +67,6 @@ public class EnemyController : MonoBehaviour
             enemies.Add(enemy);
         }
     }
-
     public void SetIsDay(bool _isDay)
     {
         isDay = _isDay;
@@ -80,5 +76,11 @@ public class EnemyController : MonoBehaviour
             EnemyBase enemyComp = enemy.GetComponent<EnemyBase>();
             enemyComp.isDay = _isDay;
         }
+    }
+
+    public void DespawnAllEnemies()
+    {
+        foreach (GameObject obj in enemies)
+            Destroy(obj, 0.5f);
     }
 }
