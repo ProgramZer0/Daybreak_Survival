@@ -85,7 +85,7 @@ public class GameManager : MonoBehaviour
         }
 
         if (deathProgress >= .9)
-            SM.FadeInSound("deathComming");
+            SM.FadeInSoundIfNotPlaying("deathComming");
             
 
         float cycleDuration = isDay ? daylightTimeSec : nightTimeSec;

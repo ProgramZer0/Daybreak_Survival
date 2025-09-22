@@ -44,6 +44,8 @@ MonoBehaviour:
   hasFlash: 1
   meleeStun: 0
   offsetSpawnProjectile: 0
+  equipSoundName: DefaultweaponEquip
+  projectileSoundName: gunshot
   rarity: 0
   projectilePrefab: {fileID: 0}
   weaponAmmoType: 0

@@ -228,16 +228,16 @@ public class PlayerInterface : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space)) dashing = true;
 
-        if (isSeenAndChased)
+        if (isSeenAndChased && chaseTimer == 0)
         {
-            SM.PlayMusic("chaseMusic", 0.3f);
+            //SM.PlayMusic("chaseMusic", 0.3f);
             chaseTimer += Time.deltaTime;
         }
         if (chaseTimer >= (hordeForgetTime + ModHordeForgetTime))
         {
             isSeenAndChased = false;
             chaseTimer = 0;
-            GM.SetEnvMusic(4);
+            //GM.SetEnvMusic(10, true);
         }
 
         if (sprinting)
@@ -267,6 +267,8 @@ public class PlayerInterface : MonoBehaviour
         return currentWeapon;
     }
 
+    public bool GetSprinting() { return sprinting; }
+
     private void FixedUpdate()
     {
         if(currentHP < 0)
@@ -291,17 +293,18 @@ public class PlayerInterface : MonoBehaviour
         if (meleeing && canMelee)
         {
             TryMelee();
-            meleeing = false;
         }
 
-        if (attacking && canShoot)
+        if (attacking && canShoot && !meleeing)
         {
             TryAttacking();
         }
+        
+        meleeing = false;
 
         if (interact)
         {
-            SM.Play("Interact");
+            SM.PlayIfAlreadyNotPlaying("Interact");
             TryInteract();
         }
 
@@ -314,7 +317,7 @@ public class PlayerInterface : MonoBehaviour
         {
             if (pickupKey)
             {
-                SM.Play("pickingUpSound");
+                SM.PlayIfAlreadyNotPlaying("pickingUpSound");
                 pickupTimer += Time.deltaTime;
                 if (!pickupObj.activeSelf)
                 {
@@ -326,7 +329,6 @@ public class PlayerInterface : MonoBehaviour
                 if (pickupTimer >= currentPick.weapon.pickupTime)
                 {
                     SM.Stop("pickingUpSound");
-                    SM.Play("pickup");
                     currentPick.addPickup(gameObject);
                     GUI.StopSeeingPickup();
                     pickupTimer = 0;
@@ -402,7 +404,8 @@ public class PlayerInterface : MonoBehaviour
 
         }
 
-        SM.Play("GunShot");
+        SM.Play(currentWeapon.projectileSoundName);
+
         if (currentWeapon.hasFlash)
             StartCoroutine(EnableShootingLights(facingside));
 
@@ -453,10 +456,10 @@ public class PlayerInterface : MonoBehaviour
                 damage = currentWeapon.meleeDamage;
 
             en.TakeDamage(damage, currentWeapon);
-            canMelee = false;
+        }
 
-            StartCoroutine(MeleeCoooldown(currentWeapon.meleeCooldown));
-        }   
+        canMelee = false;
+        StartCoroutine(MeleeCoooldown(currentWeapon.meleeCooldown));
     }
 
     private void MeleeAnimation(int facingInt, Vector2 spawnPos)
@@ -712,7 +715,7 @@ public class PlayerInterface : MonoBehaviour
         if (!stepActive && moving)
             StartCoroutine(PlayStep(speedTime));
 
-        if (dashed && canDash)
+        if (dashed && canDash && !crouch)
         {
             LockMovement(true);
             SM.Play("Dash");
@@ -745,7 +748,7 @@ public class PlayerInterface : MonoBehaviour
     private IEnumerator PlayStep(float wait)
     {
         stepActive = true;
-        SM.PlayrRandomPitch("footStep", .1f);
+        SM.PlayrRandomPitch("footStep", .15f);
         yield return new WaitForSeconds(wait);
         stepActive = false;
     }
@@ -781,7 +784,7 @@ public class PlayerInterface : MonoBehaviour
     //why bool?
     public bool AddWeapon(Weapon weapon, int ammo)
     {
-        SM.Play("weaponEquip");
+        
         //Debug.Log("adding weapon");
         if(currentWeapon != null && currentWeapon != GUI.ReturnEmptyWeapon())
         {
@@ -796,7 +799,7 @@ public class PlayerInterface : MonoBehaviour
         weaponHUD.SetCurrentWeapon(currentWeapon);
         CC.maxScrollOut = weapon.weaponZoom;
         CC.minScrollOut = weapon.weaponMinZoom;
-
+        SM.Play(currentWeapon.equipSoundName);
         return true;
     }
     public bool AddAmmo(WeaponAmmoType type, int amount)

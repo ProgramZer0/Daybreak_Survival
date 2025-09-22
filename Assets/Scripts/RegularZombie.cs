@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -21,8 +22,11 @@ public class RegularZombie : EnemyBase
     [Header("Horde Settings")]
     [SerializeField] private float hordeAccuracy = 5f;
     [SerializeField] private float hordeHearing = 15f;
-    [SerializeField] private float hordeMentality = 30f;
+    [SerializeField] private float hordeWalkingDistance = 20f;
+    [SerializeField] private int smallestHorde = 10;
+    [SerializeField] private float hordeTalkPercent = 70;
     [SerializeField] private float hordeCooldown = 10f;
+    [SerializeField] private float hordeCheckTimer = 10f;
 
     [Header("Idle Settings")]
     [SerializeField] private float idleMinTime = 2f;
@@ -83,11 +87,15 @@ public class RegularZombie : EnemyBase
     private float losTimer = 0f;
     private float stunTimer = 0f;
     private float soundTimer = 0f;
+    private float Timer = 0f;
     private bool lostLOS = false;
+    private bool inHorde = false;
 
     private void Awake()
     {
         frameOffset = Random.Range(0, detectionIntervalFrames);
+        walkingSound.GetComponent<AudioSource>().volume = walkingSound.GetComponent<AudioSource>().volume * SM.GetSoundMod();
+
     }
     private bool ShouldDetectThisFrame()
     {
@@ -102,15 +110,32 @@ public class RegularZombie : EnemyBase
         distanceFromPlayer = Vector2.Distance(player.position, transform.position);
         if (distanceFromPlayer > activeRange) return;
 
+
         if (hordeAssistTimer > 0f)
             hordeAssistTimer -= Time.deltaTime * detectionIntervalFrames;
+
         if(nextSound == 0)
             nextSound = Random.Range(1, randomSoundInterval);
-        if(soundTimer >= nextSound)
+        if(soundTimer >= 0)
+            soundTimer += Time.deltaTime * detectionIntervalFrames;
+        if (soundTimer >= nextSound)
         {
             nextSound = 0;
-            PlaySound(zombieSounds[Random.Range(0, zombieSounds.Length)]);
+            PlaySound(zombieSounds[Random.Range(0, zombieSounds.Length)], Random.Range(0, 0.3f));
         }
+
+        if (Timer >= 0)
+            Timer += Time.deltaTime * detectionIntervalFrames;
+        if(Timer > hordeCheckTimer)
+        {
+            Timer = 0;
+            if (CountnearbyZombies(smallestHorde))
+                inHorde = true;
+            else
+                inHorde = false;
+        }
+
+
         if (isDay)
         {
             LOSSpeed = baseLOSSpeed;
@@ -149,8 +174,16 @@ public class RegularZombie : EnemyBase
 
         if (DetectPlayer())
         {
-            if(!didSee)
-                PlaySound(foundSounds[Random.Range(0, foundSounds.Length)]);
+            if (!didSee)
+            {
+                if (!inHorde)
+                    PlaySound(foundSounds[Random.Range(0, foundSounds.Length)], Random.Range(0, 0.3f));
+                else
+                {
+                    if (Random.Range(0, 100) >= hordeTalkPercent)
+                        PlaySound(foundSounds[Random.Range(0, foundSounds.Length)], Random.Range(0, 0.3f));
+                }
+            }
             didSee = true;
             agent.SetDestination(player.position);
             playerInterface.SetIsSeenAndChased(true);
@@ -190,19 +223,23 @@ public class RegularZombie : EnemyBase
             UpdateAnimations(Vector2.zero);
         }
     }
-    public override void TakeDamage(float damage, bool _isStunned)
+    public override void TakeDamage(float damage, bool _isStunned = false)
     {
         health -= damage;
 
-        PlaySound(hurtSounds[Random.Range(0, hurtSounds.Length)]);
+        Debug.Log("call damage");
+        PlaySound(hurtSounds[Random.Range(0, hurtSounds.Length)], Random.Range(0, 0.3f));
 
-        if (health <= 0)
-        {
-            OnDeath();
-        }
+        
         if (agent != null && player != null)
             agent.SetDestination(player.position);
         float rand = Random.Range(0, 1);
+        if (health <= 0)
+        {
+            OnDeath();
+            return;
+        }
+
         if (!_isStunned)
             return;
 
@@ -215,7 +252,7 @@ public class RegularZombie : EnemyBase
         {
             isStunned = false;
             stunTimer = 0f;
-        }
+        }        
     }
     private void UpdateAnimations(Vector2 moveDir)
     {
@@ -244,8 +281,15 @@ public class RegularZombie : EnemyBase
                 newActive.SetActive(true);
                 activeDirectionObj = newActive;
             }
+            if(!inHorde)
+            {
+                
+            }
+            if (inHorde)
+                walkingSound.SetActive(true);
+            else
+                walkingSound.SetActive(false);
 
-            walkingSound.SetActive(true);
             facingDir = moveDir.normalized;
         }
         else
@@ -255,6 +299,7 @@ public class RegularZombie : EnemyBase
                 activeDirectionObj.SetActive(false);
                 activeDirectionObj = null;
             }
+
             walkingSound.SetActive(false);
             mainSprite.SetActive(true);
 
@@ -269,26 +314,32 @@ public class RegularZombie : EnemyBase
         }
     }
 
+    private bool CountnearbyZombies(int i)
+    {
+        int count = 0;
+        count = Physics2D.OverlapCircleAll(transform.position, hordeWalkingDistance, LayerMask.GetMask("Enemies")).Length;
+        Debug.Log("zombie Count is " + count);
+        return count >= smallestHorde;
+    }
+
     private bool DetectPlayer()
     {
         float mod = 0f;
         if (playerInterface.GetCrouch())
             mod = hearRange - sneakHearing;
-        else if (playerInterface.GetShottingBool())
+        else if (playerInterface.GetSprinting())
             mod = hearRange + sprintHearing;
         if (playerInterface.GetShottingBool())
             mod = gunshotHearing + playerInterface.GetActiveWeapon().soundMod;
 
         if (distanceFromPlayer <= mod)
         {
-            didSee = true;
             lostLOS = false;
             return true;
         }
         if (distanceFromPlayer <= range && FanVisionCheck())
         {
 
-            didSee = true;
             lostLOS = false;
             return true;
         }
@@ -314,11 +365,11 @@ public class RegularZombie : EnemyBase
             {
                 isSearching = true;
                 searchTimer = searchDuration;
-                didSee = false;
                 lostLOS = false;
+                didSee = false;
             }
         }
-
+        
         return false;
     }
 

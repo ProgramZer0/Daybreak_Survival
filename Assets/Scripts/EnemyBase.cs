@@ -39,7 +39,7 @@ public abstract class EnemyBase : MonoBehaviour, IEnemy
         playerInterface = player.GetComponent<PlayerInterface>();
     }
 
-    public virtual void OnDeath()
+    protected void OnDeath()
     {
         isDead = true;
         Destroy(gameObject);
@@ -70,33 +70,25 @@ public abstract class EnemyBase : MonoBehaviour, IEnemy
         }
     }
 
-    public abstract void Tick(); 
+    public abstract void Tick();
 
-    public void TakeDamage(float damage)
-    {
-        health -= damage;
-        if (health <= 0)
-        {
-            OnDeath();
-            return;
-        }
-        if (agent != null && player != null)
-            agent.SetDestination(player.position);
-    }
-
-    public abstract void TakeDamage(float damage, bool _isStunned);
+    public abstract void TakeDamage(float damage, bool _isStunned = true);
 
     public GameObject GetGameObj()
     {
         return gameObject;
     }
 
-    public void PlaySound(Sound s)
+    protected void PlaySound(Sound s, float timeWaiting = 0f)
     {
+        StartCoroutine(PlaySoundWait(s, timeWaiting));
+    }
+    private IEnumerator PlaySoundWait(Sound s, float TIME)
+    {
+        yield return new WaitForSeconds(TIME);
         s.source = AD;
         s.source.clip = s.clip;
         s.source.loop = s.loop;
-
         s.source.volume = s.volume * SM.GetSoundMod();
         s.source.pitch = s.pitch;
         s.source.Play();

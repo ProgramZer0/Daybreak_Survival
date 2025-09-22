@@ -89,6 +89,23 @@ public class SoundManager : MonoBehaviour
         s.source.pitch = finalPitch;
         s.source.Play();
     }
+
+    public void FadeInSoundIfNotPlaying(string name, float fadeTime = 1f)
+    {
+        Sound s = Array.Find(sounds, sound => sound.name.Equals(name, StringComparison.OrdinalIgnoreCase));
+
+        if (s == null)
+        {
+            Debug.LogWarning($"Sound '{name}' not found!");
+            return;
+        }
+
+        if (s.source.isPlaying)
+            return;
+
+        StartCoroutine(FadeInCoroutine(s, fadeTime));   
+    }
+
     public void FadeInSound(string name, float fadeTime = 1f)
     {
         Sound s = Array.Find(sounds, sound => sound.name.Equals(name, StringComparison.OrdinalIgnoreCase));
@@ -246,8 +263,11 @@ public class SoundManager : MonoBehaviour
 
     public void FadeOutCurrentMusic()
     {
-        StartCoroutine(FadeOutCoroutine(currentMusic, 1));
-        currentMusic = null;
+        if(currentMusic != null)
+        {
+            StartCoroutine(FadeOutCoroutine(currentMusic, 1));
+            currentMusic = null;
+        }
     }
     public string GetCurrentMusicName()
     {

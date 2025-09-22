@@ -45,13 +45,13 @@ AudioSource:
   m_audioClip: {fileID: 8300000, guid: de4b57253596be145be502adf7a120a3, type: 3}
   m_Resource: {fileID: 8300000, guid: de4b57253596be145be502adf7a120a3, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.1
+  m_Volume: 0.14
   m_Pitch: 1
   Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
-  Priority: 68
+  Priority: 47
   DopplerLevel: 1
   MinDistance: 0.3160391
   MaxDistance: 15
@@ -603,6 +603,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 5
   damage: 1
+  damageTime: 3
   isDay: 1
   AD: {fileID: 8442353383298492936}
   deathSound:
@@ -630,8 +631,11 @@ MonoBehaviour:
   dummmyLOSTime: 2
   hordeAccuracy: 2
   hordeHearing: 20
-  hordeMentality: 30
+  hordeWalkingDistance: 20
+  smallestHorde: 10
+  hordeTalkPercent: 70
   hordeCooldown: 5
+  hordeCheckTimer: 10
   idleMinTime: 10
   idleMaxTime: 60
   idleRadius: 10
@@ -659,7 +663,7 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: b49c264d086d3a8488a2fc680b81be67, type: 3}
     loop: 0
     isMusic: 0
-    volume: 0.389
+    volume: 0.156
     pitch: 1
     source: {fileID: 0}
   hurtSounds:
@@ -667,28 +671,28 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 213569158403736438fdfc6e607ad810, type: 3}
     loop: 0
     isMusic: 0
-    volume: 0.377
+    volume: 0.156
     pitch: 1
     source: {fileID: 0}
   - name: impact2
     clip: {fileID: 8300000, guid: fdebb814f8a557d488a3c3dfb119b859, type: 3}
     loop: 0
     isMusic: 0
-    volume: 0.377
+    volume: 0.156
     pitch: 1
     source: {fileID: 0}
   - name: impact3
     clip: {fileID: 8300000, guid: 715bea5cfebf5f041998cd3dc22d1673, type: 3}
     loop: 0
     isMusic: 0
-    volume: 0.377
+    volume: 0.156
     pitch: 1
     source: {fileID: 0}
   - name: impact4
     clip: {fileID: 8300000, guid: 7cb968dcb7480614f834b3068856fa44, type: 3}
     loop: 0
     isMusic: 0
-    volume: 0.377
+    volume: 0.156
     pitch: 1
     source: {fileID: 0}
   foundSounds:
@@ -696,21 +700,21 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: a0dcce0e21639df4aa787f84380c1f81, type: 3}
     loop: 0
     isMusic: 0
-    volume: 0.42
+    volume: 0.156
     pitch: 1
     source: {fileID: 0}
   - name: ZombieFound2
     clip: {fileID: 8300000, guid: 7d1056bde791b8445a4f47e4e2e46b61, type: 3}
     loop: 0
     isMusic: 0
-    volume: 0.46
+    volume: 0.156
     pitch: 1
     source: {fileID: 0}
   - name: ZombieFound3
     clip: {fileID: 8300000, guid: ec1cf18219338bb42bb19e0b6f37d1a1, type: 3}
     loop: 0
     isMusic: 0
-    volume: 0.41
+    volume: 0.156
     pitch: 1
     source: {fileID: 0}
   walkingSound: {fileID: 301273170463909377}
@@ -822,7 +826,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.227
   m_Pitch: 1
   Loop: 0
   Mute: 0

@@ -16,6 +16,13 @@ MonoBehaviour:
   prefab: {fileID: 9170968425028117989, guid: 5634e1c0eee7e75429134686de118e99, type: 3}
   sprite: {fileID: 21300000, guid: 38666ca377c3fc041bb3fc1d4d701206, type: 3}
   maxAmmo: 2
+  canShoot: 1
+  canMelee: 1
+  meleeDamage: 1
+  meleeRange: 0.4
+  meleeFOV: 70
+  meleeRays: 7
+  meleeCooldown: 0.5
   projectileDamage: 300
   projectileSpeed: 8
   projectileAmount: 1
@@ -35,7 +42,10 @@ MonoBehaviour:
   weaponMinZoom: 5
   pickupTime: 4
   hasFlash: 0
+  meleeStun: 0
   offsetSpawnProjectile: 0
+  equipSoundName: DefaultweaponEquip
+  projectileSoundName: gunshot
   rarity: 0
   projectilePrefab: {fileID: 8562623839093297936, guid: 987b74437e7876a4db57d9882054e5c2, type: 3}
   weaponAmmoType: 3

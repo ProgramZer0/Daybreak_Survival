@@ -54,6 +54,8 @@ public class Weapon : ScriptableObject
     public bool hasFlash = true;
     public bool meleeStun = false;
     public float offsetSpawnProjectile = 0f;
+    public string equipSoundName = "DefaultweaponEquip";
+    public string projectileSoundName = "gunshot";
     public Rarity rarity = Rarity.common;
     public GameObject projectilePrefab;
     public WeaponAmmoType weaponAmmoType;
