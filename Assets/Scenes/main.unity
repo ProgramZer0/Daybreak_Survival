@@ -8756,7 +8756,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 214009993}
         m_TargetAssemblyTypeName: ButtonMethods, Assembly-CSharp
-        m_MethodName: SettingsFromPause_B
+        m_MethodName: PauseMenu_B
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -9163,7 +9163,7 @@ MonoBehaviour:
   m_ComponentVersion: 2
   m_LightType: 3
   m_BlendStyleIndex: 0
-  m_FalloffIntensity: 0.849
+  m_FalloffIntensity: 0.977
   m_Color: {r: 0.5849056, g: 0.5621497, b: 0.29521182, a: 1}
   m_Intensity: 0.06
   m_LightVolumeIntensity: 1
@@ -9188,8 +9188,8 @@ MonoBehaviour:
     m_Extent: {x: 0.9985302, y: 0.99853027, z: 0}
   m_PointLightInnerAngle: 360
   m_PointLightOuterAngle: 360
-  m_PointLightInnerRadius: 0.4
-  m_PointLightOuterRadius: 4.17
+  m_PointLightInnerRadius: 0.22
+  m_PointLightOuterRadius: 11.82
   m_ShapeLightParametricSides: 5
   m_ShapeLightParametricAngleOffset: 0
   m_ShapeLightParametricRadius: 1
@@ -97690,7 +97690,7 @@ MonoBehaviour:
   m_BlendStyleIndex: 0
   m_FalloffIntensity: 0.5
   m_Color: {r: 0.8490566, g: 0.7833874, b: 0.59674263, a: 1}
-  m_Intensity: 0.75
+  m_Intensity: 0
   m_LightVolumeIntensity: 1
   m_LightVolumeEnabled: 0
   m_ApplyToSortingLayers: 00000000a98429d7ff0de292bb474d99473b6b8dafaffb9e3f08c8e55baeb85b9b930978ef75a325

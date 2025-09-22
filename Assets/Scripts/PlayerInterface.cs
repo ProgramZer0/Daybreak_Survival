@@ -22,13 +22,14 @@ public class PlayerInterface : MonoBehaviour
     [SerializeField] private HPBar HpBar;
     [SerializeField] private WeaponHUD weaponHUD;
     [SerializeField] private CameraController CC;
+    [SerializeField] private LayerMask dashMask;
+
     [SerializeField] private float normSpeed = 3f;
     [SerializeField] private float sprintSpeed = 4f;
     [SerializeField] private float crouchSpeed = 1.5f;
     [SerializeField] private float dashCooldown = 10f;
     [SerializeField] private float dashRange = 3f;
     [SerializeField] private float dashOffset = 0.5f;
-    [SerializeField] private LayerMask dashMask;
     [SerializeField] private float sprintTime = 10f;
     [SerializeField] private float sprintCooldown = 2f;
     [SerializeField] private float maxSprintDebuffTime = 5f;
@@ -63,9 +64,9 @@ public class PlayerInterface : MonoBehaviour
     [SerializeField] private int weaponAmmo = 0;
     [SerializeField] private int maxAmmo = 0;
 
-    [SerializeField] private float baseRange = 1f;
-    [SerializeField] private float baseFOV = 70f;
-    [SerializeField] private float meleeRangeOffset = 0.3f;
+    [SerializeField] private float baseAnimationRange = 1f;
+    [SerializeField] private float baseAnimationFOV = 70f;
+    [SerializeField] private float meleeAnimationRangeOffset = 0.3f;
     
     private Rigidbody2D body;
     private Direction facing = Direction.S;
@@ -94,9 +95,51 @@ public class PlayerInterface : MonoBehaviour
     private float sprintTimer = 0;
     private pickup currentPick;
 
-    public float GetMaxHP() { return maxHP; }
+    public float ModNormSpeed = 0f;
+    public float ModSprintSpeed = 0f;
+    public float ModCrouchSpeed = 0f;
+    public float ModDashCooldown = 0f;
+    public float ModDashRange = 0f;
+    public float ModDashOffset = 0f;
+    public float ModSprintTime = 0f;
+    public float ModSprintCooldown = 0f;
+    public float ModMaxSprintDebuffTime = 0f;
+    public float ModInteractRange = 0f;
+    public float ModPickupRange = 0f;
+    public float ModHordeForgetTime = 0f;
+
+    public float ModMaxHP = 0f;
+    public float ModSeeDistance = 0f;
+    public float ModlightDistance = 0f;
+    public bool hasNightVison = false;
+
+    public void ChangedModValues()
+    {
+        maxHP = (maxHP + ModMaxHP);
+    }
+    public void ResetModValues()
+    {
+        ModNormSpeed = 0f;
+        ModSprintSpeed = 0f;
+        ModCrouchSpeed = 0f;
+        ModDashCooldown = 0f;
+        ModDashRange = 0f;
+        ModDashOffset = 0f;
+        ModSprintTime = 0f;
+        ModSprintCooldown = 0f;
+        ModMaxSprintDebuffTime = 0f;
+        ModInteractRange = 0f;
+        ModPickupRange = 0f;
+        ModHordeForgetTime = 0f;
+        ModMaxHP = 0f;
+        ModSeeDistance = 0f;
+        ModlightDistance = 0f;
+        hasNightVison = false;
+    }
+
+    public float GetMaxHP() { return(maxHP + ModMaxHP); }
     public float GetCurrentHP() { return currentHP; }
-    public float GetCooldown() { return dashCooldown; }
+    public float GetCooldown() { return (dashCooldown+ ModDashCooldown); }
 
     private void Awake()
     {
@@ -106,7 +149,7 @@ public class PlayerInterface : MonoBehaviour
 
     public void resetPlayerData()
     {
-        currentHP = maxHP;
+        currentHP = (maxHP + ModMaxHP);
         weaponAmmo = 0;
         maxAmmo = 0;
         inputH = 0f;
@@ -133,6 +176,7 @@ public class PlayerInterface : MonoBehaviour
         isShooting = false;
         canSprint = true;
         isSeenAndChased = false;
+        ResetModValues();
 }
 
     private void Update()
@@ -168,13 +212,13 @@ public class PlayerInterface : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            if (canSprint && sprintTimer < sprintTime)
+            if (canSprint && sprintTimer < (sprintTime + ModSprintTime))
                 sprinting = true;
         }
         
         if (Input.GetKeyUp(KeyCode.LeftShift)) 
         {
-            if(sprintTimer < sprintTime)
+            if(sprintTimer < (sprintTime + ModSprintTime))
             {
                 canSprint = false;
                 sprinting = false;
@@ -189,7 +233,7 @@ public class PlayerInterface : MonoBehaviour
             SM.PlayMusic("chaseMusic", 0.3f);
             chaseTimer += Time.deltaTime;
         }
-        if (chaseTimer >= hordeForgetTime)
+        if (chaseTimer >= (hordeForgetTime + ModHordeForgetTime))
         {
             isSeenAndChased = false;
             chaseTimer = 0;
@@ -208,16 +252,16 @@ public class PlayerInterface : MonoBehaviour
         if(!sprinting)
             SM.Stop("Sprinting");
 
-        if (sprintTimer >= sprintTime && canSprint && !wentOverSprint)
+        if (sprintTimer >= (sprintTime + ModSprintTime) && canSprint && !wentOverSprint)
         {
             canSprint = false;
             sprinting = false;
             wentOverSprint = true;
-            sprintTimer += maxSprintDebuffTime;
+            sprintTimer += (maxSprintDebuffTime + ModMaxSprintDebuffTime);
             StartCoroutine(SprintingCooldown());
         }
 
-        if (sprintTimer < sprintTime)
+        if (sprintTimer < (sprintTime + ModSprintTime))
             wentOverSprint = false;
     }
     
@@ -271,7 +315,7 @@ public class PlayerInterface : MonoBehaviour
 
     private void TryPickUp()
     {
-        if (Vector2.Distance(currentPick.gameObject.transform.position, transform.position) <= pickupRange)
+        if (Vector2.Distance(currentPick.gameObject.transform.position, transform.position) <= (pickupRange + ModPickupRange))
         {
             if (pickupKey)
             {
@@ -398,7 +442,7 @@ public class PlayerInterface : MonoBehaviour
         }
         Vector2 dir = (gunPoss[facingside].transform.position - transform.position).normalized;
 
-        float offset = currentWeapon.meleeRange * meleeRangeOffset; 
+        float offset = currentWeapon.meleeRange * meleeAnimationRangeOffset; 
         Vector3 spawnPos = transform.position + (Vector3)dir * offset;
 
         MeleeAnimation(facingside, spawnPos);
@@ -431,8 +475,8 @@ public class PlayerInterface : MonoBehaviour
                 transform
             );
 
-            float fovScale = currentWeapon.meleeFOV / baseFOV;
-            float scaleFactor = currentWeapon.meleeRange / baseRange;
+            float fovScale = currentWeapon.meleeFOV / baseAnimationFOV;
+            float scaleFactor = currentWeapon.meleeRange / baseAnimationRange;
 
             slash.transform.localScale = new Vector3(fovScale, scaleFactor, 1f);
 
@@ -488,7 +532,7 @@ public class PlayerInterface : MonoBehaviour
     }
     private IEnumerator SprintingCooldown()
     {
-        yield return new WaitForSeconds(sprintCooldown);
+        yield return new WaitForSeconds((sprintCooldown + ModSprintCooldown));
         canSprint = true;
     }
     private IEnumerator ShootingCoooldown(float cooldown)
@@ -510,7 +554,7 @@ public class PlayerInterface : MonoBehaviour
 
     private void TryInteract()
     {
-        Collider2D hit = Physics2D.OverlapCircle(transform.position, interactRange, interactLayer);
+        Collider2D hit = Physics2D.OverlapCircle(transform.position, (interactRange + ModInteractRange), interactLayer);
         if (hit != null)
         {
             hit.TryGetComponent<IInteractable>(out IInteractable interactable);
@@ -526,16 +570,16 @@ public class PlayerInterface : MonoBehaviour
     private void Move(Vector2 move, bool dashed, bool isSprinting)
     {
         bool moving = true;
-        float speeds = normSpeed;
+        float speeds = (normSpeed + ModNormSpeed);
         if (crouch)
         {
-            speeds = crouchSpeed;
-            animator.speed = Mathf.Max(0.5f, crouchSpeed / normSpeed);
+            speeds = (crouchSpeed+ ModCrouchSpeed);
+            animator.speed = Mathf.Max(0.5f, (crouchSpeed+ ModCrouchSpeed) / (normSpeed + ModNormSpeed));
         }
         else if (isSprinting && canSprint)
         {
-            speeds = sprintSpeed;
-            animator.speed = sprintSpeed / normSpeed;
+            speeds = (sprintSpeed+ ModSprintSpeed);
+            animator.speed = (sprintSpeed+ ModSprintSpeed) / (normSpeed + ModNormSpeed);
         }
         else
             animator.speed = 1;
@@ -676,13 +720,13 @@ public class PlayerInterface : MonoBehaviour
 
             float playerSize = 0.5f;
             Vector2 dir = ((Vector2)gunPoss[facingInt].transform.position - (Vector2)transform.position ).normalized;
-            RaycastHit2D hit = Physics2D.CircleCast(transform.position, playerSize, dir, dashRange, dashMask);
+            RaycastHit2D hit = Physics2D.CircleCast(transform.position, playerSize, dir, (dashRange+ ModDashRange), dashMask);
             Vector2 dashTarget;
 
             if (hit)
-                dashTarget = hit.point - dir * dashOffset;
+                dashTarget = hit.point - dir * (dashOffset + ModDashOffset);
             else
-                dashTarget = transform.position + (Vector3)(dir * dashRange);
+                dashTarget = transform.position + (Vector3)(dir * (dashRange+ ModDashRange));
 
             transform.position = dashTarget;
 
@@ -692,7 +736,7 @@ public class PlayerInterface : MonoBehaviour
             GameObject o = GameObject.Instantiate(dashObj, transform.position, Quaternion.Euler(0, 0, (facingInt * 45)));
             canDash = false;
             dashIndObj.SetActive(true);
-            dashIndObj.GetComponent<DashIndicator>().SetCooldown(dashCooldown);
+            dashIndObj.GetComponent<DashIndicator>().SetCooldown((dashCooldown+ ModDashCooldown));
             dashIndObj.GetComponent<DashIndicator>().TriggerCooldown();
             StartCoroutine(WaitDash());
         }
@@ -819,7 +863,7 @@ public class PlayerInterface : MonoBehaviour
     }
     private IEnumerator WaitDash()
     {
-        yield return new WaitForSeconds(dashCooldown);
+        yield return new WaitForSeconds((dashCooldown+ ModDashCooldown));
         dashIndObj.SetActive(false);
         canDash = true;
     }
