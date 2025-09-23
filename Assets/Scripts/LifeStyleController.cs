@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,66 +7,61 @@ public class LifeStyleController : MonoBehaviour
     [SerializeField] private LifeStyles[] allLSs;
     [SerializeField] private int maxLifestyles = 10;
 
-    public List<LifeStyles> lifeStylesAvalible;
-    private List<LifeStyles> LifeStylesActive;
-    private int LifestylesActive = 0;
+    public List<LifeStyles> lifeStylesAvailable;
+    private List<LifeStyles> lifeStylesActive;
 
     private void Start()
     {
-        LifeStylesActive = new List<LifeStyles>();
-        lifeStylesAvalible = new List<LifeStyles>();
+        lifeStylesActive = new List<LifeStyles>();
+        lifeStylesAvailable = new List<LifeStyles>();
     }
 
-    public void MakeLifestylesActive(LifeStyles ls)
+    public bool MakeLifestylesActive(LifeStyles ls)
     {
-        if (LifestylesActive > maxLifestyles) return;
-        bool found = false;
-        foreach (LifeStyles l in LifeStylesActive)
-        {
-            if (l == ls)
-                found = true;
-        }
+        if (lifeStylesActive.Count >= maxLifestyles) return false;
 
-        if (!found)
+        if (!lifeStylesActive.Contains(ls))
         {
-            LifeStylesActive.Add(ls);
-            LifestylesActive++;
+            lifeStylesActive.Add(ls); 
+            return true;
         }
+        return false;
     }
+
     public void DeActiveLifestyles(LifeStyles ls)
     {
-        bool found = false;
-        foreach(LifeStyles l in LifeStylesActive)
-        {
-            if (l == ls)
-                found = true;
-        }
-
-        if(found)
-            LifeStylesActive.Remove(ls);
+        if (lifeStylesActive.Contains(ls))
+            lifeStylesActive.Remove(ls);
     }
 
     public void AddAllActive()
     {
-        foreach (LifeStyles ls in LifeStylesActive)
+        foreach (LifeStyles ls in lifeStylesActive)
             AddLifestyle(ls);
     }
+
     private void AddLifestyle(LifeStyles LS)
     {
-        string scriptName = LS.scriptName;
-        var type = System.Type.GetType(scriptName);
-
-        if (type == null)
+        if (LS.script == null)
         {
-            Debug.LogError("Type not found: " + scriptName);
+            Debug.LogError("No script assigned to lifestyle: " + LS.lifestyleName);
             return;
         }
 
-        var comp = gameObject.AddComponent(type) as lifestyleScript;
+        var type = LS.script.GetClass();
+        if (type == null)
+        {
+            Debug.LogError("Could not resolve script for: " + LS.lifestyleName);
+            return;
+        }
 
+        if (gameObject.GetComponent(type) != null)
+            return;
+
+        var comp = gameObject.AddComponent(type) as lifestyleScript;
         if (comp == null)
         {
-            Debug.LogError("Type is not a lifestyleScript: " + scriptName);
+            Debug.LogError("Script is not a lifestyleScript: " + LS.script.name);
             return;
         }
 

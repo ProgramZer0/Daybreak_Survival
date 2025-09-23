@@ -1,12 +1,13 @@
+using UnityEditor;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "LifeStyles", menuName = "Scriptable Objects/LifeStyles")]
+[CreateAssetMenu(fileName = "LifeStyles", menuName = "LifeStyles")]
 public class LifeStyles : ScriptableObject
 {
     [Header("Main Settings")]
     public string lifestyleName;
     public int id;
-    public string scriptName;
+    public MonoScript script;
     public bool isUnlocked = false;
     public bool isEnabled = false;
     public Rarity rarity = Rarity.common;

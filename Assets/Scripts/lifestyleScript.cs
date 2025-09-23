@@ -17,8 +17,8 @@ public abstract class lifestyleScript : MonoBehaviour
         timer += Time.deltaTime;
 
         if (timer >= timeToTrigger)
-            if (useUpdate)
-                TriggerLifestyle();
+            if (useUpdate && TriggerLifestyle())
+                timer = 0f; 
     }
 
     private bool CheckLim()
