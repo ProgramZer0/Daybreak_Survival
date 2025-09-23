@@ -8,9 +8,11 @@ public class LifeStyles : ScriptableObject
     public string lifestyleName;
     public int id;
     public MonoScript script;
-    public bool isUnlocked = false;
-    public bool isEnabled = false;
     public Rarity rarity = Rarity.common;
+    public GameObject lifestyleObj;
+    public Sprite displaySpirte;
+    [TextArea]
+    public string description;
 
     [Header("Complex Lifestyle Settings")]
     public bool lifestyleTriggeredEveryFrame = false;

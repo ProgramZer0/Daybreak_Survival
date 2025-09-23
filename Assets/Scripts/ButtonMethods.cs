@@ -4,7 +4,17 @@ public class ButtonMethods : MonoBehaviour
 {
     [SerializeField] private MainGUIController GUI;
     [SerializeField] private GameManager GM;
+    [SerializeField] private LifeStyleController LSC;
+    [SerializeField] private LifestyleGUI LSGui;
 
+    public void NextPage()
+    {
+        LSGui.DisplayNextPage();
+    }
+    public void PreviousPage()
+    {
+        LSGui.DisplayPreviousPage();
+    }
     public void ResumeGame_B()
     {
         FindAnyObjectByType<SoundManager>().Play("buttonClick");

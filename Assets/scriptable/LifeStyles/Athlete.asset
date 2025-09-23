@@ -10,27 +10,30 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 093041cb943546348bdffcfc855cd123, type: 3}
-  m_Name: BasicLife
+  m_Name: Athlete
   m_EditorClassIdentifier: 
-  lifestyleName: 
+  lifestyleName: 'Athelete '
   id: 0
   script: {fileID: 11500000, guid: 8a0818624976db144b3b5650de25bcbe, type: 3}
-  isUnlocked: 0
-  isEnabled: 0
   rarity: 0
+  lifestyleObj: {fileID: 0}
+  displaySpirte: {fileID: 21300000, guid: e2e78dfdf84ad834e8e0c88e77dbda08, type: 3}
+  description: You are crazy fast! Now in this life you seem to be amazing at running
+    and keeping up speed for longer. You don't seem as sneaky though... "RUN FOREST
+    RUN!!!"
   lifestyleTriggeredEveryFrame: 0
   hasLimit: 0
   triggerLimit: 1
   eachTriggerTime: 0
-  ModNormSpeed: 0
-  ModSprintSpeed: 0
-  ModCrouchSpeed: 0
+  ModNormSpeed: 0.5
+  ModSprintSpeed: 2
+  ModCrouchSpeed: -0.5
   ModDashCooldown: 0
   ModDashRange: 0
   ModDashOffset: 0
-  ModSprintTime: 0
-  ModSprintCooldown: 0
-  ModMaxSprintDebuffTime: 0
+  ModSprintTime: 10
+  ModSprintCooldown: -2
+  ModMaxSprintDebuffTime: -2
   ModInteractRange: 0
   ModPickupRange: 0
   ModHordeForgetTime: 0

@@ -6,6 +6,7 @@ public class LifeStyleController : MonoBehaviour
     [SerializeField] private PlayerInterface player;
     [SerializeField] private LifeStyles[] allLSs;
     [SerializeField] private int maxLifestyles = 10;
+    public GameObject toolTipPreFab;
 
     public List<LifeStyles> lifeStylesAvailable;
     private List<LifeStyles> lifeStylesActive;
@@ -14,6 +15,12 @@ public class LifeStyleController : MonoBehaviour
     {
         lifeStylesActive = new List<LifeStyles>();
         lifeStylesAvailable = new List<LifeStyles>();
+    }
+
+    public bool CheckIfFull()
+    {
+        if (lifeStylesActive.Count >= maxLifestyles) return true;
+        else return false;
     }
 
     public bool MakeLifestylesActive(LifeStyles ls)
