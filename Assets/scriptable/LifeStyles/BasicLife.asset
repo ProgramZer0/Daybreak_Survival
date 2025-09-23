@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lifestyleName: 
   id: 0
-  script: {fileID: 0}
+  script: {fileID: 11500000, guid: 8a0818624976db144b3b5650de25bcbe, type: 3}
   isUnlocked: 0
   isEnabled: 0
   rarity: 0
