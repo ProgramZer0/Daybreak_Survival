@@ -37,5 +37,6 @@ public class LifeStyles : ScriptableObject
     public float ModSeeDistance = 0f;
     public float ModlightDistance = 0f;
     public bool hasNightVison = false;
-
+    public float ModEnemySeeRange = 0f;
+    public float ModLoudness = 0f;
 }

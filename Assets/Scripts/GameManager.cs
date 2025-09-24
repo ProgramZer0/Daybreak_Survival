@@ -1,9 +1,13 @@
 using System.Collections;
+using System.IO;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
 public class GameManager : MonoBehaviour
 {
+    //[Header("Save Settings")]
+
+
     [Header("Used Game objects")]
     [SerializeField] private MainGUIController GUI;
     [SerializeField] private LifeStyleController LSC;
@@ -34,6 +38,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float minNoMusic;
     [SerializeField] private float maxNoMusic;
 
+    private static string SavePath => Path.Combine(Application.persistentDataPath, "playerSave.json");
+
     private float cycleTimer = 0;
     private float deathTimer = 0f;
     private bool isDay = true;
@@ -43,6 +49,7 @@ public class GameManager : MonoBehaviour
     {
         ResetDNCycle();
         StartCoroutine(PlayLate(1,1));
+        LoadData();
     }
 
     private void ResetDNCycle()
@@ -140,13 +147,13 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
-        LSC.AddAllActive();
         inMenu = false;
         cycleEnabled = true;
         ResetGame();
         enemyController.enableSpawning(true);
         SetEnvMusic(0.5f);
         SetAmbiance();
+        LSC.AddAllActive();
     }
 
     public void EndGameFail()
@@ -154,9 +161,60 @@ public class GameManager : MonoBehaviour
 
     }
 
-    public void SaveGame()
+    public void SaveGameData()
     {
+        var saveData = new PlayerSaveData();
 
+        foreach (var ls in LSC.lifeStylesAvailable)
+            saveData.availableLifestyleIds.Add(ls.id);
+
+        var active = LSC.GetActiveLifestyles();
+        foreach (var ls in active)
+            saveData.activeLifestyleIds.Add(ls.id);
+
+        saveData.crouchToggle = player.GetCrouchToggle();
+        saveData.musicVolume = SM.getSoundMusicMod();
+        saveData.soundVolume = SM.GetSoundMod();
+
+        string json = JsonUtility.ToJson(saveData, true);
+        File.WriteAllText(SavePath, json);
+
+        Debug.Log($"Game saved to {SavePath}");
+    }
+
+    public void LoadData()
+    {
+        if (!File.Exists(SavePath))
+        {
+            Debug.LogWarning("No save file found!");
+            return;
+        }
+
+        string json = File.ReadAllText(SavePath);
+        var saveData = JsonUtility.FromJson<PlayerSaveData>(json);
+
+        LSC.ClearAll();
+
+        foreach (int id in saveData.availableLifestyleIds)
+        {
+            LifeStyles ls = System.Array.Find(LSC.GetAllLifeStyles(), x => x.id == id);
+            if (ls != null && !LSC.lifeStylesAvailable.Contains(ls))
+                LSC.lifeStylesAvailable.Add(ls);
+        }
+
+        foreach (int id in saveData.activeLifestyleIds)
+        {
+            LifeStyles ls = System.Array.Find(LSC.GetAllLifeStyles(), x => x.id == id);
+            if (ls != null)
+                LSC.MakeLifestylesActive(ls);
+        }
+
+        // Apply settings
+        player.SetCrouchToggle(saveData.crouchToggle);
+        SM.SetSoundMusicMod(saveData.musicVolume);
+        SM.SetSoundMod(saveData.soundVolume);
+
+        Debug.Log("Game loaded from save file.");
     }
 
     private void SetDay()

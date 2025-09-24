@@ -24,17 +24,19 @@ public class LifestyleGUI : MonoBehaviour
 
     public void LoadLifeStyles()
     {
+        pages = new List<GameObject>();
 
         AddPage(false);
         foreach(LifeStyles ls in controller.lifeStylesAvailable)
         {
             if(currentLSonPage >= maxLSPerPage)
                 AddPage(true);
-
+            bool isAct = false;
             GameObject o =  Instantiate(lifeStylePrefab, pages[currentPage].transform);
             o.transform.SetAsLastSibling();
-            o.GetComponent<LifestyleButton>().lifeStyle = ls;
-            o.GetComponent<LifestyleButton>().Initilize(controller, this);
+            if (controller.GetActiveLifestyles().Contains(ls))
+                isAct = true;
+            o.GetComponentInChildren<LifestyleButton>().Initilize(controller, this, ls, isAct);
             currentLSonPage++;
         }
 
@@ -43,7 +45,7 @@ public class LifestyleGUI : MonoBehaviour
 
     private void AddPage(bool increment = true)
     {
-        if(pages.Count != 0)
+        if(pages.Count > 0)
             pages[currentPage].SetActive(false);
         currentLSonPage = 0;
         GameObject o = Instantiate(PagePreFab, transform);

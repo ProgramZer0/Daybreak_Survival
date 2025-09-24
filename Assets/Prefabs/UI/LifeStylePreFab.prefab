@@ -183,3 +183,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lifeStyle: {fileID: 0}
   button: {fileID: 7971571322049143556}
+  highlightedColor: {r: 0.612985, g: 0.80874777, b: 0.8962264, a: 1}

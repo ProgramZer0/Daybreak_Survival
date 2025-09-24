@@ -32,6 +32,8 @@ public class BasicLifeStyle : lifestyleScript
         player.ModPickupRange += LS.ModPickupRange;
         player.ModHordeForgetTime += LS.ModHordeForgetTime;
         player.ModMaxHP += LS.ModMaxHP;
+        player.ModLoudness += LS.ModLoudness;
+        player.ModEnemySeeRange += LS.ModEnemySeeRange;
     }                   
 
     protected override void Tick()

@@ -19,6 +19,7 @@ public class PlayerInterface : MonoBehaviour
     [SerializeField] private MainGUIController GUI;
     [SerializeField] private SoundManager SM;
     [SerializeField] private GameManager GM;
+    [SerializeField] private LifeStyleController LSC;
     [SerializeField] private HPBar HpBar;
     [SerializeField] private WeaponHUD weaponHUD;
     [SerializeField] private CameraController CC;
@@ -36,6 +37,7 @@ public class PlayerInterface : MonoBehaviour
     [SerializeField] private float interactRange = 2f;
     [SerializeField] private float pickupRange = 1f;
     [SerializeField] private float maxHP = 10f;
+
     [SerializeField] private float hordeForgetTime = 5f;
 
     [SerializeField] private LayerMask interactLayer;
@@ -109,6 +111,8 @@ public class PlayerInterface : MonoBehaviour
     public float ModPickupRange = 0f;
     public float ModHordeForgetTime = 0f;
 
+    public float ModEnemySeeRange = 0f;
+    public float ModLoudness = 0f;
     public float ModMaxHP = 0f;
     public float ModSeeDistance = 0f;
     public float ModlightDistance = 0f;
@@ -136,6 +140,8 @@ public class PlayerInterface : MonoBehaviour
         ModSeeDistance = 0f;
         ModlightDistance = 0f;
         hasNightVison = false;
+        ModLoudness = 0f;
+        ModEnemySeeRange = 0f;
     }
 
     public float GetMaxHP() { return(maxHP + ModMaxHP); }
@@ -261,12 +267,18 @@ public class PlayerInterface : MonoBehaviour
         if (sprintTimer < (sprintTime + ModSprintTime))
             wentOverSprint = false;
     }
-    
+    public bool AddNewLifestyle(LifeStyles lifeStyle)
+    {
+        if (LSC.lifeStylesAvailable.Contains(lifeStyle)) return false;
+
+        LSC.lifeStylesAvailable.Add(lifeStyle);
+        GM.SaveGameData();
+        return true;
+    }
     public Weapon GetActiveWeapon()
     {
         return currentWeapon;
     }
-
     public bool GetSprinting() { return sprinting; }
 
     private void FixedUpdate()
@@ -821,6 +833,10 @@ public class PlayerInterface : MonoBehaviour
     public void SetCrouchToggle(bool tog)
     {
         crouchToggle = tog;
+    }
+    public bool GetCrouchToggle()
+    {
+        return crouchToggle;
     }
     public bool GetCrouch()
     {

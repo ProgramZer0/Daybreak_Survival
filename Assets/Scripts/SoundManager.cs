@@ -4,13 +4,21 @@ using UnityEngine;
 
 public class SoundManager : MonoBehaviour
 {
+    [SerializeField] GameManager GM;
     public Sound[] sounds;
+    
 
     private float modSound = 0.6f;
-    private float musicSound = 0.3f;
+    private float modMusicSound = 0.3f;
 
     private Sound currentMusic;   
     private Coroutine musicFadeCoroutine;
+
+    private void Update()
+    {
+        if(currentMusic != null)
+            if (!currentMusic.source.isPlaying) GM.SetEnvMusic(1, false);
+    }
 
     private void Awake()
     {
@@ -40,7 +48,7 @@ public class SoundManager : MonoBehaviour
         if (s.source.isPlaying)
             return;
 
-        float finalVolume = s.volume * (s.isMusic ? musicSound : modSound);
+        float finalVolume = s.volume * (s.isMusic ? modMusicSound : modSound);
 
         s.source.volume = finalVolume;
         s.source.Play();
@@ -66,7 +74,7 @@ public class SoundManager : MonoBehaviour
             return;
         }
 
-        float finalVolume = s.volume * (s.isMusic ? musicSound : modSound);
+        float finalVolume = s.volume * (s.isMusic ? modMusicSound : modSound);
 
         s.source.volume = finalVolume;
         s.source.Play();
@@ -82,7 +90,7 @@ public class SoundManager : MonoBehaviour
             return;
         }
         
-        float finalVolume = s.volume * (s.isMusic ? musicSound : modSound);
+        float finalVolume = s.volume * (s.isMusic ? modMusicSound : modSound);
         float finalPitch = s.pitch + UnityEngine.Random.Range((0-plus_minusP), plus_minusP);
         
         s.source.volume = finalVolume;
@@ -145,13 +153,13 @@ public class SoundManager : MonoBehaviour
         }
 
         s.source.Stop();
-        s.source.volume = s.volume * (s.isMusic ? musicSound : modSound); 
+        s.source.volume = s.volume * (s.isMusic ? modMusicSound : modSound); 
         if (s == currentMusic)
             currentMusic = null;
     }
     private IEnumerator FadeInCoroutine(Sound s, float fadeTime)
     {
-        float targetVolume = s.volume * (s.isMusic ? musicSound : modSound);
+        float targetVolume = s.volume * (s.isMusic ? modMusicSound : modSound);
 
         s.source.volume = 0f;
         s.source.Play();
@@ -217,10 +225,10 @@ public class SoundManager : MonoBehaviour
             float t = timer / fadeTime;
 
             if (oldMusic != null)
-                oldMusic.source.volume = Mathf.Lerp(oldMusic.volume * musicSound, 0f, t);
+                oldMusic.source.volume = Mathf.Lerp(oldMusic.volume * modMusicSound, 0f, t);
 
             if (newMusic != null)
-                newMusic.source.volume = Mathf.Lerp(0f, newMusic.volume * musicSound, t);
+                newMusic.source.volume = Mathf.Lerp(0f, newMusic.volume * modMusicSound, t);
 
             yield return null;
         }
@@ -228,11 +236,11 @@ public class SoundManager : MonoBehaviour
         if (oldMusic != null)
         {
             oldMusic.source.Stop();
-            oldMusic.source.volume = oldMusic.volume * musicSound; 
+            oldMusic.source.volume = oldMusic.volume * modMusicSound; 
         }
 
         if (newMusic != null)
-            newMusic.source.volume = newMusic.volume * musicSound;
+            newMusic.source.volume = newMusic.volume * modMusicSound;
 
         musicFadeCoroutine = null;
     }
@@ -274,6 +282,21 @@ public class SoundManager : MonoBehaviour
         return currentMusic != null ? currentMusic.name : null;
     }
 
-    public void SetSoundMod(float vol) => modSound = vol;
-    public void SetSoundMusicMod(float vol) => musicSound = vol;
+    public void SetSoundMod(float vol)
+    {
+        modSound = vol;
+        foreach (Sound s in sounds)
+        {
+            if (s != currentMusic)
+                s.source.volume = s.volume * modSound;
+        }
+    }
+    public void SetSoundMusicMod(float vol)
+    {
+        modMusicSound = vol;
+        if(currentMusic != null)
+            currentMusic.source.volume = currentMusic.volume * modMusicSound;
+    }
+    public float getSoundMusicMod() { return modMusicSound; }
+
 }

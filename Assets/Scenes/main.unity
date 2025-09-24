@@ -2476,7 +2476,7 @@ MonoBehaviour:
   PagePreFab: {fileID: 3972263013608139313, guid: 7fbd47009ca25ae468f5b865236a7ede, type: 3}
   lifeStylePrefab: {fileID: 3982350922863849428, guid: daf8a22e0ce1ba849ba9b11e01e2a4a3, type: 3}
   controller: {fileID: 1754269203}
-  maxLSPerPage: 20
+  maxLSPerPage: 15
   nextButton: {fileID: 913410111}
   previousButton: {fileID: 989101473}
   displayingPage: 0
@@ -2655,8 +2655,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GUI: {fileID: 1460363059}
   GM: {fileID: 1754269201}
-  LSC: {fileID: 0}
-  LSGui: {fileID: 0}
+  LSC: {fileID: 1754269203}
+  LSGui: {fileID: 68430710}
 --- !u!114 &88412491
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2703,7 +2703,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 305992784}
         m_TargetAssemblyTypeName: ButtonMethods, Assembly-CSharp
-        m_MethodName: OpenLifestyle
+        m_MethodName: OpenLifestyle_B
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -8571,6 +8571,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SM: {fileID: 276416484}
   player: {fileID: 868446135}
+  sliderType: 1
 --- !u!114 &192016307
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9084,6 +9085,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SM: {fileID: 276416484}
   player: {fileID: 868446135}
+  sliderType: 2
 --- !u!114 &216598699
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9594,6 +9596,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea87734a5f20bd645b60da06afaa6bee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  GM: {fileID: 1754269201}
   sounds:
   - name: footStep
     clip: {fileID: 8300000, guid: 19e82294e11dd5d4aa30bac9ca51ad55, type: 3}
@@ -9660,35 +9663,35 @@ MonoBehaviour:
     source: {fileID: 0}
   - name: DayMusic4
     clip: {fileID: 8300000, guid: e360a811bccaae54593717f7abac9e8b, type: 3}
-    loop: 1
+    loop: 0
     isMusic: 1
     volume: 0.523
     pitch: 1
     source: {fileID: 0}
   - name: DayMusic5
     clip: {fileID: 8300000, guid: 93e2807e926a1ab45833e63458d449ae, type: 3}
-    loop: 1
+    loop: 0
     isMusic: 1
     volume: 0.523
     pitch: 1
     source: {fileID: 0}
   - name: DayMusic3
     clip: {fileID: 8300000, guid: 20974793b56f7ea4db682693c3d2618d, type: 3}
-    loop: 1
+    loop: 0
     isMusic: 1
     volume: 0.523
     pitch: 1
     source: {fileID: 0}
   - name: DayMusic2
     clip: {fileID: 8300000, guid: 4c18f87f134e195489200e009472aa7f, type: 3}
-    loop: 1
+    loop: 0
     isMusic: 1
     volume: 0.523
     pitch: 1
     source: {fileID: 0}
   - name: DayMusic1
     clip: {fileID: 8300000, guid: 2061842a8a54f244192f14887e53a7ba, type: 3}
-    loop: 1
+    loop: 0
     isMusic: 1
     volume: 0.523
     pitch: 1
@@ -9716,35 +9719,35 @@ MonoBehaviour:
     source: {fileID: 0}
   - name: NightMusic1
     clip: {fileID: 8300000, guid: 1bebdc475cd31044c8ea2cc534816919, type: 3}
-    loop: 1
+    loop: 0
     isMusic: 1
     volume: 0.523
     pitch: 1
     source: {fileID: 0}
   - name: NightMusic2
     clip: {fileID: 8300000, guid: 8e9ed872498435c489ec6d6a3516e6a8, type: 3}
-    loop: 1
+    loop: 0
     isMusic: 1
     volume: 0.523
     pitch: 1
     source: {fileID: 0}
   - name: NightMusic3
     clip: {fileID: 8300000, guid: 5a6d3bea9bb270645a818852eb4565d6, type: 3}
-    loop: 1
+    loop: 0
     isMusic: 1
     volume: 0.523
     pitch: 1
     source: {fileID: 0}
   - name: mainMusic1
     clip: {fileID: 8300000, guid: ae887475a694d8143a1a66d222103966, type: 3}
-    loop: 1
+    loop: 0
     isMusic: 1
     volume: 0.523
     pitch: 1
     source: {fileID: 0}
   - name: mainMusic2
     clip: {fileID: 8300000, guid: e1b1d12f18bd5c3488dcff44bcec5452, type: 3}
-    loop: 1
+    loop: 0
     isMusic: 1
     volume: 0.523
     pitch: 1
@@ -9985,8 +9988,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GUI: {fileID: 1460363059}
   GM: {fileID: 1754269201}
-  LSC: {fileID: 0}
-  LSGui: {fileID: 0}
+  LSC: {fileID: 1754269203}
+  LSGui: {fileID: 68430710}
 --- !u!114 &305992785
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11322,6 +11325,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SM: {fileID: 276416484}
   player: {fileID: 868446135}
+  sliderType: 0
 --- !u!114 &385859664
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -86442,6 +86446,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SM: {fileID: 276416484}
   player: {fileID: 868446135}
+  sliderType: 0
 --- !u!114 &574454085
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -87262,8 +87267,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GUI: {fileID: 1460363059}
   GM: {fileID: 1754269201}
-  LSC: {fileID: 0}
-  LSGui: {fileID: 0}
+  LSC: {fileID: 1754269203}
+  LSGui: {fileID: 68430710}
 --- !u!114 &677938217
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -95326,6 +95331,7 @@ MonoBehaviour:
   GUI: {fileID: 1460363059}
   SM: {fileID: 276416484}
   GM: {fileID: 1754269201}
+  LSC: {fileID: 0}
   HpBar: {fileID: 1256714497}
   weaponHUD: {fileID: 701536587}
   CC: {fileID: 278462053}
@@ -95402,6 +95408,8 @@ MonoBehaviour:
   ModInteractRange: 0
   ModPickupRange: 0
   ModHordeForgetTime: 0
+  ModEnemySeeRange: 0
+  ModLoudness: 0
   ModMaxHP: 0
   ModSeeDistance: 0
   ModlightDistance: 0
@@ -101090,8 +101098,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GUI: {fileID: 1460363059}
   GM: {fileID: 1754269201}
-  LSC: {fileID: 0}
-  LSGui: {fileID: 0}
+  LSC: {fileID: 1754269203}
+  LSGui: {fileID: 68430710}
 --- !u!114 &1468073151
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -103055,7 +103063,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GUI: {fileID: 1460363059}
-  LSC: {fileID: 0}
+  LSC: {fileID: 1754269203}
   builder: {fileID: 1754269200}
   player: {fileID: 868446135}
   playerRenderer: {fileID: 935512252}
@@ -103126,8 +103134,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2b3bf8963e3e9e04a8184b1a1af363f6, type: 2}
   maxLifestyles: 10
   toolTipPreFab: {fileID: 6287030776202556268, guid: 15df2d2663f2b3e4d91f4e90cf0988c7, type: 3}
-  lifeStylesAvailable:
-  - {fileID: 11400000, guid: 2b3bf8963e3e9e04a8184b1a1af363f6, type: 2}
+  allLifestyles: []
+  lifeStylesAvailable: []
 --- !u!1 &1756221241
 GameObject:
   m_ObjectHideFlags: 0
@@ -124942,6 +124950,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SM: {fileID: 276416484}
   player: {fileID: 868446135}
+  sliderType: 2
 --- !u!114 &1980960441
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -125674,6 +125683,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SM: {fileID: 276416484}
   player: {fileID: 868446135}
+  sliderType: 1
 --- !u!114 &2015075546
 MonoBehaviour:
   m_ObjectHideFlags: 0

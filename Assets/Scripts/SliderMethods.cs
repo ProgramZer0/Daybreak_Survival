@@ -1,10 +1,34 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+public enum SliderType
+{
+    musicVol,
+    otherVol,
+    crouch
+}
 public class SliderMethods : MonoBehaviour
 {
     [SerializeField] private SoundManager SM;
     [SerializeField] private PlayerInterface player;
+    [SerializeField] private SliderType sliderType;
+
+    private void OnEnable()
+    {
+        if(sliderType == SliderType.crouch)
+        {
+            gameObject.GetComponent<Toggle>().isOn = player.GetCrouchToggle();
+        }
+        if (sliderType == SliderType.musicVol)
+        {
+
+            gameObject.GetComponent<Slider>().value = SM.getSoundMusicMod();
+        }
+        if (sliderType == SliderType.otherVol)
+        {
+            gameObject.GetComponent<Slider>().value = SM.GetSoundMod();
+        }
+    }
 
     public void setVolume()
     {

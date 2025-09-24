@@ -9,6 +9,8 @@ public class RegularZombie : EnemyBase
     [SerializeField] private float baseRange = 8f;
     [SerializeField] private float rangeNight = 4f;
     [SerializeField] private float baseHearRange = 4f;
+    [SerializeField] private float playerModSeeRange = 0f;
+    [SerializeField] private float seeingRangeThreshhold = 3f;
     [SerializeField] private float baseFOV = 90f;
     [SerializeField] private float fovNight = 30f;
     [SerializeField] private int rayCount = 5;
@@ -17,6 +19,8 @@ public class RegularZombie : EnemyBase
     [SerializeField] private float sprintHearing = 10f;
     [SerializeField] private float gunshotHearing = 100f;
     [SerializeField] private float hearNight = 1f;
+    [SerializeField] private float playerModLoudness = 0f;
+    [SerializeField] private float hearingThreshhold = 0.4f;
     [SerializeField] private float dummmyLOSTime = 2f;
 
     [Header("Horde Settings")]
@@ -95,7 +99,6 @@ public class RegularZombie : EnemyBase
     {
         frameOffset = Random.Range(0, detectionIntervalFrames);
         walkingSound.GetComponent<AudioSource>().volume = walkingSound.GetComponent<AudioSource>().volume * SM.GetSoundMod();
-
     }
     private bool ShouldDetectThisFrame()
     {
@@ -128,6 +131,9 @@ public class RegularZombie : EnemyBase
             Timer += Time.deltaTime * detectionIntervalFrames;
         if(Timer > hordeCheckTimer)
         {
+            playerModLoudness = playerInterface.ModLoudness;
+            playerModSeeRange = playerInterface.ModEnemySeeRange;
+
             Timer = 0;
             if (CountnearbyZombies(smallestHorde))
                 inHorde = true;
@@ -140,17 +146,21 @@ public class RegularZombie : EnemyBase
         {
             LOSSpeed = baseLOSSpeed;
             idleSpeed = baseIdleSpeed;
-            range = baseRange;
+            range = baseRange + playerModSeeRange;
+            if (range < seeingRangeThreshhold)
+                range = seeingRangeThreshhold;
             fov = baseFOV;
-            hearRange = baseHearRange;
+            hearRange = baseHearRange + playerModLoudness;
         }
         else
         {
             LOSSpeed = baseLOSSpeed + nightSpeedMod;
             idleSpeed = baseIdleSpeed + nightSpeedMod;
-            range = rangeNight;
+            range = rangeNight + playerModSeeRange;
+            if (range < seeingRangeThreshhold)
+                range = seeingRangeThreshhold;
             fov = fovNight;
-            hearRange = hearNight;
+            hearRange = hearNight + playerModLoudness;
         }
 
         if (didSee || isSearching)
@@ -331,6 +341,9 @@ public class RegularZombie : EnemyBase
             mod = hearRange + sprintHearing;
         if (playerInterface.GetShottingBool())
             mod = gunshotHearing + playerInterface.GetActiveWeapon().soundMod;
+
+        if (mod < hearingThreshhold)
+            mod = hearingThreshhold;
 
         if (distanceFromPlayer <= mod)
         {

@@ -1,11 +1,20 @@
 using UnityEngine;
 
+public enum pickupType
+{
+    weapon,
+    Ammo,
+    lifestyle,
+    hiddenItem
+}
+
 public class pickup : MonoBehaviour
 {
     public Weapon weapon;
-    [SerializeField] private bool isAmmo = false;
+    [SerializeField] private pickupType pickupType = pickupType.weapon;
     [SerializeField] private WeaponAmmoType weaponAmmoType;
     [SerializeField] private int ammoAmmount = 0;
+    [SerializeField] private LifeStyles lifeStyle;
     public int currentAmmo = 0;
 
 
@@ -14,12 +23,12 @@ public class pickup : MonoBehaviour
         collision.gameObject.TryGetComponent<PlayerInterface>(out PlayerInterface player);
         if (player != null)
         {
-            if (!isAmmo)
+            if (pickupType == pickupType.weapon)
             {
                 Debug.Log("sending pickup");
                 player.SetCurrentPickup(this);
             }
-            else
+            else if(pickupType == pickupType.Ammo)
             {
                 if (player.AddAmmo(weaponAmmoType, ammoAmmount))
                 {
@@ -29,6 +38,23 @@ public class pickup : MonoBehaviour
                 {
                     //full
                 }
+            }
+            else if (pickupType == pickupType.lifestyle)
+            {
+                if(player.AddNewLifestyle(lifeStyle))
+                    Destroy(transform.gameObject);
+                else
+                {
+                    //already have it
+                }
+            }
+            else if (pickupType == pickupType.hiddenItem)
+            {
+
+            }
+            else
+            {
+
             }
         }
     }

@@ -8,14 +8,9 @@ public class LifeStyleController : MonoBehaviour
     [SerializeField] private int maxLifestyles = 10;
     public GameObject toolTipPreFab;
 
+    public LifeStyles[] allLifestyles;
     public List<LifeStyles> lifeStylesAvailable;
     private List<LifeStyles> lifeStylesActive;
-
-    private void Start()
-    {
-        lifeStylesActive = new List<LifeStyles>();
-        lifeStylesAvailable = new List<LifeStyles>();
-    }
 
     public bool CheckIfFull()
     {
@@ -67,7 +62,7 @@ public class LifeStyleController : MonoBehaviour
         if (gameObject.GetComponent(type) != null)
             return;
 
-        var comp = gameObject.AddComponent(type) as lifestyleScript;
+        var comp = player.gameObject.AddComponent(type) as lifestyleScript;
         if (comp == null)
         {
             Debug.LogError("Script is not a lifestyleScript: " + LS.script.name);
@@ -75,5 +70,20 @@ public class LifeStyleController : MonoBehaviour
         }
 
         comp.Initialize(player, LS);
+    }
+
+    public void ClearAll()
+    {
+        lifeStylesActive = new List<LifeStyles>();
+        lifeStylesAvailable = new List<LifeStyles>();
+    }
+    public LifeStyles[] GetAllLifeStyles()
+    {
+        allLifestyles = Resources.LoadAll<LifeStyles>("Scriptables/LifeStyles");
+        return allLifestyles;
+    }
+    public List<LifeStyles> GetActiveLifestyles()
+    {
+        return lifeStylesActive;
     }
 }

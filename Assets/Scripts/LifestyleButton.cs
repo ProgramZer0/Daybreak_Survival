@@ -8,36 +8,48 @@ public class LifestyleButton : MonoBehaviour, IPointerEnterHandler, IPointerExit
 {
     public LifeStyles lifeStyle;
     [SerializeField] private Button button;
+    public Color highlightedColor;
     
     private LifeStyleController controller;
     private LifestyleGUI GUI;
     private GameObject toolTip;
-    private bool showTip = false;
+    private Image image;
+    private Color ImageColor;
     private bool isActive = false;
     private bool useUpdate = false;
 
     private void Update()
     {
+        
         if (!useUpdate) return;
 
         if (!isActive)
+        {
+            image.color = ImageColor;
             button.enabled = !controller.CheckIfFull();
+        }
         else
+        {
+            image.color = highlightedColor;
             button.enabled = true;
-
-        if (showTip) ShowToolTip();
+        }
     }
 
-    public void Initilize(LifeStyleController con, LifestyleGUI gui)
+    public void Initilize(LifeStyleController con, LifestyleGUI gui, LifeStyles ls, bool isAct)
     {
         controller = con;
         GUI = gui;
-        gameObject.GetComponentInChildren<Image>().sprite = lifeStyle.displaySpirte;
+        lifeStyle = ls;
+        image = gameObject.GetComponentInChildren<Image>();
+        image.sprite = lifeStyle.displaySpirte;
+        ImageColor = image.color;
+        isActive = isAct;
         useUpdate = true;
     }
 
     public void ButtonPressed()
     {
+        FindAnyObjectByType<SoundManager>().Play("buttonClick");
         if (!isActive)
         {
             if (controller.MakeLifestylesActive(lifeStyle))
@@ -54,7 +66,10 @@ public class LifestyleButton : MonoBehaviour, IPointerEnterHandler, IPointerExit
     {
         if(toolTip == null)
         {
-            toolTip = Instantiate(controller.toolTipPreFab, GUI.gameObject.transform);
+            toolTip = Instantiate(controller.toolTipPreFab, GUI.transform);
+            toolTip.transform.position = transform.position + transform.localScale;
+            toolTip.GetComponentInChildren<Image>().raycastTarget = false;
+            toolTip.GetComponentInChildren<TextMeshProUGUI>().raycastTarget = false;
             toolTip.transform.SetAsLastSibling();
             TextMeshProUGUI[] text = toolTip.GetComponentsInChildren<TextMeshProUGUI>();
             if (text[0] != null)
@@ -63,18 +78,10 @@ public class LifestyleButton : MonoBehaviour, IPointerEnterHandler, IPointerExit
                 text[1].text = lifeStyle.name;
         }
 
-        showTip = true;
-    }
-
-    private void ShowToolTip()
-    { 
-        if(toolTip != null)
-            toolTip.transform.position = Input.mousePosition;
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        showTip = false;
         HideToolTip();
     }
 
