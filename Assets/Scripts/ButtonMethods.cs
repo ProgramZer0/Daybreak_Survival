@@ -9,11 +9,27 @@ public class ButtonMethods : MonoBehaviour
 
     public void NextPage()
     {
+        FindAnyObjectByType<SoundManager>().Play("buttonClick");
         LSGui.DisplayNextPage();
     }
     public void PreviousPage()
     {
+        FindAnyObjectByType<SoundManager>().Play("buttonClick");
         LSGui.DisplayPreviousPage();
+    }
+    public void BackToMMFromLS()
+    {
+        FindAnyObjectByType<SoundManager>().Play("buttonClick");
+        LSGui.DeleteAllPages();
+        
+    }
+    public void OpenLifestyle_B()
+    {
+        GUI.ShowNoGUI();
+        FindAnyObjectByType<SoundManager>().Play("buttonClick");
+        GUI.OpenLifestyle();
+        LSGui.LoadLifeStyles();
+        BackMainMenu_B();
     }
     public void ResumeGame_B()
     {

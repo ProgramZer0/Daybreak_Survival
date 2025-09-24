@@ -18,6 +18,7 @@ public class MainGUIController : MonoBehaviour
     [SerializeField] private GameObject settingMenuMM;
     [SerializeField] private GameObject settingMenuPM;
     [SerializeField] private GameObject mainMenu;
+    [SerializeField] private GameObject lifestyleGUI;
 
     [SerializeField] private Weapon empty;
     [SerializeField] private PlayerInterface player;
@@ -89,7 +90,18 @@ public class MainGUIController : MonoBehaviour
         player.LockMovement(false);
         mainMenu.SetActive(false);
     }
+    public void ShowNoLifestyle()
+    {
+        inUI = false;
+        player.LockMovement(false);
 
+        lifestyleGUI.SetActive(false);
+    }
+    public void OpenLifestyle()
+    {
+        setInUI();
+        lifestyleGUI.SetActive(true);
+    }
     public Weapon ReturnEmptyWeapon()
     {
         return empty;

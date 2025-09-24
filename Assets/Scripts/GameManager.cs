@@ -6,6 +6,7 @@ public class GameManager : MonoBehaviour
 {
     [Header("Used Game objects")]
     [SerializeField] private MainGUIController GUI;
+    [SerializeField] private LifeStyleController LSC;
     [SerializeField] private GroundBuilder builder;
     [SerializeField] private PlayerInterface player;
     [SerializeField] private SpriteRenderer playerRenderer;
@@ -139,6 +140,7 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
+        LSC.AddAllActive();
         inMenu = false;
         cycleEnabled = true;
         ResetGame();
