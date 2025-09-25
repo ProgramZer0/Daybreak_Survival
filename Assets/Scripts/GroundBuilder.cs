@@ -52,10 +52,6 @@ public class GroundBuilder : MonoBehaviour
 
             // Filter doors to exclude 1-3 (upwards)
             List<int> availableDoors = new List<int>();
-            foreach (int d in creator.doorNumbers)
-            {
-                if (d > 3) availableDoors.Add(d);
-            }
 
             Debug.Log($"[PlanetBuilder] Creator {creator.name} has {availableDoors.Count} available doors: {string.Join(",", availableDoors)}");
 
@@ -76,27 +72,10 @@ public class GroundBuilder : MonoBehaviour
             if (newCube != null)
             {
 
-                int removeActive = creator.DoesDoorExist(door);
-                Debug.Log($"[PlanetBuilder] doesDoorExist({door}) returned {removeActive}");
 
-                if (removeActive >= 0 && removeActive < creator.activeDoors.Count)
-                {
-                    Debug.Log($"[PlanetBuilder] Removing active door index {removeActive} from creator {creator.name}");
-                    creator.activeDoors.RemoveAt(removeActive);
-                }
-                else
-                {
-                    Debug.LogWarning($"[PlanetBuilder] Tried to remove invalid activeDoor index {removeActive} from creator {creator.name}, activeDoors count={creator.activeDoors.Count}");
-                }
 
-                creator.doorNumbers.Remove(door);
 
-                // If creator has no doors left, remove it
-                if (creator.doorNumbers.Count == 0)
-                {
-                    Debug.Log($"[PlanetBuilder] Creator {creator.name} has no doors left, removing from active list.");
-                    activeCubes.RemoveAt(index);
-                }
+
 
                 Debug.Log($"[PlanetBuilder] Successfully spawned new cube {newCube.name}, adding to active list.");
                 activeCubes.Add(newCube);
@@ -162,11 +141,7 @@ public class GroundBuilder : MonoBehaviour
 
         // Find all cubes that have a matching door
         List<Cube> compatibleCubes = new List<Cube>();
-        foreach (Cube qub in cubes)
-        {
-            if (qub.DoesDoorExist(opDoor) >= 0)
-                compatibleCubes.Add(qub);
-        }
+       
 
         Debug.Log($"[PlanetBuilder] Found {compatibleCubes.Count} compatible cubes for door {opDoor}");
 
@@ -175,15 +150,8 @@ public class GroundBuilder : MonoBehaviour
 
         // Pick one randomly
         Cube selectedCube = compatibleCubes[UnityEngine.Random.Range(0, compatibleCubes.Count)];
-        int newIDoor = selectedCube.DoesDoorExist(opDoor);
 
-        Debug.Log($"[PlanetBuilder] Selected cube {selectedCube.name}, newIDoor={newIDoor}");
-
-        int creatorDoorIndex = creator.DoesDoorExist(door);
-        Vector2 spawn = getSpawnLocation(creator, creatorDoorIndex, selectedCube, newIDoor);
-
-        Debug.Log($"[PlanetBuilder] Spawning cube {selectedCube.name} at {spawn}");
-        return tryToSpawnCube(selectedCube, newIDoor, spawn, creator, creatorDoorIndex);
+        return null;
     }
 
     private Cube tryToSpawnCube(Cube newCube, int newDoor, Vector2 spawnLocation, Cube creator, int creatorIDoor)
