@@ -10939,7 +10939,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1903629574103610520, guid: c40ee4860320a954781d70d92bd82260, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 1903629574103610520, guid: c40ee4860320a954781d70d92bd82260, type: 3}
       propertyPath: m_LocalPosition.y
@@ -19770,14 +19770,19 @@ MonoBehaviour:
   cubes: []
   SpawnCube: {fileID: 0}
   spawnObj: {fileID: 0}
-  maxCubes: 100
-  depthWantInCubes: 30
   doorLayer:
     serializedVersion: 2
     m_Bits: 256
   weaponSpawnersObjs: []
   enemySpawnersObj:
   - {fileID: 0}
+  buildingRange: 300
+  minBuildingSpacing: 60
+  roadSpacing: 40
+  maxCubes: 100
+  minBuildings: 1
+  maxBuildings: 5
+  cubeSize: 25
 --- !u!114 &1754269201
 MonoBehaviour:
   m_ObjectHideFlags: 0

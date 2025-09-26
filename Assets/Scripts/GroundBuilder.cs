@@ -7,230 +7,266 @@ public class GroundBuilder : MonoBehaviour
     [SerializeField] private Cube[] cubes;
     [SerializeField] private Cube SpawnCube;
     [SerializeField] private GameObject spawnObj;
-    [SerializeField] private int maxCubes = 100;
-    [SerializeField] private int depthWantInCubes = 30;
 
     public LayerMask doorLayer;
     public List<GameObject> weaponSpawnersObjs;
     public List<GameObject> enemySpawnersObj = new List<GameObject>();
     private List<GameObject> cubeObjs;
 
-    private int cubesSpawned = 0;
-    private int depth = 0;
+    [SerializeField] private int buildingRange = 300;
+    [SerializeField] private int minBuildingSpacing = 60;
+    [SerializeField] private int roadSpacing = 2;
+    [SerializeField] private int minBuildings = 1;
+    [SerializeField] private int maxBuildings = 5;
+    [SerializeField] private float cubeSize = 25f;
+    [SerializeField] private GameObject roadPrefab;
+    [SerializeField] private GameObject[] plainsPrefabs;
+    [SerializeField] private GameObject[] forestPrefabs;
+    [SerializeField] private GameObject[] waterPrefabs;
+
+    [SerializeField] private int chunkSize = 200; 
+    [SerializeField] private float generationBuffer = 100f;
+
+    private Dictionary<SideType, GameObject[]> fillerPrefabs;
+    private HashSet<Vector2Int> roadCells = new HashSet<Vector2Int>();
+    private HashSet<Vector2Int> occupiedCells = new HashSet<Vector2Int>();
+    private List<GameObject> spawnedBuildings = new List<GameObject>();
+
+    private HashSet<Vector2Int> generatedChunks = new HashSet<Vector2Int>();
 
     private void Awake()
     {
         cubeObjs = new List<GameObject>();
         weaponSpawnersObjs = new List<GameObject>();
 
-        Debug.Log("[PlanetBuilder] Awake initialized lists.");
+        Debug.Log("[GroundBuilder] Awake initialized lists.");
+
+        fillerPrefabs = new Dictionary<SideType, GameObject[]> {
+            { SideType.plains, plainsPrefabs },
+            { SideType.forest, forestPrefabs },
+            { SideType.water,  waterPrefabs }
+        };
     }
 
-    [ContextMenu("generate cubes")]
-    public void generateCubes()
+    // Called every frame or on player movement
+    public void GenerateIfNeeded(Vector2 playerPos)
     {
-        Debug.Log("[PlanetBuilder] Starting cube generation...");
-        deleteAllCubes();
+        Vector2Int currentChunk = WorldToChunk(playerPos);
 
-        // Start with some seed cubes
-        Debug.Log("[PlanetBuilder] Adding initial spawn cube at door 8.");
-        addCube(8, SpawnCube);
+        // How many chunks around the player to generate
+        int bufferChunks = Mathf.CeilToInt(generationBuffer / chunkSize);
 
-        System.Random rand = new System.Random();
-
-        // Initialize active cubes list
-        List<Cube> activeCubes = new List<Cube>();
-        foreach (GameObject go in cubeObjs)
-            activeCubes.Add(go.GetComponent<Cube>());
-
-        
-        while (depth < depthWantInCubes && cubesSpawned < maxCubes && activeCubes.Count > 0)
+        for (int x = -bufferChunks; x <= bufferChunks; x++)
         {
-            int index = rand.Next(activeCubes.Count);
-            Cube creator = activeCubes[index];
-            Debug.Log($"[PlanetBuilder] Selected creator cube {creator.name}, depth={depth}, cubesSpawned={cubesSpawned}");
-
-            // Filter doors to exclude 1-3 (upwards)
-            List<int> availableDoors = new List<int>();
-
-            Debug.Log($"[PlanetBuilder] Creator {creator.name} has {availableDoors.Count} available doors: {string.Join(",", availableDoors)}");
-
-            if (availableDoors.Count == 0)
+            for (int y = -bufferChunks; y <= bufferChunks; y++)
             {
-                Debug.Log($"[PlanetBuilder] No available doors for cube {creator.name}, removing from active list.");
-                activeCubes.RemoveAt(index);
-                continue;
-            }
+                Vector2Int checkChunk = currentChunk + new Vector2Int(x, y);
 
-            // Pick a random door from the filtered list
-            int door = availableDoors[rand.Next(availableDoors.Count)];
-            Debug.Log($"[PlanetBuilder] Trying to add cube from creator {creator.name} using door {door}");
-
-            // Spawn a new cube from this door
-            Cube newCube = addCube(door, creator);
-
-            if (newCube != null)
-            {
-
-
-
-
-
-
-                Debug.Log($"[PlanetBuilder] Successfully spawned new cube {newCube.name}, adding to active list.");
-                activeCubes.Add(newCube);
-            }
-            else
-            {
-                //No cube spawned — keep the door in lists so FinishCube() can wall it later
-                Debug.Log($"[PlanetBuilder] Failed to spawn cube from {creator.name} door {door}, leaving door in list for sealing.");
+                if (!generatedChunks.Contains(checkChunk))
+                {
+                    GenerateChunk(checkChunk);
+                    generatedChunks.Add(checkChunk);
+                }
             }
         }
-
-        Debug.Log($"[PlanetBuilder] Generation complete! Spawned {cubesSpawned} cubes, depth: {depth}");
-
-        foreach (GameObject cubeObj in cubeObjs)
-        {
-            cubeObj.GetComponent<Cube>().FinishCube();
-        }
-
     }
 
-    private void deleteAllCubes()
+    private void GenerateChunk(Vector2Int chunkCoord)
     {
-        Debug.Log("[PlanetBuilder] Deleting all cubes...");
-        foreach (GameObject obj in cubeObjs)
-            Destroy(obj);
+        Vector2 worldCenter = ChunkToWorld(chunkCoord);
 
-        cubeObjs = new List<GameObject>();
-        weaponSpawnersObjs = new List<GameObject>();
-        enemySpawnersObj = new List<GameObject>();
+        Debug.Log($"[ChunkGen] Generating chunk {chunkCoord} at world {worldCenter}");
 
-        cubesSpawned = 0;
-        depth = 0;
+        // Each chunk runs its own generation
+        SpawnBuildings(worldCenter);
+        GenerateRoads();
+        FillEmptyCells(chunkCoord);
     }
 
-    private Vector2 getSpawnLocation(Cube creator, int creatorIDoor, Cube newCube, int newIDoor)
+    private void SpawnBuildings(Vector2 chunkCenter)
     {
-        Debug.Log($"[PlanetBuilder] getSpawnLocation: creator={creator.name}, creatorIDoor={creatorIDoor}, newCube={newCube.name}, newIDoor={newIDoor}");
+        int buildingCount = UnityEngine.Random.Range(minBuildings, maxBuildings + 1);
+        int attempts = 0;
 
-        if (creatorIDoor < 0 || creatorIDoor >= creator.activeDoors.Count)
+        while (buildingCount > 0 && attempts < buildingCount * 20)
         {
-            Debug.LogError($"[PlanetBuilder] Invalid creatorIDoor index {creatorIDoor} for cube {creator.name}, activeDoors count={creator.activeDoors.Count}");
-            return creator.transform.position;
-        }
-        if (newIDoor < 0 || newIDoor >= newCube.activeDoors.Count)
-        {
-            Debug.LogError($"[PlanetBuilder] Invalid newIDoor index {newIDoor} for cube {newCube.name}, activeDoors count={newCube.activeDoors.Count}");
-            return creator.transform.position;
-        }
+            attempts++;
 
-        Vector2 creatorDoorWorld = creator.activeDoors[creatorIDoor].transform.position;
-        Vector2 newCubeDoorLocal = newCube.activeDoors[newIDoor].transform.localPosition;
-        Vector2 spawnPos = creatorDoorWorld - newCubeDoorLocal;
-        Debug.Log($"[PlanetBuilder] Calculated spawn position {spawnPos}");
-        return spawnPos;
-    }
+            Vector2Int randomCell = WorldToGrid(
+                chunkCenter + UnityEngine.Random.insideUnitCircle * (chunkSize * 0.5f)
+            );
 
-    private Cube addCube(int door, Cube creator)
-    {
-        Debug.Log($"[PlanetBuilder] addCube called with door={door}, creator={creator.name}");
-
-        int opDoor = findOpDoor(door);
-        Debug.Log($"[PlanetBuilder] Opposite door of {door} is {opDoor}");
-
-        // Find all cubes that have a matching door
-        List<Cube> compatibleCubes = new List<Cube>();
-       
-
-        Debug.Log($"[PlanetBuilder] Found {compatibleCubes.Count} compatible cubes for door {opDoor}");
-
-        if (compatibleCubes.Count == 0)
-            return null; // no cube fits, skip
-
-        // Pick one randomly
-        Cube selectedCube = compatibleCubes[UnityEngine.Random.Range(0, compatibleCubes.Count)];
-
-        return null;
-    }
-
-    private Cube tryToSpawnCube(Cube newCube, int newDoor, Vector2 spawnLocation, Cube creator, int creatorIDoor)
-    {
-        Debug.Log($"[PlanetBuilder] tryToSpawnCube: newCube={newCube.name}, newDoor={newDoor}, spawnLocation={spawnLocation}, creator={creator.name}, creatorIDoor={creatorIDoor}");
-
-        if (creatorIDoor < 0 || creatorIDoor >= creator.activeDoors.Count)
-        {
-            Debug.LogError($"[PlanetBuilder] Invalid creatorIDoor index {creatorIDoor} when spawning cube {newCube.name}. Creator {creator.name} has {creator.activeDoors.Count} activeDoors.");
-            return null;
-        }
-
-        creator.activeDoors[creatorIDoor].SetActive(false);
-        Collider2D hit = Physics2D.OverlapCircle(creator.activeDoors[creatorIDoor].transform.position, 0.2f, doorLayer);
-        if (hit != null)
-        {
-            Debug.Log($"[PlanetBuilder] Overlap found, blocked by {hit.gameObject.name}. Cancelling spawn.");
-            creator.activeDoors[creatorIDoor].SetActive(true);
-            return null;
-        }
-        creator.activeDoors[creatorIDoor].SetActive(true);
-
-        // Spawn the cube
-        GameObject cube = GameObject.Instantiate(newCube.cubePrefab, spawnLocation, Quaternion.identity);
-        cube.transform.SetParent(transform, worldPositionStays: true);
-        cubesSpawned++;
-        cubeObjs.Add(cube);
-
-        Debug.Log($"[PlanetBuilder] Spawned cube {cube.name}, total spawned={cubesSpawned}");
-
-        // Add equipment spawners
-        Cube cubeComponent = cube.GetComponent<Cube>();
-        if (cubeComponent.weaponSpawners.Length > 0)
-        {
-            for (int i = 0; i < cubeComponent.weaponSpawners.Length; i++)
+            // Skip if occupied
+            bool tooClose = false;
+            foreach (Vector2Int existing in occupiedCells)
             {
-                weaponSpawnersObjs.Add(cubeComponent.weaponSpawners[i]);
+                if (Vector2Int.Distance(existing, randomCell) < minBuildingSpacing / cubeSize)
+                {
+                    tooClose = true;
+                    break;
+                }
             }
-            Debug.Log($"[PlanetBuilder] Added {cubeComponent.weaponSpawners.Length} equipment spawners from {cube.name}");
-        }
+            if (tooClose) continue;
 
-        // Add enemy spawners
-        if (cubeComponent.enemySpawners.Length > 0)
-        {
-            for (int i = 0; i < cubeComponent.enemySpawners.Length; i++)
+            Cube prefab = PickRandomBuildingCube();
+            if (prefab == null) continue;
+
+            Vector2 spawnPos = GridToWorld(randomCell);
+            GameObject newCubeObj = Instantiate(prefab.cubePrefab, spawnPos, Quaternion.identity, transform);
+            Cube newCube = newCubeObj.GetComponent<Cube>();
+            spawnedBuildings.Add(newCubeObj);
+            occupiedCells.Add(randomCell);
+
+            Debug.Log($"[Buildings] Spawned {newCube.name} at {randomCell}");
+
+            // Check sides for extra prefabs
+            foreach (cubeSide side in newCube.sides)
             {
-                enemySpawnersObj.Add(cubeComponent.enemySpawners[i]);
+                if (side == null) continue;
+                if (side.isDefinedConnected && side.PrefabNeeded != null)
+                {
+                    Vector3 attachPos = side.transform.position;
+                    Instantiate(side.PrefabNeeded, attachPos, Quaternion.identity, newCube.transform);
+                }
             }
-            Debug.Log($"[PlanetBuilder] Added {cubeComponent.enemySpawners.Length} enemy spawners from {cube.name}");
-        }
 
-        // Increase depth if needed
-        if (creatorIDoor >= 7 && creatorIDoor <= 9)
-        {
-            depth++;
-            Debug.Log($"[PlanetBuilder] Increased depth to {depth}");
+            buildingCount--;
         }
-
-        return cubeComponent;
     }
 
-    private int findOpDoor(int d)
+    private void GenerateRoads()
     {
-        switch (d)
+        foreach (GameObject buildingObj in spawnedBuildings)
         {
-            case 1: return 9;
-            case 2: return 8;
-            case 3: return 7;
-            case 4: return 12;
-            case 5: return 11;
-            case 6: return 10;
-            case 7: return 3;
-            case 8: return 2;
-            case 9: return 1;
-            case 10: return 6;
-            case 11: return 5;
-            case 12: return 4;
+            Cube building = buildingObj.GetComponent<Cube>();
+            Vector2Int buildingCell = WorldToGrid(buildingObj.transform.position);
+
+            foreach (cubeSide side in building.sides)
+            {
+                if (side == null || side.sideType != SideType.road) continue;
+
+                Vector2Int dir = SideToDir(side.transform.localPosition);
+                if (dir == Vector2Int.zero) continue;
+
+                Vector2Int current = buildingCell + dir;
+                int steps = 0;
+                while (WithinRange(current) && steps < buildingRange / cubeSize)
+                {
+                    if (IsTooCloseToRoad(current)) break;
+
+                    if (occupiedCells.Contains(current))
+                    {
+                        Debug.Log($"[Roads] Connected road at {current}");
+                        break;
+                    }
+
+                    Vector2 worldPos = GridToWorld(current);
+                    Instantiate(roadPrefab, worldPos, Quaternion.identity, transform);
+                    roadCells.Add(current);
+
+                    steps++;
+                    current += dir;
+                }
+            }
         }
-        Debug.LogWarning($"[PlanetBuilder] findOpDoor called with unexpected value {d}");
-        return 0;
     }
+
+    private void FillEmptyCells(Vector2Int chunkCoord)
+    {
+        int cellsPerChunk = Mathf.CeilToInt(chunkSize / cubeSize);
+
+        for (int x = 0; x < cellsPerChunk; x++)
+        {
+            for (int y = 0; y < cellsPerChunk; y++)
+            {
+                Vector2Int cell = new Vector2Int(
+                    chunkCoord.x * cellsPerChunk + x,
+                    chunkCoord.y * cellsPerChunk + y
+                );
+
+                if (occupiedCells.Contains(cell) || roadCells.Contains(cell))
+                    continue;
+
+                SideType fillerType = PickRandomFillerType();
+                if (!fillerPrefabs.ContainsKey(fillerType) || fillerPrefabs[fillerType].Length == 0)
+                    continue;
+
+                GameObject chosen = fillerPrefabs[fillerType][UnityEngine.Random.Range(0, fillerPrefabs[fillerType].Length)];
+                Vector2 worldPos = GridToWorld(cell);
+                Instantiate(chosen, worldPos, Quaternion.identity, transform);
+
+                occupiedCells.Add(cell);
+            }
+        }
+    }
+
+    // --- Helpers ---
+    private Vector2Int WorldToGrid(Vector2 worldPos)
+    {
+        return new Vector2Int(
+            Mathf.RoundToInt(worldPos.x / cubeSize),
+            Mathf.RoundToInt(worldPos.y / cubeSize)
+        );
+    }
+
+    private Vector2 GridToWorld(Vector2Int gridPos)
+    {
+        return new Vector2(gridPos.x * cubeSize, gridPos.y * cubeSize);
+    }
+
+    private Vector2Int SideToDir(Vector3 localPos)
+    {
+        if (Mathf.Abs(localPos.x) > Mathf.Abs(localPos.y))
+            return (localPos.x > 0) ? Vector2Int.right : Vector2Int.left;
+        else
+            return (localPos.y > 0) ? Vector2Int.up : Vector2Int.down;
+    }
+
+    private bool WithinRange(Vector2Int cell)
+    {
+        return Vector2Int.Distance(Vector2Int.zero, cell) <= buildingRange / cubeSize;
+    }
+
+    private bool IsTooCloseToRoad(Vector2Int cell)
+    {
+        foreach (Vector2Int road in roadCells)
+        {
+            if (Vector2Int.Distance(road, cell) < roadSpacing)
+                return true;
+        }
+        return false;
+    }
+
+    private Cube PickRandomBuildingCube()
+    {
+        List<Cube> buildingCubes = new List<Cube>();
+        foreach (Cube c in cubes)
+        {
+            if (c.isBuilding) buildingCubes.Add(c);
+        }
+        if (buildingCubes.Count == 0) return null;
+        return buildingCubes[UnityEngine.Random.Range(0, buildingCubes.Count)];
+    }
+
+    private SideType PickRandomFillerType()
+    {
+        int roll = UnityEngine.Random.Range(0, 100);
+        if (roll < 70) return SideType.plains;
+        if (roll < 90) return SideType.forest;
+        return SideType.water;
+    }
+
+    private Vector2Int WorldToChunk(Vector2 worldPos)
+    {
+        return new Vector2Int(
+            Mathf.FloorToInt(worldPos.x / chunkSize),
+            Mathf.FloorToInt(worldPos.y / chunkSize)
+        );
+    }
+
+    private Vector2 ChunkToWorld(Vector2Int chunkCoord)
+    {
+        return new Vector2(chunkCoord.x * chunkSize, chunkCoord.y * chunkSize);
+    }
+
 }
