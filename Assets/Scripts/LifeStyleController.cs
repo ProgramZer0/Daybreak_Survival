@@ -38,6 +38,7 @@ public class LifeStyleController : MonoBehaviour
 
     public void AddAllActive()
     {
+        if (lifeStylesActive == null) return;
         if (lifeStylesActive.Count <= 0) return;
 
         foreach (LifeStyles ls in lifeStylesActive)

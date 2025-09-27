@@ -6,6 +6,7 @@ public class Spawner : MonoBehaviour
 {
     public List<GameObject> spawns;
     [SerializeField] private int maxSpawns = 5;
+    [SerializeField] private float spawnDistance = 0f;
 
     private void Update()
     {

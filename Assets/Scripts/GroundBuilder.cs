@@ -1,59 +1,67 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class GroundBuilder : MonoBehaviour
 {
-    [SerializeField] private Cube[] cubes;
-    [SerializeField] private Cube SpawnCube;
-    [SerializeField] private GameObject spawnObj;
+    [Header("Prefabs")]
+    [SerializeField] private List<Cube> allCubePrefabs;   // drag all cubes here
+    [SerializeField] private GameObject roadFallback;     // optional backup prefab
+    [SerializeField] private GameObject player;
 
-    public LayerMask doorLayer;
-    public List<GameObject> weaponSpawnersObjs;
-    public List<GameObject> enemySpawnersObj = new List<GameObject>();
-    private List<GameObject> cubeObjs;
-
+    [Header("Generation Settings")]
     [SerializeField] private int buildingRange = 300;
     [SerializeField] private int minBuildingSpacing = 60;
     [SerializeField] private int roadSpacing = 2;
     [SerializeField] private int minBuildings = 1;
     [SerializeField] private int maxBuildings = 5;
     [SerializeField] private float cubeSize = 25f;
-    [SerializeField] private GameObject roadPrefab;
-    [SerializeField] private GameObject[] plainsPrefabs;
-    [SerializeField] private GameObject[] forestPrefabs;
-    [SerializeField] private GameObject[] waterPrefabs;
-
-    [SerializeField] private int chunkSize = 200; 
+    [SerializeField] private int chunkSize = 300;
     [SerializeField] private float generationBuffer = 100f;
+    [SerializeField] private float branchChance = 0.5f; 
 
-    private Dictionary<SideType, GameObject[]> fillerPrefabs;
+    // Data
+    private Dictionary<SideType, List<Cube>> cubeDict;
     private HashSet<Vector2Int> roadCells = new HashSet<Vector2Int>();
     private HashSet<Vector2Int> occupiedCells = new HashSet<Vector2Int>();
     private List<GameObject> spawnedBuildings = new List<GameObject>();
-
     private HashSet<Vector2Int> generatedChunks = new HashSet<Vector2Int>();
+    private Queue<Vector2Int> roadQueue = new Queue<Vector2Int>();
+    private Dictionary<Vector2Int, SideDirection> connectionRequirements = new Dictionary<Vector2Int, SideDirection>();
+
+
+
+
+    public bool generationEnabled = false;
 
     private void Awake()
     {
-        cubeObjs = new List<GameObject>();
-        weaponSpawnersObjs = new List<GameObject>();
-
-        Debug.Log("[GroundBuilder] Awake initialized lists.");
-
-        fillerPrefabs = new Dictionary<SideType, GameObject[]> {
-            { SideType.plains, plainsPrefabs },
-            { SideType.forest, forestPrefabs },
-            { SideType.water,  waterPrefabs }
-        };
+        BuildDictionary();
+        Debug.Log("[GroundBuilder] Awake initialized dictionary.");
     }
 
-    // Called every frame or on player movement
+    private void Update()
+    {
+        if(generationEnabled)
+            GenerateIfNeeded(player.transform.position);
+    }
+
+    private void BuildDictionary()
+    {
+        cubeDict = new Dictionary<SideType, List<Cube>>();
+
+        foreach (Cube cube in allCubePrefabs)
+        {
+            if (!cubeDict.ContainsKey(cube.cubeType))
+                cubeDict[cube.cubeType] = new List<Cube>();
+
+            cubeDict[cube.cubeType].Add(cube);
+        }
+    }
+
+    // --- Chunk Generation ---
     public void GenerateIfNeeded(Vector2 playerPos)
     {
         Vector2Int currentChunk = WorldToChunk(playerPos);
-
-        // How many chunks around the player to generate
         int bufferChunks = Mathf.CeilToInt(generationBuffer / chunkSize);
 
         for (int x = -bufferChunks; x <= bufferChunks; x++)
@@ -71,21 +79,20 @@ public class GroundBuilder : MonoBehaviour
         }
     }
 
-    private void GenerateChunk(Vector2Int chunkCoord)
+    public void GenerateChunk(Vector2Int chunkCoord)
     {
         Vector2 worldCenter = ChunkToWorld(chunkCoord);
+        Debug.Log($"[ChunkGen] Generating chunk {chunkCoord} at {worldCenter}");
 
-        Debug.Log($"[ChunkGen] Generating chunk {chunkCoord} at world {worldCenter}");
-
-        // Each chunk runs its own generation
         SpawnBuildings(worldCenter);
         GenerateRoads();
         FillEmptyCells(chunkCoord);
     }
 
+    // --- Buildings ---
     private void SpawnBuildings(Vector2 chunkCenter)
     {
-        int buildingCount = UnityEngine.Random.Range(minBuildings, maxBuildings + 1);
+        int buildingCount = Random.Range(minBuildings, maxBuildings + 1);
         int attempts = 0;
 
         while (buildingCount > 0 && attempts < buildingCount * 20)
@@ -93,10 +100,10 @@ public class GroundBuilder : MonoBehaviour
             attempts++;
 
             Vector2Int randomCell = WorldToGrid(
-                chunkCenter + UnityEngine.Random.insideUnitCircle * (chunkSize * 0.5f)
+                chunkCenter + Random.insideUnitCircle * (chunkSize * 0.5f)
             );
 
-            // Skip if occupied
+            // spacing check
             bool tooClose = false;
             foreach (Vector2Int existing in occupiedCells)
             {
@@ -108,32 +115,23 @@ public class GroundBuilder : MonoBehaviour
             }
             if (tooClose) continue;
 
-            Cube prefab = PickRandomBuildingCube();
+            Cube prefab = GetRandomCube(SideType.building);
             if (prefab == null) continue;
 
             Vector2 spawnPos = GridToWorld(randomCell);
             GameObject newCubeObj = Instantiate(prefab.cubePrefab, spawnPos, Quaternion.identity, transform);
             Cube newCube = newCubeObj.GetComponent<Cube>();
+
             spawnedBuildings.Add(newCubeObj);
             occupiedCells.Add(randomCell);
 
             Debug.Log($"[Buildings] Spawned {newCube.name} at {randomCell}");
 
-            // Check sides for extra prefabs
-            foreach (cubeSide side in newCube.sides)
-            {
-                if (side == null) continue;
-                if (side.isDefinedConnected && side.PrefabNeeded != null)
-                {
-                    Vector3 attachPos = side.transform.position;
-                    Instantiate(side.PrefabNeeded, attachPos, Quaternion.identity, newCube.transform);
-                }
-            }
-
             buildingCount--;
         }
     }
 
+    // --- Roads ---
     private void GenerateRoads()
     {
         foreach (GameObject buildingObj in spawnedBuildings)
@@ -145,35 +143,59 @@ public class GroundBuilder : MonoBehaviour
             {
                 if (side == null || side.sideType != SideType.road) continue;
 
-                Vector2Int dir = SideToDir(side.transform.localPosition);
+                Vector2Int dir = DirFromSide(side.sideDirection);
                 if (dir == Vector2Int.zero) continue;
 
                 Vector2Int current = buildingCell + dir;
-                int steps = 0;
-                while (WithinRange(current) && steps < buildingRange / cubeSize)
+                SideDirection needed = OppositeDirection(side.sideDirection);
+
+                while (true)
                 {
+                    // 1. Out of range?
+                    if (!WithinRange(current)) break;
+
+                    // 2. Too close to another road?
                     if (IsTooCloseToRoad(current)) break;
 
+                    // 3. Another building here?
                     if (occupiedCells.Contains(current))
                     {
-                        Debug.Log($"[Roads] Connected road at {current}");
+                        Debug.Log($"[Roads] Connected road to building at {current}");
                         break;
                     }
 
-                    Vector2 worldPos = GridToWorld(current);
-                    Instantiate(roadPrefab, worldPos, Quaternion.identity, transform);
+                    // Try to get a cube that connects correctly
+                    Cube roadCube = GetRandomCubeWithRoadAt(needed);
+                    if (roadCube == null && roadFallback != null)
+                    {
+                        Instantiate(roadFallback, GridToWorld(current), Quaternion.identity, transform);
+                        occupiedCells.Add(current);
+                        roadCells.Add(current);
+                        break;
+                    }
+                    else if (roadCube == null) break;
+
+                    // Place road
+                    GameObject roadObj = Instantiate(
+                        roadCube.cubePrefab,
+                        GridToWorld(current),
+                        Quaternion.identity,
+                        transform
+                    );
+                    occupiedCells.Add(current);
                     roadCells.Add(current);
 
-                    steps++;
+                    // Move forward
                     current += dir;
                 }
             }
         }
     }
 
+    // --- Fill Empty ---
     private void FillEmptyCells(Vector2Int chunkCoord)
     {
-        int cellsPerChunk = Mathf.CeilToInt(chunkSize / cubeSize);
+        int cellsPerChunk = Mathf.FloorToInt(chunkSize / cubeSize);
 
         for (int x = 0; x < cellsPerChunk; x++)
         {
@@ -188,19 +210,68 @@ public class GroundBuilder : MonoBehaviour
                     continue;
 
                 SideType fillerType = PickRandomFillerType();
-                if (!fillerPrefabs.ContainsKey(fillerType) || fillerPrefabs[fillerType].Length == 0)
-                    continue;
+                Cube filler = GetRandomCube(fillerType);
+                if (filler == null) continue;
 
-                GameObject chosen = fillerPrefabs[fillerType][UnityEngine.Random.Range(0, fillerPrefabs[fillerType].Length)];
-                Vector2 worldPos = GridToWorld(cell);
-                Instantiate(chosen, worldPos, Quaternion.identity, transform);
-
+                Instantiate(filler.cubePrefab, GridToWorld(cell), Quaternion.identity, transform);
                 occupiedCells.Add(cell);
             }
         }
     }
 
     // --- Helpers ---
+    private Cube GetRandomCube(SideType type)
+    {
+        if (!cubeDict.ContainsKey(type) || cubeDict[type].Count == 0) return null;
+        return cubeDict[type][Random.Range(0, cubeDict[type].Count)];
+    }
+
+    private Cube GetRandomCubeWithRoadAt(SideDirection requiredSide)
+    {
+        List<Cube> candidates = new List<Cube>();
+        foreach (var cube in allCubePrefabs)
+        {
+            foreach (cubeSide side in cube.sides)
+            {
+                if (side != null && side.sideType == SideType.road && side.sideDirection == requiredSide)
+                {
+                    candidates.Add(cube);
+                    break; // no need to keep checking this cube
+                }
+            }
+        }
+
+        if (candidates.Count == 0) return null;
+        return candidates[Random.Range(0, candidates.Count)];
+    }
+
+    /*private Cube GetRandomCubeWithRoadAt(SideDirection requiredSide)
+    {
+        List<Cube> candidates = new List<Cube>();
+        foreach (var cube in allCubePrefabs)
+        {
+            foreach (cubeSide side in cube.sides)
+            {
+                if (side != null && side.sideType == SideType.road && side.sideDirection == requiredSide)
+                {
+                    candidates.Add(cube);
+                    break;
+                }
+            }
+        }
+        if (candidates.Count == 0) return null;
+        return candidates[Random.Range(0, candidates.Count)];
+    }
+    */
+
+    private SideType PickRandomFillerType()
+    {
+        //int roll = Random.Range(0, 100);
+        //if (roll < 70) return SideType.plains;
+        //if (roll < 90) return SideType.forest;
+        return SideType.plains;
+    }
+
     private Vector2Int WorldToGrid(Vector2 worldPos)
     {
         return new Vector2Int(
@@ -214,12 +285,17 @@ public class GroundBuilder : MonoBehaviour
         return new Vector2(gridPos.x * cubeSize, gridPos.y * cubeSize);
     }
 
-    private Vector2Int SideToDir(Vector3 localPos)
+    private Vector2Int WorldToChunk(Vector2 worldPos)
     {
-        if (Mathf.Abs(localPos.x) > Mathf.Abs(localPos.y))
-            return (localPos.x > 0) ? Vector2Int.right : Vector2Int.left;
-        else
-            return (localPos.y > 0) ? Vector2Int.up : Vector2Int.down;
+        return new Vector2Int(
+            Mathf.FloorToInt(worldPos.x / chunkSize),
+            Mathf.FloorToInt(worldPos.y / chunkSize)
+        );
+    }
+
+    private Vector2 ChunkToWorld(Vector2Int chunkCoord)
+    {
+        return new Vector2(chunkCoord.x * chunkSize, chunkCoord.y * chunkSize);
     }
 
     private bool WithinRange(Vector2Int cell)
@@ -237,36 +313,50 @@ public class GroundBuilder : MonoBehaviour
         return false;
     }
 
-    private Cube PickRandomBuildingCube()
+    private Vector2Int DirFromSide(SideDirection dir)
     {
-        List<Cube> buildingCubes = new List<Cube>();
-        foreach (Cube c in cubes)
+        switch (dir)
         {
-            if (c.isBuilding) buildingCubes.Add(c);
+            case SideDirection.Up: return Vector2Int.up;
+            case SideDirection.Down: return Vector2Int.down;
+            case SideDirection.Left: return Vector2Int.left;
+            case SideDirection.Right: return Vector2Int.right;
+            default: return Vector2Int.zero;
         }
-        if (buildingCubes.Count == 0) return null;
-        return buildingCubes[UnityEngine.Random.Range(0, buildingCubes.Count)];
     }
 
-    private SideType PickRandomFillerType()
+    private SideDirection OppositeDirection(SideDirection dir)
     {
-        int roll = UnityEngine.Random.Range(0, 100);
-        if (roll < 70) return SideType.plains;
-        if (roll < 90) return SideType.forest;
-        return SideType.water;
+        switch (dir)
+        {
+            case SideDirection.Up: return SideDirection.Down;
+            case SideDirection.Down: return SideDirection.Up;
+            case SideDirection.Left: return SideDirection.Right;
+            case SideDirection.Right: return SideDirection.Left;
+            default: return SideDirection.Up;
+        }
     }
 
-    private Vector2Int WorldToChunk(Vector2 worldPos)
+    public void ClearWorld()
     {
-        return new Vector2Int(
-            Mathf.FloorToInt(worldPos.x / chunkSize),
-            Mathf.FloorToInt(worldPos.y / chunkSize)
-        );
-    }
+        // Destroy all spawned buildings
+        foreach (GameObject obj in spawnedBuildings)
+        {
+            if (obj != null) Destroy(obj);
+        }
+        spawnedBuildings.Clear();
 
-    private Vector2 ChunkToWorld(Vector2Int chunkCoord)
-    {
-        return new Vector2(chunkCoord.x * chunkSize, chunkCoord.y * chunkSize);
-    }
+        // Destroy any remaining children (roads, filler, extra cubes, etc.)
+        foreach (Transform child in transform)
+        {
+            Destroy(child.gameObject);
+        }
 
+        // Reset tracking structures
+        roadCells.Clear();
+        occupiedCells.Clear();
+        generatedChunks.Clear();
+
+        Debug.Log("[GroundBuilder] World cleared.");
+    }
 }

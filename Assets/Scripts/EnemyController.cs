@@ -11,7 +11,7 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private GroundBuilder planetBuilder;
 
     [Header("Spawn Settings")]
-    [SerializeField] private float minSpawnRadius = 100f;   
+    [SerializeField] private float minSpawnRadius = 100f;
     [SerializeField] private float spawnRadius = 200f;     
     [SerializeField] private int minEnemyCount = 40;      
     [SerializeField] private int maxEnemyCount = 200;     
@@ -48,7 +48,7 @@ public class EnemyController : MonoBehaviour
     {
         if (enemies.Count >= maxEnemyCount) return; 
 
-        var possibleSpawners = planetBuilder.enemySpawnersObj
+        /*var possibleSpawners = planetBuilder.enemySpawnersObj
             .Where(s =>
             {
                 float dist = Vector2.Distance(player.position, s.transform.position);
@@ -65,7 +65,7 @@ public class EnemyController : MonoBehaviour
         if (enemy != null)
         {
             enemies.Add(enemy);
-        }
+        }*/
     }
     public void SetIsDay(bool _isDay)
     {

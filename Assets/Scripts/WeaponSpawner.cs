@@ -8,6 +8,7 @@ public class WeaponSpawner : MonoBehaviour
 
 
     //now only for equipment
+    /*
     public void SpawnWeapon()
     { 
         foreach (GameObject obj in groundBuilder.weaponSpawnersObjs)
@@ -16,5 +17,5 @@ public class WeaponSpawner : MonoBehaviour
 
             obj.GetComponent<Spawner>().Spawn(weaponInit);
         }
-    }
+    }*/
 }

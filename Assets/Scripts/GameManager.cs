@@ -142,6 +142,8 @@ public class GameManager : MonoBehaviour
         ResetPlayer();
         enemyController.enableSpawning(false);
         enemyController.DespawnAllEnemies();
+        builder.generationEnabled = false;
+        builder.ClearWorld();
         SM.StopAll();
     }
 
@@ -150,6 +152,8 @@ public class GameManager : MonoBehaviour
         inMenu = false;
         cycleEnabled = true;
         ResetGame();
+        builder.generationEnabled = true;
+        builder.GenerateChunk(Vector2Int.zero);
         enemyController.enableSpawning(true);
         SetEnvMusic(0.5f);
         SetAmbiance();
@@ -169,8 +173,11 @@ public class GameManager : MonoBehaviour
             saveData.availableLifestyleIds.Add(ls.id);
 
         var active = LSC.GetActiveLifestyles();
-        foreach (var ls in active)
-            saveData.activeLifestyleIds.Add(ls.id);
+        if(active != null)
+        {
+            foreach (var ls in active)
+                saveData.activeLifestyleIds.Add(ls.id);
+        }
 
         saveData.crouchToggle = player.GetCrouchToggle();
         saveData.musicVolume = SM.getSoundMusicMod();
