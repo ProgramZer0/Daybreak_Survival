@@ -24,12 +24,10 @@ public class GroundBuilder : MonoBehaviour
     private HashSet<Vector2Int> roadCells = new HashSet<Vector2Int>();
     private HashSet<Vector2Int> occupiedCells = new HashSet<Vector2Int>();
     private List<GameObject> spawnedBuildings = new List<GameObject>();
+    private List<GameObject> objThatNeedRoads = new List<GameObject>();
     private HashSet<Vector2Int> generatedChunks = new HashSet<Vector2Int>();
-    private Queue<Vector2Int> roadQueue = new Queue<Vector2Int>();
-    private Dictionary<Vector2Int, SideDirection> connectionRequirements = new Dictionary<Vector2Int, SideDirection>();
-
-
-
+    private List<GameObject> roads = new List<GameObject>();
+    //private Dictionary<Vector2Int, SideDirection> connectionRequirements = new Dictionary<Vector2Int, SideDirection>();
 
     public bool generationEnabled = false;
 
@@ -125,6 +123,36 @@ public class GroundBuilder : MonoBehaviour
             spawnedBuildings.Add(newCubeObj);
             occupiedCells.Add(randomCell);
 
+            foreach (cubeSide side in newCube.sides)
+            {
+                if (side.isDefinedConnected)
+                {
+                    Vector2Int addtoCell = randomCell;
+                    switch (side.sideDirection)
+                    {
+                        case SideDirection.Up:
+                            addtoCell = randomCell + Vector2Int.up;
+                            break;
+                        case SideDirection.Down:
+                            addtoCell = randomCell + Vector2Int.down;
+                            break;
+                        case SideDirection.Left:
+                            addtoCell = randomCell + Vector2Int.left;
+                            break;
+                        case SideDirection.Right:
+                            addtoCell = randomCell + Vector2Int.right;
+                            break;
+                    }
+                    
+                    Vector2 spawnPos2 = GridToWorld(addtoCell);
+                    GameObject newCubeObj2 = Instantiate(side.PrefabNeeded, spawnPos2, Quaternion.identity, transform);
+                    Cube newCube2 = newCubeObj2.GetComponent<Cube>();
+
+                    spawnedBuildings.Add(newCubeObj2);
+                    occupiedCells.Add(addtoCell);
+                }
+            }
+
             Debug.Log($"[Buildings] Spawned {newCube.name} at {randomCell}");
 
             buildingCount--;
@@ -134,59 +162,89 @@ public class GroundBuilder : MonoBehaviour
     // --- Roads ---
     private void GenerateRoads()
     {
-        foreach (GameObject buildingObj in spawnedBuildings)
-        {
-            Cube building = buildingObj.GetComponent<Cube>();
-            Vector2Int buildingCell = WorldToGrid(buildingObj.transform.position);
+        Queue<GameObject> frontier = new Queue<GameObject>();
 
-            foreach (cubeSide side in building.sides)
+        // add new buildings to the frontier
+        foreach (GameObject obj in spawnedBuildings)
+        {
+            if (!objThatNeedRoads.Contains(obj))
+            {
+                objThatNeedRoads.Add(obj);
+                frontier.Enqueue(obj);
+                Debug.Log($"[Roads] Added building {obj.name} to frontier");
+            }
+        }
+
+        // expand roads until no frontier left
+        while (frontier.Count > 0)
+        {
+            GameObject currentObj = frontier.Dequeue();
+            Cube currentCube = currentObj.GetComponent<Cube>();
+            Vector2Int currentCell = WorldToGrid(currentObj.transform.position);
+
+            Debug.Log($"[Roads] Expanding from {currentObj.name} at {currentCell}");
+
+            foreach (cubeSide side in currentCube.sides)
             {
                 if (side == null || side.sideType != SideType.road) continue;
 
                 Vector2Int dir = DirFromSide(side.sideDirection);
                 if (dir == Vector2Int.zero) continue;
 
-                Vector2Int current = buildingCell + dir;
+                Vector2Int nextCell = currentCell + dir;
                 SideDirection needed = OppositeDirection(side.sideDirection);
 
-                while (true)
+                Debug.Log($"[Roads] Checking side {side.sideDirection} next cell {nextCell}, needs road at {needed}");
+
+                int steps = 0;
+                int maxSteps = 50;
+
+                while (steps < maxSteps)
                 {
-                    // 1. Out of range?
-                    if (!WithinRange(current)) break;
+                    steps++;
 
-                    // 2. Too close to another road?
-                    if (IsTooCloseToRoad(current)) break;
-
-                    // 3. Another building here?
-                    if (occupiedCells.Contains(current))
+                    if (!WithinRange(nextCell))
                     {
-                        Debug.Log($"[Roads] Connected road to building at {current}");
+                        Debug.Log($"[Roads] Stopped, {nextCell} out of range");
                         break;
                     }
 
-                    // Try to get a cube that connects correctly
+                    if (occupiedCells.Contains(nextCell))
+                    {
+                        Debug.Log($"[Roads] Stopped, {nextCell} already occupied");
+                        break;
+                    }
+
                     Cube roadCube = GetRandomCubeWithRoadAt(needed);
                     if (roadCube == null && roadFallback != null)
                     {
-                        Instantiate(roadFallback, GridToWorld(current), Quaternion.identity, transform);
-                        occupiedCells.Add(current);
-                        roadCells.Add(current);
+                        Debug.Log($"[Roads] Using fallback road at {nextCell}");
+                        GameObject fallback = Instantiate(roadFallback, GridToWorld(nextCell), Quaternion.identity, transform);
+                        occupiedCells.Add(nextCell);
+                        roadCells.Add(nextCell);
+                        objThatNeedRoads.Add(fallback);
+                        frontier.Enqueue(fallback);
                         break;
                     }
-                    else if (roadCube == null) break;
+                    else if (roadCube == null)
+                    {
+                        Debug.Log($"[Roads] No road cube found for {needed}, stopping");
+                        break;
+                    }
 
-                    // Place road
-                    GameObject roadObj = Instantiate(
-                        roadCube.cubePrefab,
-                        GridToWorld(current),
-                        Quaternion.identity,
-                        transform
-                    );
-                    occupiedCells.Add(current);
-                    roadCells.Add(current);
+                    // place road
+                    GameObject roadObj = Instantiate(roadCube.cubePrefab, GridToWorld(nextCell), Quaternion.identity, transform);
+                    Debug.Log($"[Roads] Placed road {roadObj.name} at {nextCell}");
 
-                    // Move forward
-                    current += dir;
+                    occupiedCells.Add(nextCell);
+                    roadCells.Add(nextCell);
+
+                    // add to tracking frontier
+                    objThatNeedRoads.Add(roadObj);
+                    frontier.Enqueue(roadObj);
+
+                    // move forward
+                    nextCell += dir;
                 }
             }
         }
@@ -231,6 +289,8 @@ public class GroundBuilder : MonoBehaviour
         List<Cube> candidates = new List<Cube>();
         foreach (var cube in allCubePrefabs)
         {
+            if (cube.isBuilding)
+                continue;
             foreach (cubeSide side in cube.sides)
             {
                 if (side != null && side.sideType == SideType.road && side.sideDirection == requiredSide)
