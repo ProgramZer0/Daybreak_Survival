@@ -10024,7 +10024,7 @@ MonoBehaviour:
   GUI: {fileID: 1460363059}
   SM: {fileID: 276416484}
   GM: {fileID: 1754269201}
-  LSC: {fileID: 0}
+  LSC: {fileID: 1754269203}
   HpBar: {fileID: 1256714497}
   weaponHUD: {fileID: 701536587}
   CC: {fileID: 278462053}
@@ -14392,11 +14392,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 868446135}
-  allLSs:
-  - {fileID: 11400000, guid: 2b3bf8963e3e9e04a8184b1a1af363f6, type: 2}
   maxLifestyles: 10
   toolTipPreFab: {fileID: 6287030776202556268, guid: 15df2d2663f2b3e4d91f4e90cf0988c7, type: 3}
-  allLifestyles: []
+  allLifestyles:
+  - {fileID: 11400000, guid: 2b3bf8963e3e9e04a8184b1a1af363f6, type: 2}
+  - {fileID: 11400000, guid: 6ea87abcae8c3074ca13bc919f53a7b8, type: 2}
+  - {fileID: 11400000, guid: b83efb01a987b7149be2f348e633beb4, type: 2}
+  - {fileID: 11400000, guid: 77ee5e587b138fd46a64192e48795974, type: 2}
+  - {fileID: 11400000, guid: 88bb68312103c3741b7fcd902c43705f, type: 2}
   lifeStylesAvailable: []
 --- !u!1 &1765203492
 GameObject:
@@ -17224,9 +17227,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4cd58449cac0087429e36aaace00554f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  worldSize: 50
+  worldSize: 100
   outsideRingThickness: 3
-  sectionSpawnMargin: 10
+  sectionSpawnMargin: 2
   cubeSize: 25
   minRoadSpacing: 3
   maxRoadSpacing: 6
@@ -17237,12 +17240,14 @@ MonoBehaviour:
     minSize: 8
     maxSize: 20
     loadOrder: 0
+    cityStyle: 0
   - type: 2
     minSections: 1
     maxSections: 2
     minSize: 4
     maxSize: 10
     loadOrder: 1
+    cityStyle: 0
   allCubes:
   - {fileID: 5033481907361620, guid: c40ee4860320a954781d70d92bd82260, type: 3}
   - {fileID: 7390423912284533387, guid: d37bb701c74bc924d8abb9ec872fc309, type: 3}
@@ -17262,10 +17267,9 @@ MonoBehaviour:
   - {fileID: 992663739453157545, guid: 2c27e3fe30fa14d4cb8fb491510cf029, type: 3}
   - {fileID: 8327728951469255124, guid: 5b43f39fdfe363748b625b9fae3ff481, type: 3}
   - {fileID: 7823630562116728027, guid: ea0acdd3a18bab740a17d6823f82ba66, type: 3}
-  - {fileID: 5672887971770174123, guid: cacc5694842a2244d8ac88dc7ac2c91b, type: 3}
-  - {fileID: 5753738269007334262, guid: 9db76ac670df5a3499716c1e11bf55aa, type: 3}
-  - {fileID: 6716798516455360214, guid: abe0f97f0f8d69b4db344844b1e30ab3, type: 3}
-  - {fileID: 4583750953616758859, guid: 2f1ef3c0e9087dc4782af77cea8db739, type: 3}
+  - {fileID: 5068235422857126964, guid: b59bc4c082dcce1458140b9633df8866, type: 3}
+  cityMinDistance: 10
+  gridCityBias: 0.7
 --- !u!114 &5045635640186557265
 MonoBehaviour:
   m_ObjectHideFlags: 0

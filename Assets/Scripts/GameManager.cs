@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
@@ -192,6 +193,7 @@ public class GameManager : MonoBehaviour
         if (!File.Exists(SavePath))
         {
             Debug.LogWarning("No save file found!");
+            LSC.InitLists();
             return;
         }
 

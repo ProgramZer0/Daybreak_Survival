@@ -28,6 +28,27 @@ public class SliderMethods : MonoBehaviour
         {
             gameObject.GetComponent<Slider>().value = SM.GetSoundMod();
         }
+
+    }
+
+    private void Update()
+    {
+        if(gameObject.activeSelf)
+        {
+            if (sliderType == SliderType.crouch)
+            {
+                player.SetCrouchToggle(gameObject.GetComponent<Toggle>().isOn);
+            }
+            if (sliderType == SliderType.musicVol)
+            {
+
+                SM.SetSoundMusicMod(gameObject.GetComponent<Slider>().value);
+            }
+            if (sliderType == SliderType.otherVol)
+            {
+                SM.SetSoundMod(gameObject.GetComponent<Slider>().value);
+            }
+        }
     }
 
     public void setVolume()

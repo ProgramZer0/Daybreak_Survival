@@ -284,6 +284,8 @@ public class SoundManager : MonoBehaviour
 
     public void SetSoundMod(float vol)
     {
+        Debug.Log("setting sound");
+
         modSound = vol;
         foreach (Sound s in sounds)
         {
@@ -293,6 +295,7 @@ public class SoundManager : MonoBehaviour
     }
     public void SetSoundMusicMod(float vol)
     {
+        Debug.Log("setting music");
         modMusicSound = vol;
         if(currentMusic != null)
             currentMusic.source.volume = currentMusic.volume * modMusicSound;

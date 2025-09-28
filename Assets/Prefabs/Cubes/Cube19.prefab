@@ -7171,7 +7171,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7092d813880563439a9b3caa4bdf680, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sideType: 1
+  sideType: 3
   sideDirection: 2
   isDefinedConnected: 0
   PrefabNeeded: {fileID: 0}
@@ -7287,7 +7287,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7092d813880563439a9b3caa4bdf680, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sideType: 1
+  sideType: 3
   sideDirection: 3
   isDefinedConnected: 0
   PrefabNeeded: {fileID: 0}
@@ -8118,7 +8118,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7092d813880563439a9b3caa4bdf680, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sideType: 1
+  sideType: 3
   sideDirection: 1
   isDefinedConnected: 0
   PrefabNeeded: {fileID: 0}
@@ -8268,7 +8268,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7092d813880563439a9b3caa4bdf680, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sideType: 1
+  sideType: 3
   sideDirection: 0
   isDefinedConnected: 0
   PrefabNeeded: {fileID: 0}

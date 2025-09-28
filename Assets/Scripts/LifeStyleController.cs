@@ -4,14 +4,17 @@ using UnityEngine;
 public class LifeStyleController : MonoBehaviour
 {
     [SerializeField] private PlayerInterface player;
-    [SerializeField] private LifeStyles[] allLSs;
     [SerializeField] private int maxLifestyles = 10;
     public GameObject toolTipPreFab;
 
     public LifeStyles[] allLifestyles;
     public List<LifeStyles> lifeStylesAvailable;
     private List<LifeStyles> lifeStylesActive;
-
+    public void InitLists()
+    {
+        lifeStylesAvailable = new List<LifeStyles>();
+        lifeStylesActive = new List<LifeStyles>();
+    }
     public bool CheckIfFull()
     {
         if (lifeStylesActive.Count >= maxLifestyles) return true;
