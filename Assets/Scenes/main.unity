@@ -17228,48 +17228,48 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   worldSize: 100
-  outsideRingThickness: 3
+  outsideRingThickness: 2
   sectionSpawnMargin: 2
   cubeSize: 25
-  minRoadSpacing: 3
-  maxRoadSpacing: 6
   sectionSettings:
   - type: 1
-    minSections: 3
-    maxSections: 4
+    minSections: 1
+    maxSections: 2
     minSize: 8
-    maxSize: 20
+    maxSize: 16
     loadOrder: 0
+    cityToRoadChance: 0.6
+    cityStyle: 1
+    minRoadSpacing: 1
+    maxRoadSpacing: 2
+  - type: 1
+    minSections: 0
+    maxSections: 3
+    minSize: 5
+    maxSize: 10
+    loadOrder: 1
+    cityToRoadChance: 0.5
     cityStyle: 0
+    minRoadSpacing: 3
+    maxRoadSpacing: 8
   - type: 2
     minSections: 1
     maxSections: 2
     minSize: 4
     maxSize: 10
-    loadOrder: 1
+    loadOrder: 2
+    cityToRoadChance: 0.7
     cityStyle: 0
+    minRoadSpacing: 1
+    maxRoadSpacing: 8
   allCubes:
-  - {fileID: 5033481907361620, guid: c40ee4860320a954781d70d92bd82260, type: 3}
-  - {fileID: 7390423912284533387, guid: d37bb701c74bc924d8abb9ec872fc309, type: 3}
-  - {fileID: 5516276053283988616, guid: 552cd9e5f22bf0640a418d141e74cf63, type: 3}
-  - {fileID: 7912342884281958728, guid: 17cb1985de2766442b877c3f1e095077, type: 3}
-  - {fileID: 2997057928643260658, guid: 20c55033fd220914cbc1b34b84dc19ab, type: 3}
-  - {fileID: 1860352396384261728, guid: ee388b9ef17c00a4b90e90b6a684bbb0, type: 3}
-  - {fileID: 3296305304993741269, guid: bd3b73b28fa23364ebb82e16f65148e7, type: 3}
-  - {fileID: 477167499359416039, guid: ffbac71156856744bbdbfa487d9bd83a, type: 3}
-  - {fileID: 4484937515529958045, guid: fb12a7f94903e4344a1bb4c9375bf78a, type: 3}
-  - {fileID: 3655888638420496873, guid: f54a51592c04dfd44a63a36afb547173, type: 3}
-  - {fileID: 8460345934191631041, guid: d82f6cbdd44245c4784f62622ac097d4, type: 3}
-  - {fileID: 1725252724543383101, guid: 2dcdaa3800ae7e9438c513b0f752395b, type: 3}
-  - {fileID: 5559418178236922227, guid: 07c2e1a0daa3ef54380eab315c4b5d8d, type: 3}
-  - {fileID: 1752053685929527228, guid: 9216af1a5e32c9b489046081a2beebd9, type: 3}
-  - {fileID: 8325740964341240979, guid: 1cf6e9cbae66e5d42a353c26994a571c, type: 3}
-  - {fileID: 992663739453157545, guid: 2c27e3fe30fa14d4cb8fb491510cf029, type: 3}
-  - {fileID: 8327728951469255124, guid: 5b43f39fdfe363748b625b9fae3ff481, type: 3}
-  - {fileID: 7823630562116728027, guid: ea0acdd3a18bab740a17d6823f82ba66, type: 3}
-  - {fileID: 5068235422857126964, guid: b59bc4c082dcce1458140b9633df8866, type: 3}
+  - {fileID: 2390302947462879489, guid: f25264cc8255ce9428cdc1af66a1ba30, type: 3}
+  - {fileID: 2390302947462879489, guid: fa9eba809f2b7a44aa5979874cba35e2, type: 3}
+  - {fileID: 2390302947462879489, guid: 8d30286fdd211744d88f9df23a5bca6f, type: 3}
+  - {fileID: 2390302947462879489, guid: 60df3d18b5f982f44a151d2cb423280f, type: 3}
   cityMinDistance: 10
-  gridCityBias: 0.7
+  maxCityPlacementTries: 10
+  gridCityBias: 0.294
 --- !u!114 &5045635640186557265
 MonoBehaviour:
   m_ObjectHideFlags: 0

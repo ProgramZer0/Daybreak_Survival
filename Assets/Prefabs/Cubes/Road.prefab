@@ -6609,7 +6609,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7092d813880563439a9b3caa4bdf680, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sideType: 4
+  sideType: 0
   sideDirection: 0
   isDefinedConnected: 0
   PrefabNeeded: {fileID: 0}
@@ -6624,7 +6624,7 @@ GameObject:
   - component: {fileID: 5355333483451436236}
   - component: {fileID: 2390302947462879489}
   m_Layer: 0
-  m_Name: Cube24
+  m_Name: Road
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6674,7 +6674,7 @@ MonoBehaviour:
   isBuilding: 0
   Rarity: 0
   cubePrefab: {fileID: 1579458419829339703}
-  cubeType: 0
+  cubeType: 3
   weaponSpawners: []
   enemySpawners:
   - {fileID: 1225540632123570243}
@@ -7023,7 +7023,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7092d813880563439a9b3caa4bdf680, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sideType: 4
+  sideType: 0
   sideDirection: 1
   isDefinedConnected: 0
   PrefabNeeded: {fileID: 0}
@@ -7106,7 +7106,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7092d813880563439a9b3caa4bdf680, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sideType: 4
+  sideType: 0
   sideDirection: 2
   isDefinedConnected: 0
   PrefabNeeded: {fileID: 0}
@@ -7745,7 +7745,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7092d813880563439a9b3caa4bdf680, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sideType: 4
+  sideType: 0
   sideDirection: 3
   isDefinedConnected: 0
   PrefabNeeded: {fileID: 0}

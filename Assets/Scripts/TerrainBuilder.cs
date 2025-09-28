@@ -1,9 +1,22 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public enum SectionType { Outside, City, Plains, Road, Building, Shack }
 public enum CityStyle { Auto, Grid, Organic }
 
+[System.Serializable]
+public struct CityData
+{
+    public Vector2Int center;
+    public int size;
+
+    public CityData(Vector2Int c, int s)
+    {
+        center = c;
+        size = s;
+    }
+}
 
 [System.Serializable]
 public class SectionSettings
@@ -15,7 +28,10 @@ public class SectionSettings
     public int maxSize;
     public int loadOrder;
 
+    public float cityToRoadChance = 0.7f;
     public CityStyle cityStyle = CityStyle.Auto;
+    public int minRoadSpacing = 1;
+    public int maxRoadSpacing = 8;
 }
 
 public class TerrainBuilder : MonoBehaviour
@@ -26,10 +42,6 @@ public class TerrainBuilder : MonoBehaviour
     public int sectionSpawnMargin = 10;
     [SerializeField] private float cubeSize = 25f;
 
-    [Header("Road Settings")]
-    public int minRoadSpacing = 3;
-    public int maxRoadSpacing = 6;
-
     [Header("Sections")]
     public List<SectionSettings> sectionSettings;
 
@@ -38,6 +50,7 @@ public class TerrainBuilder : MonoBehaviour
 
     [Header("City Settings")]
     public int cityMinDistance = 10;
+    [SerializeField] int maxCityPlacementTries = 10;
     [Range(0f, 1f)]
     public float gridCityBias = 0.4f; // 70% grid, 30% organic
 
@@ -45,19 +58,21 @@ public class TerrainBuilder : MonoBehaviour
     private Dictionary<Vector2Int, SectionType> sectionGrid = new();
     private Dictionary<Vector2Int, Cube> cubeInstances = new();
     private Dictionary<SectionType, List<Cube>> cubeDict = new();
-    private List<Vector2Int> cityCenters = new();
+    private List<CityData> cityCenters = new();
 
     public void GenerateTerrain()
     {
         sectionGrid = new();
 
         BuildCubeDictionary();
-        GenerateOutsideRing();
-        GenerateAllSections();
-        ConnectCitiesWithPlainsRoads();
+        GenerateOutsideRing(); //generates outside ring, and places it 
+        GenerateAllSections(); //sets sectionGrid values;
+        //GenerateAllCubes(); //creates cubes based on sectionGrid
+
+        //ConnectCitiesWithPlainsRoads();
         //GeneratePlains();
-        FillEmptyWithPlains();
-        PopulatePlainsWithShacks();
+        //FillEmptyWithPlains();
+        //PopulatePlainsWithShacks();
     }
 
     #region Cube Dictionary
@@ -126,7 +141,7 @@ public class TerrainBuilder : MonoBehaviour
 
         if (candidates.Count == 0)
         {
-            Debug.LogWarning($"[CubeMatch] No strict match at {gridPos}, fallback used.");
+            //Debug.Log($"[CubeMatch] No strict match at {gridPos}, fallback used.");
             return GetRandomCube(fallbackType); 
         }
 
@@ -144,17 +159,24 @@ public class TerrainBuilder : MonoBehaviour
     #region World Generation
     private void GenerateOutsideRing()
     {
-        for (int x = 0; x < worldSize; x++)
-        {
-            for (int y = 0; y < worldSize; y++)
-            {
-                bool isOutside =
-                    (x < outsideRingThickness || y < outsideRingThickness ||
-                     x >= worldSize - outsideRingThickness ||
-                     y >= worldSize - outsideRingThickness);
+        int halfWorld = 0 - (worldSize / 2);
 
+        for (int x = halfWorld; x <= (worldSize / 2); x++)
+        {
+            for (int y = halfWorld; y <= (worldSize / 2); y++)
+            {
+
+                bool isOutside = false;
+
+                if (x < halfWorld + outsideRingThickness || x > (worldSize / 2) - outsideRingThickness)
+                    isOutside = true;
+                if (y < halfWorld + outsideRingThickness || y > (worldSize / 2) - outsideRingThickness)
+                    isOutside = true;
+                
                 if (isOutside)
                 {
+                    //Debug.Log("spawning outside cube at " + x + "," + y);
+
                     Vector2Int pos = new(x, y);
                     sectionGrid[pos] = SectionType.Outside;
                     SpawnCubeAt(pos, SectionType.Outside);
@@ -165,6 +187,9 @@ public class TerrainBuilder : MonoBehaviour
 
     private void GenerateAllSections()
     {
+        int halfWorldNeg = 0 - (worldSize / 2);
+        int halfWorldPos = (worldSize / 2);
+
         // Sort by load order
         sectionSettings.Sort((a, b) => a.loadOrder.CompareTo(b.loadOrder));
 
@@ -174,10 +199,31 @@ public class TerrainBuilder : MonoBehaviour
             for (int i = 0; i < sectionCount; i++)
             {
                 int size = Random.Range(section.minSize, section.maxSize + 1);
-                Vector2Int center = new Vector2Int(
-                    Random.Range(sectionSpawnMargin, worldSize - sectionSpawnMargin),
-                    Random.Range(sectionSpawnMargin, worldSize - sectionSpawnMargin)
-                );
+
+                int spawnMargin = sectionSpawnMargin + (size / 2);
+                bool validCenter = false;
+                int count = 0;
+                Vector2Int center = new Vector2Int();
+                while (!validCenter && count < maxCityPlacementTries)
+                {
+                    center = new Vector2Int(
+                    Random.Range(halfWorldNeg + spawnMargin, (halfWorldPos - spawnMargin) + 1),
+                    Random.Range(halfWorldNeg + spawnMargin, (halfWorldPos - spawnMargin) + 1)
+                    );
+
+                    if (section.type == SectionType.City)
+                    {
+                        if (IsCityFarEnough(center, size))
+                            validCenter = true;
+                        else
+                            center = new Vector2Int();
+                    }
+                    else
+                        validCenter = true;
+                    count++;
+                }
+
+                if (center == Vector2Int.zero) continue;
 
                 switch (section.type)
                 {
@@ -185,7 +231,7 @@ public class TerrainBuilder : MonoBehaviour
                         CityStyle chosenStyle;
 
                         // If the section explicitly defines a style, use it
-                        if (section.cityStyle != CityStyle.Grid && section.cityStyle != CityStyle.Organic)
+                        if (section.cityStyle == CityStyle.Auto)
                         {
                             // Otherwise pick based on global bias
                             chosenStyle = (Random.value < gridCityBias)
@@ -198,15 +244,16 @@ public class TerrainBuilder : MonoBehaviour
                         }
 
                         if (chosenStyle == CityStyle.Grid)
-                            GenerateGridCity(center, size);
+                            GenerateGridCity(center, size, section.cityToRoadChance, section.minRoadSpacing, section.maxRoadSpacing);
                         else
                             GenerateOrganicCity(center, size);
 
-                        cityCenters.Add(center);
+                        cityCenters.Add(new CityData(center, size));
+
                         break;
 
                     case SectionType.Plains:
-                        GeneratePlain(center, size);
+                        //GeneratePlain(center, size);
                         break;
                 }
             }
@@ -215,12 +262,14 @@ public class TerrainBuilder : MonoBehaviour
 
     private bool IsCityFarEnough(Vector2Int newCenter, int newSize)
     {
-        int halfSize = newSize / 2;
+        int newHalf = newSize / 2;
 
-        foreach (var existing in cityCenters)
+        foreach (var city in cityCenters)
         {
-            float dist = Vector2Int.Distance(newCenter, existing);
-            if (dist < cityMinDistance + halfSize)
+            int existingHalf = city.size / 2;
+
+            float dist = Vector2Int.Distance(newCenter, city.center);
+            if (dist < cityMinDistance + newHalf + existingHalf)
             {
                 return false;
             }
@@ -228,6 +277,7 @@ public class TerrainBuilder : MonoBehaviour
         return true;
     }
 
+    /*
     private void ConnectCitiesWithPlainsRoads()
     {
         for (int i = 0; i < cityCenters.Count - 1; i++)
@@ -291,6 +341,12 @@ public class TerrainBuilder : MonoBehaviour
         }
     }
 
+    */
+
+    private void GenerateAllCubes()
+    {
+
+    }
     private void GeneratePlains()
     {
         foreach (var kvp in sectionGrid)
@@ -321,88 +377,234 @@ public class TerrainBuilder : MonoBehaviour
     }
     #endregion
 
-    private void GenerateGridCity(Vector2Int center, int size)
+    private void GenerateGridCity(Vector2Int center, int size, float cityChance, int minRoadSpacing, int maxRoadSpacing)
     {
         int half = size / 2;
-        int roadSpacing = Random.Range(minRoadSpacing, maxRoadSpacing + 1);
 
+        int roadSpacing = Mathf.Clamp(Random.Range(minRoadSpacing, maxRoadSpacing + 1), 0, half);
+
+        Debug.Log("generating grid city at " + center + " with size of " + size + ", and a spacing of " + roadSpacing);
+
+        // --- PASS 1: Roads (on road lines only) ---
         for (int x = -half; x <= half; x++)
         {
             for (int y = -half; y <= half; y++)
             {
                 Vector2Int pos = center + new Vector2Int(x, y);
-                if (pos.x < 0 || pos.y < 0 || pos.x >= worldSize || pos.y >= worldSize) continue;
 
                 bool isRoadLine = (x % roadSpacing == 0 || y % roadSpacing == 0);
 
                 if (isRoadLine)
                 {
-                    sectionGrid[pos] = (Random.value < 0.7f)
-                        ? SectionType.Road
-                        : SectionType.Building;
+                    if(Random.value > cityChance)
+                    {
+                        sectionGrid[pos] = SectionType.Road;
+                        SpawnCubeAt(pos, SectionType.Road);
+                    }        
                 }
-                else
-                {
-                    float roll = Random.value;
-                    if (roll < 0.05f) sectionGrid[pos] = SectionType.Plains;
-                    else if (roll < 0.10f) sectionGrid[pos] = SectionType.Shack;
-                    else sectionGrid[pos] = SectionType.Building;
-                }
-
-                SpawnCubeAt(pos, sectionGrid[pos]);
             }
         }
-    }
 
-    // 2. Organic city (cluster-based with winding roads)
-    private void GenerateOrganicCity(Vector2Int center, int size, int clusterCount = 4)
-    {
-        int half = size / 2;
-        List<Vector2Int> clusters = new();
-
-        // Step 1: Place clusters of buildings
-        for (int i = 0; i < clusterCount; i++)
+        // --- PASS 2: Cities (on road lines only) ---
+        for (int x = -half; x <= half; x++)
         {
-            Vector2Int clusterCenter = center + new Vector2Int(
-                Random.Range(-half, half),
-                Random.Range(-half, half)
+            for (int y = -half; y <= half; y++)
+            {
+                Vector2Int pos = center + new Vector2Int(x, y);
+
+                bool isRoadLine = (x % roadSpacing == 0 || y % roadSpacing == 0);
+
+                if (isRoadLine)
+                {
+                    if (sectionGrid.ContainsKey(pos))
+                        continue;
+
+                    sectionGrid[pos] = SectionType.City;
+                    SpawnCubeAt(pos, SectionType.City);
+                }
+            }
+        }
+
+        // --- PASS 3: Fill Remaining (non-road-line cells) ---
+        for (int x = -half; x <= half; x++)
+        {
+            for (int y = -half; y <= half; y++)
+            {
+                Vector2Int pos = center + new Vector2Int(x, y);
+
+                // Skip if already assigned in pass 1
+                if (sectionGrid.ContainsKey(pos))
+                    continue;
+
+                sectionGrid[pos] = SectionType.Plains;
+                SpawnCubeAt(pos, SectionType.Plains);
+            }
+        }
+
+    }
+    /*
+    // 2. Organic city (cluster-based with winding roads)
+    private void GenerateOrganicCity(Vector2Int center, int size)
+    {
+        Debug.Log("generating organic city at " + center + " with size of " + size);
+
+        int half = size / 2;
+
+        List<Vector2Int> buildings = new();
+
+        int buildingLimit = (half * half) / 2;
+
+        int buildingCount = Random.Range(2, buildingLimit);
+
+        // Step 1: Place buildings randomly
+        int placed = 0;
+        int attempts = 0;
+        while (placed < buildingCount && attempts < buildingCount * 10)
+        {
+            attempts++;
+            Vector2Int randomCell = WorldToGrid(
+                (Vector2)GridToWorld(center) + Random.insideUnitCircle * (size * cubeSize)
             );
 
-            clusters.Add(clusterCenter);
-
-            int clusterSize = Random.Range(2, 5);
-            for (int x = -clusterSize; x <= clusterSize; x++)
+            if (!buildings.Contains(randomCell))
             {
-                for (int y = -clusterSize; y <= clusterSize; y++)
-                {
-                    Vector2Int pos = clusterCenter + new Vector2Int(x, y);
-                    if (pos.x < 0 || pos.y < 0 || pos.x >= worldSize || pos.y >= worldSize) continue;
-
-                    sectionGrid[pos] = SectionType.Building;
-                    SpawnCubeAt(pos, SectionType.Building);
-                }
+                buildings.Add(randomCell);
+                sectionGrid[randomCell] = SectionType.City;
+                SpawnCubeAt(randomCell, SectionType.City);
+                placed++;
             }
         }
 
-        // Step 2: Connect clusters with winding roads
-        for (int i = 0; i < clusters.Count - 1; i++)
+        // Step 2: Connect buildings with winding roads
+        for (int i = 0; i < buildings.Count - 1; i++)
         {
-            Vector2Int start = clusters[i];
-            Vector2Int end = clusters[i + 1];
+            Vector2Int start = buildings[i];
+            Vector2Int end = buildings[i + 1];
             Vector2Int current = start;
 
-            while (current != end)
+            int safety = 0; // prevents infinite loops
+            while (current != end && safety++ < size * size)
             {
+                // Move toward end, but with some randomness
                 if (Random.value > 0.5f)
-                    current.x += current.x < end.x ? 1 : -1;
+                    current.x += current.x < end.x ? 1 : (current.x > end.x ? -1 : 0);
                 else
-                    current.y += current.y < end.y ? 1 : -1;
+                    current.y += current.y < end.y ? 1 : (current.y > end.y ? -1 : 0);
 
                 if (!sectionGrid.ContainsKey(current))
                 {
                     sectionGrid[current] = SectionType.Road;
                     SpawnCubeAt(current, SectionType.Road);
                 }
+            }
+        }
+    }*/
+
+    private void GenerateOrganicCity(Vector2Int center, int size)
+    {
+        Debug.Log("Generating organic city at " + center + " with size " + size);
+
+        int half = size / 2;
+        List<Vector2Int> buildings = new();
+
+        int buildingLimit = Mathf.Max(2, (half * half) / 2);
+        int buildingCount = Random.Range(2, buildingLimit);
+
+        // --- Step 1: Place buildings randomly ---
+        int placed = 0;
+        int attempts = 0;
+        while (placed < buildingCount && attempts < buildingCount * 10)
+        {
+            attempts++;
+            Vector2Int randomCell = WorldToGrid(
+                (Vector2)GridToWorld(center) + Random.insideUnitCircle * (half * cubeSize)
+            );
+
+            // Clamp inside world bounds
+            randomCell.x = Mathf.Clamp(randomCell.x, -worldSize / 2, worldSize / 2);
+            randomCell.y = Mathf.Clamp(randomCell.y, -worldSize / 2, worldSize / 2);
+
+            if (!buildings.Contains(randomCell))
+            {
+                buildings.Add(randomCell);
+                sectionGrid[randomCell] = SectionType.City;
+                SpawnCubeAt(randomCell, SectionType.City);
+                placed++;
+            }
+        }
+
+        // Shuffle buildings so road connections aren’t predictable
+        buildings = buildings.OrderBy(b => Random.value).ToList();
+
+        // --- Step 2: Connect buildings to nearest neighbor ---
+        HashSet<Vector2Int> connected = new();
+        connected.Add(buildings[0]);
+
+        List<Vector2Int> remaining = buildings.Skip(1).ToList();
+
+        while (remaining.Count > 0)
+        {
+            Vector2Int currentBuilding = connected.OrderBy(c => Random.value).First();
+
+            // Find closest remaining building
+            Vector2Int closest = remaining.OrderBy(b => Vector2Int.Distance(currentBuilding, b)).First();
+
+            // Connect the two
+            CreateRoad(currentBuilding, closest, size);
+
+            connected.Add(closest);
+            remaining.Remove(closest);
+        }
+
+        // --- Step 3: Optional random side branches ---
+        float branchChance = 0.3f; // 30% chance
+        foreach (var b1 in buildings)
+        {
+            foreach (var b2 in buildings)
+            {
+                if (b1 == b2) continue;
+                if (Random.value < branchChance)
+                {
+                    CreateRoad(b1, b2, size / 2); // shorter safety limit for branches
+                }
+            }
+        }
+
+        // Register city in cityCenters
+        cityCenters.Add(new CityData(center, size));
+    }
+
+    // --- Helper method to create winding road between two points ---
+    private void CreateRoad(Vector2Int start, Vector2Int end, int safetyLimit)
+    {
+        Vector2Int current = start;
+        int safety = 0;
+
+        while (current != end && safety++ < safetyLimit * safetyLimit)
+        {
+            // Randomly move along X or Y
+            if (Random.value > 0.5f)
+                current.x += current.x < end.x ? 1 : (current.x > end.x ? -1 : 0);
+            else
+                current.y += current.y < end.y ? 1 : (current.y > end.y ? -1 : 0);
+
+            // Occasionally take a diagonal step
+            if (Random.value < 0.1f)
+            {
+                if (current.x != end.x && current.y != end.y)
+                {
+                    current.x += current.x < end.x ? 1 : -1;
+                    current.y += current.y < end.y ? 1 : -1;
+                }
+            }
+
+            // Place road if cell is empty or plains/shack
+            if (!sectionGrid.ContainsKey(current) ||
+                sectionGrid[current] == SectionType.Plains ||
+                sectionGrid[current] == SectionType.Shack)
+            {
+                sectionGrid[current] = SectionType.Road;
+                SpawnCubeAt(current, SectionType.Road);
             }
         }
     }
@@ -416,7 +618,6 @@ public class TerrainBuilder : MonoBehaviour
             for (int y = -half; y <= half; y++)
             {
                 Vector2Int pos = center + new Vector2Int(x, y);
-                if (pos.x < 0 || pos.y < 0 || pos.x >= worldSize || pos.y >= worldSize) continue;
 
                 if (!sectionGrid.ContainsKey(pos))
                 {
@@ -448,6 +649,7 @@ public class TerrainBuilder : MonoBehaviour
     private void SpawnCubeAt(Vector2Int gridPos, SectionType type)
     {
         Cube prefab = GetMatchingCube(gridPos, type);
+        //Debug.Log(prefab.name);
         if (prefab != null)
         {
             GameObject obj = Instantiate(
@@ -482,5 +684,12 @@ public class TerrainBuilder : MonoBehaviour
         SideDirection.Right => SideDirection.Left,
         _ => dir,
     };
+    private Vector2Int WorldToGrid(Vector2 worldPos)
+    {
+        return new Vector2Int(
+            Mathf.RoundToInt(worldPos.x / cubeSize),
+            Mathf.RoundToInt(worldPos.y / cubeSize)
+        );
+    }
     #endregion
 }
