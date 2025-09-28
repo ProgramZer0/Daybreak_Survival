@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
     [Header("Used Game objects")]
     [SerializeField] private MainGUIController GUI;
     [SerializeField] private LifeStyleController LSC;
-    [SerializeField] private GroundBuilder builder;
+    [SerializeField] private TerrainBuilder TB;
     [SerializeField] private PlayerInterface player;
     [SerializeField] private SpriteRenderer playerRenderer;
     [SerializeField] private EnemyController enemyController;
@@ -142,8 +142,7 @@ public class GameManager : MonoBehaviour
         ResetPlayer();
         enemyController.enableSpawning(false);
         enemyController.DespawnAllEnemies();
-        builder.generationEnabled = false;
-        builder.ClearWorld();
+        TB.ClearTerrain();
         SM.StopAll();
     }
 
@@ -152,8 +151,7 @@ public class GameManager : MonoBehaviour
         inMenu = false;
         cycleEnabled = true;
         ResetGame();
-        builder.generationEnabled = true;
-        builder.GenerateChunk(Vector2Int.zero);
+        TB.GenerateTerrain();
         enemyController.enableSpawning(true);
         SetEnvMusic(0.5f);
         SetAmbiance();

@@ -2,10 +2,7 @@ using UnityEngine;
 
 public enum SideType
 {
-    road,
-    plains,
-    water,
-    building
+    None, Road, Building, Plains, Outside, Shack
 }
 public enum SideDirection
 {

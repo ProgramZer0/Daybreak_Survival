@@ -1812,7 +1812,7 @@ MonoBehaviour:
   isBuilding: 1
   Rarity: 0
   cubePrefab: {fileID: 2831109863485006950}
-  cubeType: 3
+  cubeType: 1
   weaponSpawners: []
   enemySpawners:
   - {fileID: 3413492297538853005}
@@ -2530,16 +2530,6 @@ Tilemap:
       m_TileObjectToInstantiateIndex: 65535
       dummyAlignment: 0
       m_AllTileFlags: 1073741825
-  - first: {x: 0, y: 0, z: 0}
-    second:
-      serializedVersion: 2
-      m_TileIndex: 19
-      m_TileSpriteIndex: 19
-      m_TileMatrixIndex: 3
-      m_TileColorIndex: 0
-      m_TileObjectToInstantiateIndex: 65535
-      dummyAlignment: 0
-      m_AllTileFlags: 1073741825
   - first: {x: 1, y: 0, z: 0}
     second:
       serializedVersion: 2
@@ -3200,7 +3190,7 @@ Tilemap:
     m_Data: {fileID: 11400000, guid: 7648dad5e68b11b4aba3ef76b002c725, type: 2}
   - m_RefCount: 8
     m_Data: {fileID: 11400000, guid: a722902e5d07987488d0d4c73b7c35ea, type: 2}
-  - m_RefCount: 13
+  - m_RefCount: 12
     m_Data: {fileID: 11400000, guid: 136b241b37356154b8e70e827231655e, type: 2}
   - m_RefCount: 4
     m_Data: {fileID: 11400000, guid: 40c8288725c3c2c4b895bfaafa99a178, type: 2}
@@ -3257,7 +3247,7 @@ Tilemap:
     m_Data: {fileID: -1993387818, guid: 5eb78b6d0c279be4c8c967face2553bb, type: 3}
   - m_RefCount: 8
     m_Data: {fileID: -1711885656, guid: 5eb78b6d0c279be4c8c967face2553bb, type: 3}
-  - m_RefCount: 13
+  - m_RefCount: 12
     m_Data: {fileID: 30031976, guid: 5eb78b6d0c279be4c8c967face2553bb, type: 3}
   - m_RefCount: 4
     m_Data: {fileID: -1497727879, guid: 5eb78b6d0c279be4c8c967face2553bb, type: 3}
@@ -3330,7 +3320,7 @@ Tilemap:
       e31: 5.4e-43
       e32: 5.44e-43
       e33: 5.41e-43
-  - m_RefCount: 125
+  - m_RefCount: 124
     m_Data:
       e00: 1
       e01: 0
@@ -3349,7 +3339,7 @@ Tilemap:
       e32: 0
       e33: 1
   m_TileColorArray:
-  - m_RefCount: 125
+  - m_RefCount: 124
     m_Data: {r: 1, g: 1, b: 1, a: 1}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1

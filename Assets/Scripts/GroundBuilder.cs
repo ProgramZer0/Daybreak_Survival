@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class GroundBuilder : MonoBehaviour
 {
+    
     [Header("Prefabs")]
     [SerializeField] private List<Cube> allCubePrefabs;   // drag all cubes here
     [SerializeField] private GameObject roadFallback;     // optional backup prefab
@@ -28,7 +29,8 @@ public class GroundBuilder : MonoBehaviour
     private HashSet<Vector2Int> generatedChunks = new HashSet<Vector2Int>();
     private List<GameObject> roads = new List<GameObject>();
     //private Dictionary<Vector2Int, SideDirection> connectionRequirements = new Dictionary<Vector2Int, SideDirection>();
-
+    
+    /*
     public bool generationEnabled = false;
 
     private void Awake()
@@ -323,7 +325,7 @@ public class GroundBuilder : MonoBehaviour
         return candidates[Random.Range(0, candidates.Count)];
     }
     */
-
+    /*
     private SideType PickRandomFillerType()
     {
         //int roll = Random.Range(0, 100);
@@ -418,5 +420,5 @@ public class GroundBuilder : MonoBehaviour
         generatedChunks.Clear();
 
         Debug.Log("[GroundBuilder] World cleared.");
-    }
+    }*/
 }

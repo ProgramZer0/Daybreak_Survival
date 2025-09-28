@@ -8938,7 +8938,7 @@ MonoBehaviour:
   isBuilding: 0
   Rarity: 0
   cubePrefab: {fileID: 8889442443264000390}
-  cubeType: 1
+  cubeType: 2
   weaponSpawners: []
   enemySpawners:
   - {fileID: 2337887266713494682}

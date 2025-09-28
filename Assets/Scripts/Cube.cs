@@ -8,7 +8,7 @@ public class Cube : MonoBehaviour
     public bool isBuilding = false;
     public float Rarity;
     public GameObject cubePrefab;
-    public SideType cubeType;
+    public SectionType cubeType;
     public GameObject[] weaponSpawners;
     public GameObject[] enemySpawners;
     [SerializeField] private LayerMask doorLayer;
