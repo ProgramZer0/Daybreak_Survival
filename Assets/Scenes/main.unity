@@ -17198,7 +17198,7 @@ MonoBehaviour:
   - type: 1
     minSections: 2
     maxSections: 5
-    minSize: 2
+    minSize: 3
     maxSize: 6
     loadOrder: 1
     cityToRoadChance: 0.5
@@ -17220,9 +17220,11 @@ MonoBehaviour:
   - {fileID: 2390302947462879489, guid: fa9eba809f2b7a44aa5979874cba35e2, type: 3}
   - {fileID: 2390302947462879489, guid: 8d30286fdd211744d88f9df23a5bca6f, type: 3}
   - {fileID: 2390302947462879489, guid: 60df3d18b5f982f44a151d2cb423280f, type: 3}
-  cityMinDistance: 6
+  - {fileID: 2390302947462879489, guid: e279972b5487bc74cb88f271bc159d95, type: 3}
+  cityMinDistance: 7
   maxCityPlacementTries: 10
   gridCityBias: 0.294
+  shackChance: 0.01
 --- !u!114 &5045635640186557265
 MonoBehaviour:
   m_ObjectHideFlags: 0

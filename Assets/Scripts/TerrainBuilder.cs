@@ -5,6 +5,18 @@ using UnityEngine;
 public enum SectionType { Outside, City, Plains, Road, Shack }
 public enum CityStyle { Auto, Grid, Organic }
 
+
+[System.Serializable]
+public struct RoadData
+{
+    public List<Vector2Int> roads;
+
+    public RoadData(List<Vector2Int> initRoads)
+    {
+        roads = initRoads;
+    }
+}
+
 [System.Serializable]
 public struct CityData
 {
@@ -53,12 +65,14 @@ public class TerrainBuilder : MonoBehaviour
     [SerializeField] int maxCityPlacementTries = 10;
     [Range(0f, 1f)]
     public float gridCityBias = 0.4f;
+    public float shackChance = 0.25f;
 
     // Internal data
     private Dictionary<Vector2Int, SectionType> sectionGrid = new();
     private Dictionary<Vector2Int, Cube> cubeInstances = new();
     private Dictionary<SectionType, List<Cube>> cubeDict = new();
     private List<CityData> cityCenters = new();
+    private List<RoadData> roadListObjs = new();
 
     public void GenerateTerrain()
     {
@@ -67,12 +81,7 @@ public class TerrainBuilder : MonoBehaviour
         BuildCubeDictionary();
         GenerateOutsideRing();
         GenerateAllSections();
-
         //GenerateAllCubes();
-        //ConnectCitiesWithPlainsRoads();
-        //GeneratePlains();
-        //FillEmptyWithPlains();
-        //PopulatePlainsWithShacks();
     }
 
     #region Cube Dictionary
@@ -97,6 +106,7 @@ public class TerrainBuilder : MonoBehaviour
         cubeInstances.Clear();
         sectionGrid.Clear();
         cityCenters.Clear();
+        roadListObjs.Clear();
 
         Debug.Log("[TerrainBuilder] Terrain cleared.");
     }
@@ -246,8 +256,102 @@ public class TerrainBuilder : MonoBehaviour
                 }
             }
         }
+
+        ConnectAllCities();
+        FillEmptyWithPlains();
+        PopulatePlainsWithShacks(shackChance);
     }
 
+    private void ConnectAllCities()
+    {
+        if (cityCenters.Count < 2) return;
+
+        // Sort cities randomly or by some heuristic (optional)
+        var cities = cityCenters.OrderBy(_ => Random.value).ToList();
+
+        // We'll connect each city to the nearest unconnected city
+        HashSet<int> connectedCities = new();
+        connectedCities.Add(0); // start with the first city
+
+        while (connectedCities.Count < cities.Count)
+        {
+            float minDist = float.MaxValue;
+            int fromIndex = -1, toIndex = -1;
+
+            foreach (int i in connectedCities)
+            {
+                Vector2Int fromCity = cities[i].center;
+
+                for (int j = 0; j < cities.Count; j++)
+                {
+                    if (connectedCities.Contains(j)) continue;
+
+                    Vector2Int toCity = cities[j].center;
+                    float dist = Vector2Int.Distance(fromCity, toCity);
+
+                    if (dist < minDist)
+                    {
+                        minDist = dist;
+                        fromIndex = i;
+                        toIndex = j;
+                    }
+                }
+            }
+
+            if (fromIndex != -1 && toIndex != -1)
+            {
+                Vector2Int from = cities[fromIndex].center;
+                Vector2Int to = cities[toIndex].center;
+                int radius = Mathf.Max(cities[fromIndex].radius, cities[toIndex].radius);
+
+                CreateCityRoad(from, to, from, radius);
+
+                connectedCities.Add(toIndex);
+            }
+        }
+    }
+
+    /*
+    private void ConnectAllCities()
+    {
+        if (cityCenters.Count <= 1) return;
+
+        HashSet<CityData> connected = new();
+        connected.Add(cityCenters[0]);
+
+        List<CityData> remaining = new(cityCenters.Skip(1));
+
+        while (remaining.Count > 0)
+        {
+            float minDist = float.MaxValue;
+            CityData? fromCity = null;
+            CityData? toCity = null;
+
+            foreach (var c1 in connected)
+            {
+                foreach (var c2 in remaining)
+                {
+                    float dist = Vector2Int.Distance(c1.center, c2.center);
+                    if (dist < minDist)
+                    {
+                        minDist = dist;
+                        fromCity = c1;
+                        toCity = c2;
+                    }
+                }
+            }
+
+            if (fromCity.HasValue && toCity.HasValue)
+            {
+                CreateCityRoad(fromCity.Value.center, toCity.Value.center, fromCity.Value.center, (fromCity.Value.radius + 1));
+
+                connected.Add(toCity.Value);
+                remaining.Remove(toCity.Value);
+            }
+            else break;
+        }
+    }
+    */
     private bool IsCityFarEnough(Vector2Int newCenter, int newRadius)
     {
         foreach (var city in cityCenters)
@@ -259,7 +363,40 @@ public class TerrainBuilder : MonoBehaviour
         return true;
     }
     #endregion
+    private void FillEmptyWithPlains()
+    {
+        int halfWorld = worldSize / 2;
 
+        for (int x = -halfWorld; x <= halfWorld; x++)
+        {
+            for (int y = -halfWorld; y <= halfWorld; y++)
+            {
+                Vector2Int pos = new(x, y);
+                if (!sectionGrid.ContainsKey(pos))
+                {
+                    sectionGrid[pos] = SectionType.Plains;
+                    SpawnCubeAt(pos, SectionType.Plains);
+                }
+            }
+        }
+    }
+
+    private void PopulatePlainsWithShacks(float spawnChance = 0.25f)
+    {
+        List<Vector2Int> plainsTiles = sectionGrid
+            .Where(kvp => kvp.Value == SectionType.Plains)
+            .Select(kvp => kvp.Key)
+            .ToList();
+
+        foreach (var pos in plainsTiles)
+        {
+            if (Random.value < spawnChance)
+            {
+                sectionGrid[pos] = SectionType.Shack;
+                SpawnCubeAt(pos, SectionType.Shack);
+            }
+        }
+    }
     private void GenerateGridCity(Vector2Int center, int radius, float cityChance, int minRoadSpacing, int maxRoadSpacing)
     {
         int adjustedRadius = (radius % 2 == 0) ? radius : radius + 1;
@@ -332,6 +469,7 @@ public class TerrainBuilder : MonoBehaviour
     {
         Debug.Log($"[OrganicCity] center {center}, radius {radius}");
 
+        roadListObjs.Clear();
         List<Vector2Int> buildings = new();
         int buildingLimit = Mathf.Max(2, (radius * radius) / 2);
         int buildingCount = Random.Range(2, buildingLimit);
@@ -354,91 +492,356 @@ public class TerrainBuilder : MonoBehaviour
             }
         }
 
+        Dictionary<Vector2Int, bool> isConnected = new();
+
         buildings = buildings.OrderBy(b => Random.value).ToList();
 
-        // Track building connections
-        Dictionary<Vector2Int, int> connectionCount = new();
-        foreach (var b in buildings) connectionCount[b] = 0;
-
-        HashSet<Vector2Int> connected = new();
-        connected.Add(buildings[0]);
-        List<Vector2Int> remaining = buildings.Skip(1).ToList();
-
-        // Connect buildings (main MST)
-        while (remaining.Count > 0)
+        foreach (var building in buildings)
         {
-            Vector2Int currentBuilding = connected.OrderBy(c => Random.value).First();
-            Vector2Int closest = remaining
-                .OrderBy(b => Vector2Int.Distance(currentBuilding, b))
-                .First();
+            Debug.Log("looking at building " + building);
 
-            CreateRoadIfAllowed(currentBuilding, closest, radius, connectionCount);
-
-            connected.Add(closest);
-            remaining.Remove(closest);
-        }
-
-        // Optional side branches
-        float branchChance = 0.3f;
-        foreach (var b1 in buildings)
-        {
-            foreach (var b2 in buildings)
+            //step 1  if building is next to building or a road stop
+            Vector2Int adjacentTile = isAdjacentToCellVector(building);
+            if (adjacentTile != Vector2Int.zero)
             {
-                if (b1 == b2) continue;
-                if (connectionCount[b1] >= 1 || connectionCount[b2] >= 1) continue;
-                if (Random.value < branchChance)
+                Debug.Log("building " + building + " is adjecent to something ");
+                roadListObjs.Add(new RoadData(new List<Vector2Int> {building, adjacentTile }));
+                continue;
+            }
+
+            //step 2 road starts from direction towards center
+            Vector2Int startingDir;
+            if (building.x > center.x)
+            {
+                //to the right of center
+
+                if (building.y > center.y)
                 {
-                    CreateRoadIfAllowed(b1, b2, radius / 2, connectionCount);
+                    //building is above
+                    if (Random.value >= 0.5f)
+                        startingDir = Vector2Int.left;
+                    else
+                        startingDir = Vector2Int.up;
+                }
+                else
+                {
+                    //building is below
+                    if (Random.value >= 0.5f)
+                        startingDir = Vector2Int.left;
+                    else
+                        startingDir = Vector2Int.up;
                 }
             }
+            else
+            {
+                //to the left of center
+
+                if (building.y > center.y)
+                {
+                    //building is above
+                    if (Random.value >= 0.5f)
+                        startingDir = Vector2Int.right;
+                    else
+                        startingDir = Vector2Int.up;
+                }
+                else
+                {
+                    //building is below
+                    if (Random.value >= 0.5f)
+                        startingDir = Vector2Int.right;
+                    else
+                        startingDir = Vector2Int.up;
+                }
+            }
+
+            Debug.Log("direction towards center is  " + startingDir.ToString());
+
+            //step 3 road goes straight towards another building (if there is a building that has a connection we go towards that if not pick random one)
+            Vector2Int target = PickTargetBuilding(buildings, building, center, isConnected);
+
+            Debug.Log("target is " + target);
+
+            Vector2Int endPoint = CreateRoad((building + startingDir), target, radius, building);
+
+            if (buildings.Contains(endPoint))
+            {
+                if (!isConnected.ContainsKey(building))
+                    isConnected[building] = true;
+                if (!isConnected.ContainsKey(endPoint))
+                    isConnected[endPoint] = true;
+            }
         }
+
+        if (roadListObjs.Count <= 1) return;
+
+        //Step 5 connect any local roads to center
+        ConnectAllRoadSegmentsOptimized();
     }
 
-    // Only create a road if both buildings have < 2 connections
-    private void CreateRoadIfAllowed(Vector2Int start, Vector2Int end, int safetyLimit, Dictionary<Vector2Int, int> connectionCount)
+    private Vector2Int PickTargetBuilding(List<Vector2Int> buildings, Vector2Int current, Vector2Int center, Dictionary<Vector2Int, bool> connected)
     {
-        if (connectionCount[start] >= 1 || connectionCount[end] >= 1)
-        {
-            Debug.Log("location " + start + " or " + end + " is full");
-            return;
-        }
+        // Prefer already connected buildings
+        var candidates = buildings.Where(b => connected.ContainsKey(b) && b != current).ToList();
+        if (candidates.Count() > 0)
+            return candidates.OrderBy(b => Vector2Int.Distance(current, b)).First();
 
-        CreateRoad(start, end, safetyLimit);
-
-        connectionCount[start]++;
-        connectionCount[end]++;
+        return buildings.Where(b => b != current).OrderBy(_ => Random.value).First();
     }
 
-    private void CreateRoad(Vector2Int start, Vector2Int end, int safetyLimit)
+    private Vector2Int CreateRoad(Vector2Int start, Vector2Int end, int safetyLimit, Vector2Int startingBuilding, bool isUsingStart = true)
     {
         Vector2Int current = start;
         int safety = 0;
 
+        List<Vector2Int> localRoads = new List<Vector2Int>();
+        localRoads.Add(startingBuilding);
+        bool firstStep = isUsingStart;
+
         while (current != end && safety++ < safetyLimit * safetyLimit)
         {
-            if (Random.value < 0.9f)
+            if(!firstStep)
             {
                 if (Mathf.Abs(end.x - current.x) > Mathf.Abs(end.y - current.y))
                     current.x += (end.x > current.x) ? 1 : -1;
                 else if (end.y != current.y)
                     current.y += (end.y > current.y) ? 1 : -1;
             }
-            else
+
+            if (!sectionGrid.ContainsKey(current))
             {
-                if (Random.value > 0.5f && current.x != end.x)
-                    current.x += (end.x > current.x) ? 1 : -1;
-                else if (current.y != end.y)
-                    current.y += (end.y > current.y) ? 1 : -1;
+                sectionGrid[current] = SectionType.Road;
+                SpawnCubeAt(current, SectionType.Road);
+                localRoads.Add(current);
             }
 
-            if (!sectionGrid.ContainsKey(current) ||
-                sectionGrid[current] == SectionType.Plains ||
-                sectionGrid[current] == SectionType.Shack)
+            //step 4  if road is ever adjacent to a building or a road it 
+            if (isAdjacentToCell(current, localRoads))
+            {
+                Debug.Log("road at " + current + " is adjent to something stopping");
+                roadListObjs.Add(new RoadData(localRoads));
+                break;
+            }
+            firstStep = false;
+        }
+
+        return current;
+    }
+
+    private void CreateCityRoad(Vector2Int startCity, Vector2Int endCity, Vector2Int startingPoint, int cityRadius)
+    {
+        Vector2Int current = startingPoint;
+        Vector2Int target = endCity;
+        int safetyLimit = 1000; // fallback to prevent infinite loops
+        int safety = 0;
+
+        while (current != target && safety++ < safetyLimit)
+        {
+            Vector2Int nextStep = current;
+
+            // Decide whether to move horizontally or vertically
+            if (current.x != target.x)
+            {
+                nextStep.x += (target.x > current.x) ? 1 : -1;
+            }
+            else if (current.y != target.y)
+            {
+                nextStep.y += (target.y > current.y) ? 1 : -1;
+            }
+
+            // Skip placing if already occupied
+            if (!sectionGrid.ContainsKey(nextStep))
+            {
+                sectionGrid[nextStep] = SectionType.Road;
+                SpawnCubeAt(nextStep, SectionType.Road);
+            }
+
+            // Stop if we hit a building outside the city
+            if (sectionGrid.TryGetValue(nextStep, out SectionType type) &&
+                type == SectionType.City &&
+                Vector2Int.Distance(nextStep, startCity) > cityRadius)
+            {
+                break;
+            }
+
+            current = nextStep;
+        }
+    }
+
+    /*
+    private void CreateCityRoad(Vector2Int start, Vector2Int end, Vector2Int cityCenter, int cityRadius)
+    {
+        Vector2Int current = start;
+        int safety = 0;
+        int safetyLimit = Mathf.Max(worldSize, 50);
+
+        while (current != end && safety++ < safetyLimit)
+        {
+            // Move one step towards target
+            if (Mathf.Abs(end.x - current.x) > Mathf.Abs(end.y - current.y))
+                current.x += (end.x > current.x) ? 1 : -1;
+            else if (end.y != current.y)
+                current.y += (end.y > current.y) ? 1 : -1;
+
+            // Stop if we hit a building outside the city radius
+            if (IsBuildingAt(current) && Vector2Int.Distance(current, cityCenter) > cityRadius)
+                break;
+
+            // Place road only if nothing exists there already
+            if (!sectionGrid.ContainsKey(current))
             {
                 sectionGrid[current] = SectionType.Road;
                 SpawnCubeAt(current, SectionType.Road);
             }
         }
+    }
+    */
+    private bool IsBuildingAt(Vector2Int pos)
+    {
+        return sectionGrid.TryGetValue(pos, out SectionType type) && type == SectionType.City;
+    }
+
+    private bool IsAdjacentToBuilding(Vector2Int pos)
+    {
+        Vector2Int[] dirs = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
+        foreach (var d in dirs)
+        {
+            Vector2Int n = pos + d;
+            if (sectionGrid.TryGetValue(n, out SectionType type))
+            {
+                if (type == SectionType.City) // only stop at buildings
+                    return true;
+            }
+        }
+        return false;
+    }
+    private bool isAdjacentToCell(Vector2Int pos, List<Vector2Int> blacklist)
+    {
+        Vector2Int[] dirs = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
+        foreach (var d in dirs)
+        {
+            var n = pos + d;
+            if (blacklist.Contains(n)) continue;
+            if (sectionGrid.ContainsKey(n))
+                return true;
+        }
+        return false;
+    }
+
+    private Vector2Int isAdjacentToCellVector(Vector2Int pos)
+    {
+        Vector2Int[] dirs = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
+        foreach (var d in dirs)
+        {
+            var n = pos + d;
+            if (sectionGrid.ContainsKey(n))
+                return n;
+        }
+        return Vector2Int.zero;
+    }
+    private void ConnectAllRoadSegmentsOptimized()
+    {
+        if (roadListObjs.Count <= 1) return;
+
+        // Separate connected / disconnected roads
+        List<RoadData> connected = new();
+        List<RoadData> disconnected = new(roadListObjs);
+
+        // Start with the first road segment
+        connected.Add(disconnected[0]);
+        disconnected.RemoveAt(0);
+
+        // Build a global hash set for fast adjacency checks
+        HashSet<Vector2Int> connectedTiles = new HashSet<Vector2Int>();
+        foreach (var vec in connected[0].roads)
+            connectedTiles.Add(vec);
+
+        int maxIterations = 1000;
+        int iteration = 0;
+        bool added;
+
+        do
+        {
+            added = false;
+            iteration++;
+
+            if (iteration > maxIterations)
+            {
+                Debug.LogWarning("[TerrainBuilder] ConnectAllRoadSegments reached max iterations. Forcing remaining connections.");
+                break;
+            }
+
+            for (int i = disconnected.Count - 1; i >= 0; i--)
+            {
+                RoadData road = disconnected[i];
+
+                if (IsAdjacentToConnectedTiles(road, connectedTiles))
+                {
+                    // Add to connected
+                    connected.Add(road);
+                    disconnected.RemoveAt(i);
+
+                    // Add all tiles to the global set
+                    foreach (var vec in road.roads)
+                        connectedTiles.Add(vec);
+
+                    added = true;
+                }
+            }
+
+        } while (added);
+
+        // Connect any remaining disconnected segments
+        foreach (var road in disconnected)
+        {
+            Vector2Int from = road.roads[Random.Range(0, road.roads.Count)];
+            Vector2Int to = FindNearestRoadVector(from, connectedTiles);
+
+            // Create a direct road between them
+            CreateRoad(from, to, 50, from, false);
+
+            // Add tiles to connected set
+            foreach (var vec in road.roads)
+                connectedTiles.Add(vec);
+
+            connected.Add(road);
+        }
+    }
+
+    /// <summary>
+    /// Checks if any tile in road is adjacent to the global set of connected tiles.
+    /// </summary>
+    private bool IsAdjacentToConnectedTiles(RoadData road, HashSet<Vector2Int> connectedTiles)
+    {
+        foreach (var vec in road.roads)
+        {
+            if (connectedTiles.Contains(vec + Vector2Int.up) ||
+                connectedTiles.Contains(vec + Vector2Int.down) ||
+                connectedTiles.Contains(vec + Vector2Int.left) ||
+                connectedTiles.Contains(vec + Vector2Int.right))
+                return true;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Finds the nearest connected tile from the hash set to the given position.
+    /// </summary>
+    private Vector2Int FindNearestRoadVector(Vector2Int from, HashSet<Vector2Int> connectedTiles)
+    {
+        Vector2Int nearest = Vector2Int.zero;
+        float minDist = float.MaxValue;
+
+        foreach (var vec in connectedTiles)
+        {
+            float dist = Vector2Int.Distance(from, vec);
+            if (dist < minDist)
+            {
+                minDist = dist;
+                nearest = vec;
+            }
+        }
+
+        return nearest;
     }
 
     #region Section Generators
@@ -454,22 +857,6 @@ public class TerrainBuilder : MonoBehaviour
                 {
                     sectionGrid[pos] = SectionType.Plains;
                     SpawnCubeAt(pos, SectionType.Plains);
-                }
-            }
-        }
-    }
-
-    private void PopulatePlainsWithShacks(float spawnChance = 0.25f)
-    {
-        foreach (var kvp in sectionGrid)
-        {
-            if (kvp.Value == SectionType.Plains)
-            {
-                Vector2Int pos = kvp.Key;
-                if (Random.value < spawnChance)
-                {
-                    sectionGrid[pos] = SectionType.Shack;
-                    SpawnCubeAt(pos, SectionType.Shack);
                 }
             }
         }
