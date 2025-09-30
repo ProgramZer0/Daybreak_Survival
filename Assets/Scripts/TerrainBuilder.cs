@@ -1,8 +1,9 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public enum SectionType { Outside, City, Plains, Road, Shack }
+public enum SectionType { Empty, Outside, City, Plains, Road, Shack }
 public enum CityStyle { Auto, Grid, Organic }
 
 
@@ -68,15 +69,30 @@ public class TerrainBuilder : MonoBehaviour
     public float shackChance = 0.25f;
 
     // Internal data
-    private Dictionary<Vector2Int, SectionType> sectionGrid = new();
-    private Dictionary<Vector2Int, Cube> cubeInstances = new();
+    private SectionType[,] sectionGrid;
+    private Cube[,] cubeInstances;
+
+    private int gridOffset;
+
     private Dictionary<SectionType, List<Cube>> cubeDict = new();
     private List<CityData> cityCenters = new();
     private List<RoadData> roadListObjs = new();
 
     public void GenerateTerrain()
     {
-        sectionGrid = new();
+        gridOffset = worldSize / 2;
+
+        sectionGrid = new SectionType[worldSize, worldSize];
+        cubeInstances = new Cube[worldSize, worldSize];
+
+        for (int x = 0; x < worldSize; x++)
+        {
+            for (int y = 0; y < worldSize; y++)
+            {
+                sectionGrid[x, y] = SectionType.Empty;
+                cubeInstances[x, y] = null;
+            }
+        }
 
         BuildCubeDictionary();
         GenerateOutsideRing();
@@ -97,14 +113,15 @@ public class TerrainBuilder : MonoBehaviour
 
     public void ClearTerrain()
     {
-        foreach (var cube in cubeInstances.Values)
+        if(cubeInstances != null)
         {
-            if (cube != null)
-                Destroy(cube.gameObject);
+            foreach (var cube in cubeInstances)
+            {
+                if (cube != null)
+                    Destroy(cube.gameObject);
+            }
         }
 
-        cubeInstances.Clear();
-        sectionGrid.Clear();
         cityCenters.Clear();
         roadListObjs.Clear();
 
@@ -118,7 +135,12 @@ public class TerrainBuilder : MonoBehaviour
         foreach (SideDirection dir in System.Enum.GetValues(typeof(SideDirection)))
         {
             Vector2Int neighborPos = gridPos + DirFromSide(dir);
-            if (cubeInstances.TryGetValue(neighborPos, out Cube neighbor))
+
+            if (!InBounds(neighborPos))
+                continue;
+
+            Cube neighbor = CubeAt(neighborPos);
+            if (neighbor != null)
             {
                 SideDirection opposite = OppositeDirection(dir);
                 cubeSide neighborSide = neighbor.sides.Find(s => s.sideDirection == opposite);
@@ -127,24 +149,24 @@ public class TerrainBuilder : MonoBehaviour
             }
         }
 
+        if (!cubeDict.TryGetValue(fallbackType, out List<Cube> cubeList) || cubeList.Count == 0)
+            return null;
+
         List<Cube> candidates = new();
-        if (cubeDict.TryGetValue(fallbackType, out List<Cube> cubeList))
+        foreach (Cube prefab in cubeList)
         {
-            foreach (Cube prefab in cubeList)
+            bool matches = true;
+            foreach (var req in requiredSides)
             {
-                bool matches = true;
-                foreach (var req in requiredSides)
+                cubeSide side = prefab.sides.Find(s => s.sideDirection == req.Key);
+                if (side == null || side.sideType != req.Value)
                 {
-                    cubeSide side = prefab.sides.Find(s => s.sideDirection == req.Key);
-                    if (side == null || side.sideType != req.Value)
-                    {
-                        matches = false;
-                        break;
-                    }
+                    matches = false;
+                    break;
                 }
-                if (matches)
-                    candidates.Add(prefab);
             }
+            if (matches)
+                candidates.Add(prefab);
         }
 
         if (candidates.Count == 0)
@@ -180,8 +202,7 @@ public class TerrainBuilder : MonoBehaviour
                 if (isOutside)
                 {
                     Vector2Int pos = new(x, y);
-                    sectionGrid[pos] = SectionType.Outside;
-                    SpawnCubeAt(pos, SectionType.Outside);
+                    if (InBounds(pos)) SectionAt(pos) = SectionType.Outside;
                 }
             }
         }
@@ -260,6 +281,34 @@ public class TerrainBuilder : MonoBehaviour
         ConnectAllCities();
         FillEmptyWithPlains();
         PopulatePlainsWithShacks(shackChance);
+
+        Debug.Log("[TerrainBuilder] Sections Generated.");
+    }
+
+    IEnumerator SpawnAllCubes()
+    {
+        int half = worldSize / 2;
+
+        for (int gx = -half; gx <= half; gx++)
+        {
+            for (int gy = -half; gy <= half; gy++)
+            {
+                Vector2Int gridPos = new Vector2Int(gx, gy);
+                SectionType type = SectionAt(gridPos);
+
+                if (type == SectionType.Outside) continue;
+
+                Cube prefab = GetMatchingCube(gridPos, type);
+                if (prefab != null)
+                {
+                    GameObject obj = Instantiate(prefab.cubePrefab, GridToWorld(gridPos), Quaternion.identity, transform);
+                    SetCubeAt(gridPos, obj.GetComponent<Cube>());
+                }
+            }
+
+            // Yield after each row to keep frame responsive
+            yield return null;
+        }
     }
 
     private void ConnectAllCities()
@@ -311,47 +360,6 @@ public class TerrainBuilder : MonoBehaviour
         }
     }
 
-    /*
-    private void ConnectAllCities()
-    {
-        if (cityCenters.Count <= 1) return;
-
-        HashSet<CityData> connected = new();
-        connected.Add(cityCenters[0]);
-
-        List<CityData> remaining = new(cityCenters.Skip(1));
-
-        while (remaining.Count > 0)
-        {
-            float minDist = float.MaxValue;
-            CityData? fromCity = null;
-            CityData? toCity = null;
-
-            foreach (var c1 in connected)
-            {
-                foreach (var c2 in remaining)
-                {
-                    float dist = Vector2Int.Distance(c1.center, c2.center);
-                    if (dist < minDist)
-                    {
-                        minDist = dist;
-                        fromCity = c1;
-                        toCity = c2;
-                    }
-                }
-            }
-
-            if (fromCity.HasValue && toCity.HasValue)
-            {
-                CreateCityRoad(fromCity.Value.center, toCity.Value.center, fromCity.Value.center, (fromCity.Value.radius + 1));
-
-                connected.Add(toCity.Value);
-                remaining.Remove(toCity.Value);
-            }
-            else break;
-        }
-    }
-    */
     private bool IsCityFarEnough(Vector2Int newCenter, int newRadius)
     {
         foreach (var city in cityCenters)
@@ -372,10 +380,9 @@ public class TerrainBuilder : MonoBehaviour
             for (int y = -halfWorld; y <= halfWorld; y++)
             {
                 Vector2Int pos = new(x, y);
-                if (!sectionGrid.ContainsKey(pos))
+                if (IsEmpty(pos))
                 {
-                    sectionGrid[pos] = SectionType.Plains;
-                    SpawnCubeAt(pos, SectionType.Plains);
+                    SectionAt(pos) = SectionType.Plains;
                 }
             }
         }
@@ -383,20 +390,20 @@ public class TerrainBuilder : MonoBehaviour
 
     private void PopulatePlainsWithShacks(float spawnChance = 0.25f)
     {
-        List<Vector2Int> plainsTiles = sectionGrid
-            .Where(kvp => kvp.Value == SectionType.Plains)
-            .Select(kvp => kvp.Key)
-            .ToList();
-
-        foreach (var pos in plainsTiles)
+        for (int x = 0; x < worldSize; x++)
         {
-            if (Random.value < spawnChance)
+            for (int y = 0; y < worldSize; y++)
             {
-                sectionGrid[pos] = SectionType.Shack;
-                SpawnCubeAt(pos, SectionType.Shack);
+                Vector2Int pos = new Vector2Int(x - gridOffset, y - gridOffset);
+
+                if (SectionAt(pos) == SectionType.Plains && Random.value < spawnChance)
+                {
+                    SetSection(pos, SectionType.Shack);
+                }
             }
         }
     }
+
     private void GenerateGridCity(Vector2Int center, int radius, float cityChance, int minRoadSpacing, int maxRoadSpacing)
     {
         int adjustedRadius = (radius % 2 == 0) ? radius : radius + 1;
@@ -428,8 +435,7 @@ public class TerrainBuilder : MonoBehaviour
 
                 if (isRoadLine && Random.value > cityChance)
                 {
-                    sectionGrid[pos] = SectionType.Road;
-                    SpawnCubeAt(pos, SectionType.Road);
+                    if (InBounds(pos)) SectionAt(pos) = SectionType.Road;
                 }
             }
         }
@@ -442,10 +448,9 @@ public class TerrainBuilder : MonoBehaviour
                 Vector2Int pos = center + new Vector2Int(x, y);
                 bool isRoadLine = (x % roadSpacing == 0 || y % roadSpacing == 0);
 
-                if (isRoadLine && !sectionGrid.ContainsKey(pos))
+                if (isRoadLine && IsEmpty(pos))
                 {
-                    sectionGrid[pos] = SectionType.City;
-                    SpawnCubeAt(pos, SectionType.City);
+                    SectionAt(pos) = SectionType.City;
                 }
             }
         }
@@ -456,10 +461,9 @@ public class TerrainBuilder : MonoBehaviour
             for (int y = -adjustedRadius; y <= adjustedRadius; y++)
             {
                 Vector2Int pos = center + new Vector2Int(x, y);
-                if (!sectionGrid.ContainsKey(pos))
+                if (IsEmpty(pos))
                 {
-                    sectionGrid[pos] = SectionType.Plains;
-                    SpawnCubeAt(pos, SectionType.Plains);
+                    SectionAt(pos) = SectionType.Plains;
                 }
             }
         }
@@ -485,10 +489,14 @@ public class TerrainBuilder : MonoBehaviour
 
             if (!buildings.Contains(randomCell))
             {
-                buildings.Add(randomCell);
-                sectionGrid[randomCell] = SectionType.City;
-                SpawnCubeAt(randomCell, SectionType.City);
-                placed++;
+                if (IsEmpty(randomCell))
+                {
+                    buildings.Add(randomCell);
+
+                    SectionAt(randomCell) = SectionType.City;
+                    placed++;
+
+                }
             }
         }
 
@@ -607,10 +615,9 @@ public class TerrainBuilder : MonoBehaviour
                     current.y += (end.y > current.y) ? 1 : -1;
             }
 
-            if (!sectionGrid.ContainsKey(current))
+            if (IsEmpty(current))
             {
-                sectionGrid[current] = SectionType.Road;
-                SpawnCubeAt(current, SectionType.Road);
+                SectionAt(current) = SectionType.Road;
                 localRoads.Add(current);
             }
 
@@ -649,92 +656,52 @@ public class TerrainBuilder : MonoBehaviour
             }
 
             // Skip placing if already occupied
-            if (!sectionGrid.ContainsKey(nextStep))
-            {
-                sectionGrid[nextStep] = SectionType.Road;
-                SpawnCubeAt(nextStep, SectionType.Road);
-            }
+            if (IsType(nextStep, SectionType.City) && Vector2Int.Distance(nextStep, startCity) > cityRadius)
+                break;
 
             // Stop if we hit a building outside the city
-            if (sectionGrid.TryGetValue(nextStep, out SectionType type) &&
-                type == SectionType.City &&
-                Vector2Int.Distance(nextStep, startCity) > cityRadius)
-            {
-                break;
-            }
+            if (IsEmpty(nextStep))
+                SetSection(nextStep, SectionType.Road);
 
             current = nextStep;
         }
     }
 
-    /*
-    private void CreateCityRoad(Vector2Int start, Vector2Int end, Vector2Int cityCenter, int cityRadius)
-    {
-        Vector2Int current = start;
-        int safety = 0;
-        int safetyLimit = Mathf.Max(worldSize, 50);
-
-        while (current != end && safety++ < safetyLimit)
-        {
-            // Move one step towards target
-            if (Mathf.Abs(end.x - current.x) > Mathf.Abs(end.y - current.y))
-                current.x += (end.x > current.x) ? 1 : -1;
-            else if (end.y != current.y)
-                current.y += (end.y > current.y) ? 1 : -1;
-
-            // Stop if we hit a building outside the city radius
-            if (IsBuildingAt(current) && Vector2Int.Distance(current, cityCenter) > cityRadius)
-                break;
-
-            // Place road only if nothing exists there already
-            if (!sectionGrid.ContainsKey(current))
-            {
-                sectionGrid[current] = SectionType.Road;
-                SpawnCubeAt(current, SectionType.Road);
-            }
-        }
-    }
-    */
-    private bool IsBuildingAt(Vector2Int pos)
-    {
-        return sectionGrid.TryGetValue(pos, out SectionType type) && type == SectionType.City;
-    }
-
     private bool IsAdjacentToBuilding(Vector2Int pos)
     {
-        Vector2Int[] dirs = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
-        foreach (var d in dirs)
+        foreach (var n in GetNeighbors(pos))
         {
-            Vector2Int n = pos + d;
-            if (sectionGrid.TryGetValue(n, out SectionType type))
-            {
-                if (type == SectionType.City) // only stop at buildings
-                    return true;
-            }
+            if (InBounds(n) && SectionAt(n) == SectionType.City)
+                return true;
         }
         return false;
     }
     private bool isAdjacentToCell(Vector2Int pos, List<Vector2Int> blacklist)
     {
-        Vector2Int[] dirs = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
-        foreach (var d in dirs)
+        foreach (var n in GetNeighbors(pos))
         {
-            var n = pos + d;
             if (blacklist.Contains(n)) continue;
-            if (sectionGrid.ContainsKey(n))
-                return true;
+
+            if (InBounds(n))
+            {
+                var type = SectionAt(n);
+                if (type != SectionType.Empty && type != SectionType.Outside)
+                    return true;
+            }
         }
         return false;
     }
 
     private Vector2Int isAdjacentToCellVector(Vector2Int pos)
     {
-        Vector2Int[] dirs = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
-        foreach (var d in dirs)
+        foreach (var n in GetNeighbors(pos))
         {
-            var n = pos + d;
-            if (sectionGrid.ContainsKey(n))
-                return n;
+            if (InBounds(n))
+            {
+                var type = SectionAt(n);
+                if (type != SectionType.Empty && type != SectionType.Outside)
+                    return n;
+            }
         }
         return Vector2Int.zero;
     }
@@ -807,9 +774,6 @@ public class TerrainBuilder : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Checks if any tile in road is adjacent to the global set of connected tiles.
-    /// </summary>
     private bool IsAdjacentToConnectedTiles(RoadData road, HashSet<Vector2Int> connectedTiles)
     {
         foreach (var vec in road.roads)
@@ -823,9 +787,6 @@ public class TerrainBuilder : MonoBehaviour
         return false;
     }
 
-    /// <summary>
-    /// Finds the nearest connected tile from the hash set to the given position.
-    /// </summary>
     private Vector2Int FindNearestRoadVector(Vector2Int from, HashSet<Vector2Int> connectedTiles)
     {
         Vector2Int nearest = Vector2Int.zero;
@@ -853,10 +814,9 @@ public class TerrainBuilder : MonoBehaviour
             {
                 Vector2Int pos = center + new Vector2Int(x, y);
 
-                if (!sectionGrid.ContainsKey(pos))
+                if (IsEmpty(pos))
                 {
-                    sectionGrid[pos] = SectionType.Plains;
-                    SpawnCubeAt(pos, SectionType.Plains);
+                    SectionAt(pos)= SectionType.Plains;
                 }
             }
         }
@@ -864,6 +824,53 @@ public class TerrainBuilder : MonoBehaviour
     #endregion
 
     #region Helpers
+
+    private bool IsWalkable(Vector2Int pos)
+    {
+        if (!InBounds(pos)) return false;
+        SectionType type = SectionAt(pos);
+        return type != SectionType.Empty && type != SectionType.Outside;
+    }
+
+    private bool IsType(Vector2Int pos, SectionType type)
+    {
+        return InBounds(pos) && SectionAt(pos) == type;
+    }
+
+    private Vector2Int[] GetNeighbors(Vector2Int pos)
+    {
+        return new Vector2Int[] { pos + Vector2Int.up, pos + Vector2Int.down, pos + Vector2Int.right, pos + Vector2Int.left };
+    }
+    private int ToIndex(int coord) => coord + gridOffset;
+    private bool InBounds(Vector2Int pos)
+    {
+        int x = pos.x + gridOffset;
+        int y = pos.y + gridOffset;
+        return (x >= 0 && x < worldSize && y >= 0 && y < worldSize);
+    }
+
+    private ref SectionType SectionAt(Vector2Int pos)
+    {
+        return ref sectionGrid[pos.x + gridOffset, pos.y + gridOffset];
+    }
+    private void SetSection(Vector2Int pos, SectionType type)
+    {
+        if (InBounds(pos))
+            sectionGrid[ToIndex(pos.x), ToIndex(pos.y)] = type;
+    }
+    private bool IsEmpty(Vector2Int pos)
+    {
+        return InBounds(pos) && sectionGrid[ToIndex(pos.x), ToIndex(pos.y)] == SectionType.Empty;
+    }
+    private Cube CubeAt(Vector2Int pos)
+    {
+        return cubeInstances[pos.x + gridOffset, pos.y + gridOffset];
+    }
+
+    private void SetCubeAt(Vector2Int pos, Cube cube)
+    {
+        cubeInstances[pos.x + gridOffset, pos.y + gridOffset] = cube;
+    }
     private void SpawnCubeAt(Vector2Int gridPos, SectionType type)
     {
         Cube prefab = GetMatchingCube(gridPos, type);
@@ -875,10 +882,13 @@ public class TerrainBuilder : MonoBehaviour
                 Quaternion.identity,
                 transform
             );
-            cubeInstances[gridPos] = obj.GetComponent<Cube>();
+            SetCubeAt(gridPos, obj.GetComponent<Cube>());
         }
     }
-
+    private bool HasCube(Vector2Int pos)
+    {
+        return InBounds(pos) && cubeInstances[ToIndex(pos.x), ToIndex(pos.y)] != null;
+    }
     private Vector3 GridToWorld(Vector2Int gridPos)
     {
         return new Vector3(gridPos.x * cubeSize, gridPos.y * cubeSize, 0f);

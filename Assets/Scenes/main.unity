@@ -17185,7 +17185,7 @@ MonoBehaviour:
   sectionSpawnMargin: 4
   cubeSize: 25
   sectionSettings:
-  - type: 1
+  - type: 2
     minSections: 2
     maxSections: 5
     minSize: 4
@@ -17195,7 +17195,7 @@ MonoBehaviour:
     cityStyle: 1
     minRoadSpacing: 2
     maxRoadSpacing: 3
-  - type: 1
+  - type: 2
     minSections: 2
     maxSections: 5
     minSize: 3
@@ -17205,7 +17205,7 @@ MonoBehaviour:
     cityStyle: 2
     minRoadSpacing: 3
     maxRoadSpacing: 8
-  - type: 2
+  - type: 3
     minSections: 1
     maxSections: 2
     minSize: 4
