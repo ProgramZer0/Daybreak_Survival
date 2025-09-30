@@ -1,9 +1,5 @@
 using UnityEngine;
 
-public enum SideType
-{
-    None, Road, Building, Plains, Outside, Shack
-}
 public enum SideDirection
 {
     Up,
@@ -14,7 +10,7 @@ public enum SideDirection
 
 public class cubeSide : MonoBehaviour
 {
-    public SideType sideType;
+    public SectionType[] sideType;
     public SideDirection sideDirection;
 
     public bool isDefinedConnected;

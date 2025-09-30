@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lifestyleName: LumberJack
   id: 1
-  script: {fileID: 11500000, guid: 8a0818624976db144b3b5650de25bcbe, type: 3}
+  scriptName: BasicLifeStyle
   rarity: 0
   lifestyleObj: {fileID: 0}
   displaySpirte: {fileID: 21300000, guid: e2e78dfdf84ad834e8e0c88e77dbda08, type: 3}

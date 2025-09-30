@@ -45,7 +45,6 @@ public class Spawner : MonoBehaviour
         }
 
         return o;
-
     }
 
     public GameObject Spawn(GameObject prefab, Transform player, bool isDay, SoundManager SM)

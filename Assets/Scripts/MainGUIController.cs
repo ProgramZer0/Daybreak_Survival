@@ -19,6 +19,7 @@ public class MainGUIController : MonoBehaviour
     [SerializeField] private GameObject settingMenuPM;
     [SerializeField] private GameObject mainMenu;
     [SerializeField] private GameObject lifestyleGUI;
+    [SerializeField] private GameObject loadingScreen;
 
     [SerializeField] private Weapon empty;
     [SerializeField] private PlayerInterface player;
@@ -102,6 +103,13 @@ public class MainGUIController : MonoBehaviour
         setInUI();
         lifestyleGUI.SetActive(true);
     }
+
+    public void ShowLoading()
+    {
+        setInUI();
+        loadingScreen.SetActive(true);
+    }
+
     public Weapon ReturnEmptyWeapon()
     {
         return empty;

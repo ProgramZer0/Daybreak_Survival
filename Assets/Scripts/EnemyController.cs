@@ -8,7 +8,6 @@ public class EnemyController : MonoBehaviour
     [SerializeField] protected SoundManager SM;
     [SerializeField] private Transform player;
     [SerializeField] private GameObject[] enemyPrefabs;
-    [SerializeField] private GroundBuilder planetBuilder;
 
     [Header("Spawn Settings")]
     [SerializeField] private float minSpawnRadius = 100f;

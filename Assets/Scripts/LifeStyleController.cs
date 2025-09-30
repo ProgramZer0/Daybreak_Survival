@@ -50,26 +50,26 @@ public class LifeStyleController : MonoBehaviour
 
     private void AddLifestyle(LifeStyles LS)
     {
-        if (LS.script == null)
+        if (string.IsNullOrEmpty(LS.scriptName))
         {
-            Debug.LogError("No script assigned to lifestyle: " + LS.lifestyleName);
+            Debug.LogError("No scriptName set for lifestyle: " + LS.lifestyleName);
             return;
         }
 
-        var type = LS.script.GetClass();
+        var type = System.Type.GetType(LS.scriptName);
         if (type == null)
         {
-            Debug.LogError("Could not resolve script for: " + LS.lifestyleName);
+            Debug.LogError("Could not resolve type from scriptName: " + LS.scriptName);
             return;
         }
 
-        if (gameObject.GetComponent(type) != null)
+        if (player.gameObject.GetComponent(type) != null)
             return;
 
         var comp = player.gameObject.AddComponent(type) as lifestyleScript;
         if (comp == null)
         {
-            Debug.LogError("Script is not a lifestyleScript: " + LS.script.name);
+            Debug.LogError($"Script {LS.scriptName} is not a lifestyleScript.");
             return;
         }
 

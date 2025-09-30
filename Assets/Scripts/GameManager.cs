@@ -45,7 +45,8 @@ public class GameManager : MonoBehaviour
     private float deathTimer = 0f;
     private bool isDay = true;
     private bool inMenu = true;
-
+    private bool startedGame = false;
+    private bool hitMMButton = false;
     private void Start()
     {
         ResetDNCycle();
@@ -74,12 +75,32 @@ public class GameManager : MonoBehaviour
             cycleTimer += Time.deltaTime * debugTimeMult;
             deathTimer += Time.deltaTime * debugTimeMult;
         }
+
+        if (!TB.isRunning && startedGame)
+        {
+            enemyController.enableSpawning(true);
+            SetEnvMusic(10f);
+            SetAmbiance();
+            LSC.AddAllActive();
+            GUI.ShowNoGUI();
+            GUI.ShowAllHUDs();
+            GUI.SetHUDVals();
+            startedGame = false;
+            Debug.Log("Bulding done");
+        }
+
+        if (!TB.isDeleting && hitMMButton)
+        {
+            Debug.Log("deleting ");
+            GUI.ShowNoGUI();
+            GUI.OpenMainMenu();
+            hitMMButton = false;
+        }
     }
 
     private void FixedUpdate()
-    {
+    { 
         if (!cycleEnabled) return;
-
 
         if (deathTimer >= deathTime)
         {
@@ -132,9 +153,10 @@ public class GameManager : MonoBehaviour
     public void MainMenu()
     {
         if (inMenu) return;
+        PlayRandomEnvMusic(5);
         ResetGame();
         inMenu = true;
-        PlayRandomEnvMusic(0.3f);
+        hitMMButton = true;
     }
 
     public void ResetGame()
@@ -153,10 +175,7 @@ public class GameManager : MonoBehaviour
         cycleEnabled = true;
         ResetGame();
         TB.GenerateTerrain();
-        enemyController.enableSpawning(true);
-        SetEnvMusic(0.5f);
-        SetAmbiance();
-        LSC.AddAllActive();
+        startedGame = true;
     }
 
     public void EndGameFail()

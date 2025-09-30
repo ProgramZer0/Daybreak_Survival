@@ -7,7 +7,7 @@ public class LifeStyles : ScriptableObject
     [Header("Main Settings")]
     public string lifestyleName;
     public int id;
-    public MonoScript script;
+    public string scriptName;
     public Rarity rarity = Rarity.common;
     public GameObject lifestyleObj;
     public Sprite displaySpirte;

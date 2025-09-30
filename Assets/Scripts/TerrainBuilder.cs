@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public enum SectionType { Empty, Outside, City, Plains, Road, Shack }
+public enum SectionType { Empty, Outside, City, Plains, Road, Shack, Highway, rualBuildings}
 public enum CityStyle { Auto, Grid, Organic }
 
 
@@ -78,8 +78,13 @@ public class TerrainBuilder : MonoBehaviour
     private List<CityData> cityCenters = new();
     private List<RoadData> roadListObjs = new();
 
+    public bool isRunning = false;
+    public bool isDeleting = false;
+
     public void GenerateTerrain()
-    {
+    {   
+        isRunning = true;
+        Debug.Log("[TerrainBuilder] Terrain started.");
         gridOffset = worldSize / 2;
 
         sectionGrid = new SectionType[worldSize, worldSize];
@@ -97,7 +102,7 @@ public class TerrainBuilder : MonoBehaviour
         BuildCubeDictionary();
         GenerateOutsideRing();
         GenerateAllSections();
-        //GenerateAllCubes();
+        StartCoroutine(SpawnAllCubes());
     }
 
     #region Cube Dictionary
@@ -113,14 +118,20 @@ public class TerrainBuilder : MonoBehaviour
 
     public void ClearTerrain()
     {
-        if(cubeInstances != null)
-        {
-            foreach (var cube in cubeInstances)
-            {
-                if (cube != null)
-                    Destroy(cube.gameObject);
-            }
-        }
+        // Kick off the clear process
+        StartCoroutine(ClearTerrainRoutine());
+    }
+
+    private IEnumerator ClearTerrainRoutine()
+    {
+        // If a delete is already running, wait until it's done
+        while (isDeleting)
+            yield return null;
+
+        isDeleting = true;
+
+        // Do deletion
+        yield return StartCoroutine(DeleteAllCubes());
 
         cityCenters.Clear();
         roadListObjs.Clear();
@@ -128,9 +139,31 @@ public class TerrainBuilder : MonoBehaviour
         Debug.Log("[TerrainBuilder] Terrain cleared.");
     }
 
+    private IEnumerator DeleteAllCubes()
+    {
+        if (cubeInstances != null)
+        {
+            for (int x = 0; x < worldSize; x++)
+            {
+                for (int y = 0; y < worldSize; y++)
+                {
+                    if (cubeInstances[x, y] != null)
+                        Destroy(cubeInstances[x, y].gameObject);
+
+                    cubeInstances[x, y] = null;
+                }
+                // Yield after each row to avoid frame hitch
+                yield return null;
+            }
+        }
+
+        isDeleting = false;
+    }
+
     private Cube GetMatchingCube(Vector2Int gridPos, SectionType fallbackType)
     {
-        Dictionary<SideDirection, SideType> requiredSides = new();
+        // Step 1: Gather required sides from neighbors
+        Dictionary<SideDirection, SectionType[]> requiredSides = new();
 
         foreach (SideDirection dir in System.Enum.GetValues(typeof(SideDirection)))
         {
@@ -144,35 +177,60 @@ public class TerrainBuilder : MonoBehaviour
             {
                 SideDirection opposite = OppositeDirection(dir);
                 cubeSide neighborSide = neighbor.sides.Find(s => s.sideDirection == opposite);
-                if (neighborSide != null)
+                if (neighborSide != null && neighborSide.sideType.Length > 0)
+                {
                     requiredSides[dir] = neighborSide.sideType;
+                }
             }
         }
 
+        // Step 2: Get all cubes of the requested type
         if (!cubeDict.TryGetValue(fallbackType, out List<Cube> cubeList) || cubeList.Count == 0)
             return null;
 
+        // Step 3: Filter candidates that match at least one type per required side
         List<Cube> candidates = new();
         foreach (Cube prefab in cubeList)
         {
             bool matches = true;
+
             foreach (var req in requiredSides)
             {
                 cubeSide side = prefab.sides.Find(s => s.sideDirection == req.Key);
-                if (side == null || side.sideType != req.Value)
+
+                if (side == null)
+                {
+                    matches = false;
+                    break;
+                }
+
+                // Check for any overlap between neighbor's allowed types and this cube's allowed types
+                bool hasOverlap = false;
+                foreach (var type in side.sideType)
+                {
+                    if (req.Value.Contains(type))
+                    {
+                        hasOverlap = true;
+                        break;
+                    }
+                }
+
+                if (!hasOverlap)
                 {
                     matches = false;
                     break;
                 }
             }
+
             if (matches)
                 candidates.Add(prefab);
         }
 
-        if (candidates.Count == 0)
-            return GetRandomCube(fallbackType);
+        // Step 4: Return a candidate if found, otherwise fallback
+        if (candidates.Count > 0)
+            return candidates[Random.Range(0, candidates.Count)];
 
-        return candidates[Random.Range(0, candidates.Count)];
+        return GetRandomCube(fallbackType);
     }
 
     private Cube GetRandomCube(SectionType type)
@@ -202,6 +260,7 @@ public class TerrainBuilder : MonoBehaviour
                 if (isOutside)
                 {
                     Vector2Int pos = new(x, y);
+                    //Debug.Log("205");
                     if (InBounds(pos)) SectionAt(pos) = SectionType.Outside;
                 }
             }
@@ -294,9 +353,14 @@ public class TerrainBuilder : MonoBehaviour
             for (int gy = -half; gy <= half; gy++)
             {
                 Vector2Int gridPos = new Vector2Int(gx, gy);
-                SectionType type = SectionAt(gridPos);
+                //Debug.Log("298");
+                SectionType type = SectionType.Empty;
 
-                if (type == SectionType.Outside) continue;
+                if (InBounds(gridPos))
+                    type = SectionAt(gridPos);
+                    
+
+                if (type == SectionType.Empty) continue;
 
                 Cube prefab = GetMatchingCube(gridPos, type);
                 if (prefab != null)
@@ -309,6 +373,8 @@ public class TerrainBuilder : MonoBehaviour
             // Yield after each row to keep frame responsive
             yield return null;
         }
+
+        isRunning = false;
     }
 
     private void ConnectAllCities()
@@ -382,6 +448,7 @@ public class TerrainBuilder : MonoBehaviour
                 Vector2Int pos = new(x, y);
                 if (IsEmpty(pos))
                 {
+                    //Debug.Log("387");
                     SectionAt(pos) = SectionType.Plains;
                 }
             }
@@ -396,7 +463,8 @@ public class TerrainBuilder : MonoBehaviour
             {
                 Vector2Int pos = new Vector2Int(x - gridOffset, y - gridOffset);
 
-                if (SectionAt(pos) == SectionType.Plains && Random.value < spawnChance)
+                //Debug.Log("205");
+                if (InBounds(pos) && SectionAt(pos) == SectionType.Plains && Random.value < spawnChance)
                 {
                     SetSection(pos, SectionType.Shack);
                 }
@@ -423,7 +491,7 @@ public class TerrainBuilder : MonoBehaviour
 
         int roadSpacing = validSpacings[Random.Range(0, validSpacings.Count)];
 
-        Debug.Log($"[GridCity] center {center}, radius {radius}, adjusting Radius {adjustedRadius}, spacing {roadSpacing}");
+        //Debug.Log($"[GridCity] center {center}, radius {radius}, adjusting Radius {adjustedRadius}, spacing {roadSpacing}");
 
         // Roads
         for (int x = -adjustedRadius; x <= adjustedRadius; x++)
@@ -450,6 +518,7 @@ public class TerrainBuilder : MonoBehaviour
 
                 if (isRoadLine && IsEmpty(pos))
                 {
+                    //Debug.Log("457");
                     SectionAt(pos) = SectionType.City;
                 }
             }
@@ -463,6 +532,7 @@ public class TerrainBuilder : MonoBehaviour
                 Vector2Int pos = center + new Vector2Int(x, y);
                 if (IsEmpty(pos))
                 {
+                    //Debug.Log("471");
                     SectionAt(pos) = SectionType.Plains;
                 }
             }
@@ -471,7 +541,7 @@ public class TerrainBuilder : MonoBehaviour
 
     private void GenerateOrganicCity(Vector2Int center, int radius)
     {
-        Debug.Log($"[OrganicCity] center {center}, radius {radius}");
+        //Debug.Log($"[OrganicCity] center {center}, radius {radius}");
 
         roadListObjs.Clear();
         List<Vector2Int> buildings = new();
@@ -493,7 +563,11 @@ public class TerrainBuilder : MonoBehaviour
                 {
                     buildings.Add(randomCell);
 
-                    SectionAt(randomCell) = SectionType.City;
+                    //Debug.Log("502");
+                    if (Random.value > .7)
+                        SectionAt(randomCell) = SectionType.City;
+                    else
+                        SectionAt(randomCell) = SectionType.rualBuildings;
                     placed++;
 
                 }
@@ -506,13 +580,13 @@ public class TerrainBuilder : MonoBehaviour
 
         foreach (var building in buildings)
         {
-            Debug.Log("looking at building " + building);
+            //Debug.Log("looking at building " + building);
 
             //step 1  if building is next to building or a road stop
             Vector2Int adjacentTile = isAdjacentToCellVector(building);
             if (adjacentTile != Vector2Int.zero)
             {
-                Debug.Log("building " + building + " is adjecent to something ");
+                //Debug.Log("building " + building + " is adjecent to something ");
                 roadListObjs.Add(new RoadData(new List<Vector2Int> {building, adjacentTile }));
                 continue;
             }
@@ -562,12 +636,12 @@ public class TerrainBuilder : MonoBehaviour
                 }
             }
 
-            Debug.Log("direction towards center is  " + startingDir.ToString());
+            //Debug.Log("direction towards center is  " + startingDir.ToString());
 
             //step 3 road goes straight towards another building (if there is a building that has a connection we go towards that if not pick random one)
             Vector2Int target = PickTargetBuilding(buildings, building, center, isConnected);
 
-            Debug.Log("target is " + target);
+            //Debug.Log("target is " + target);
 
             Vector2Int endPoint = CreateRoad((building + startingDir), target, radius, building);
 
@@ -617,14 +691,15 @@ public class TerrainBuilder : MonoBehaviour
 
             if (IsEmpty(current))
             {
+                //Debug.Log("627");
                 SectionAt(current) = SectionType.Road;
                 localRoads.Add(current);
             }
 
-            //step 4  if road is ever adjacent to a building or a road it 
+            //step 4  if road is ever adjacent to a building or a road it STOPS
             if (isAdjacentToCell(current, localRoads))
             {
-                Debug.Log("road at " + current + " is adjent to something stopping");
+                //Debug.Log("road at " + current + " is adjent to something stopping");
                 roadListObjs.Add(new RoadData(localRoads));
                 break;
             }
@@ -655,26 +730,19 @@ public class TerrainBuilder : MonoBehaviour
                 nextStep.y += (target.y > current.y) ? 1 : -1;
             }
 
+
+
             // Skip placing if already occupied
-            if (IsType(nextStep, SectionType.City) && Vector2Int.Distance(nextStep, startCity) > cityRadius)
-                break;
+            if (IsEmpty(nextStep))
+                SetSection(nextStep, SectionType.Highway);
 
             // Stop if we hit a building outside the city
-            if (IsEmpty(nextStep))
-                SetSection(nextStep, SectionType.Road);
+            bool isBuilding = isAdjacentToType(nextStep, SectionType.City) || isAdjacentToType(nextStep, SectionType.Road) || isAdjacentToType(nextStep, SectionType.rualBuildings);
+            if (isBuilding && Vector2Int.Distance(nextStep, startCity) > cityRadius)
+                break;
 
             current = nextStep;
         }
-    }
-
-    private bool IsAdjacentToBuilding(Vector2Int pos)
-    {
-        foreach (var n in GetNeighbors(pos))
-        {
-            if (InBounds(n) && SectionAt(n) == SectionType.City)
-                return true;
-        }
-        return false;
     }
     private bool isAdjacentToCell(Vector2Int pos, List<Vector2Int> blacklist)
     {
@@ -684,6 +752,7 @@ public class TerrainBuilder : MonoBehaviour
 
             if (InBounds(n))
             {
+                //Debug.Log("696");
                 var type = SectionAt(n);
                 if (type != SectionType.Empty && type != SectionType.Outside)
                     return true;
@@ -691,13 +760,27 @@ public class TerrainBuilder : MonoBehaviour
         }
         return false;
     }
-
+    private bool isAdjacentToType(Vector2Int pos, SectionType typeChecked)
+    {
+        foreach (var n in GetNeighbors(pos))
+        {
+            if (InBounds(n))
+            {
+                //Debug.Log("696");
+                var type = SectionAt(n);
+                if (type == typeChecked)    
+                    return true;
+            }
+        }
+        return false;
+    }
     private Vector2Int isAdjacentToCellVector(Vector2Int pos)
     {
         foreach (var n in GetNeighbors(pos))
         {
             if (InBounds(n))
             {
+                //Debug.Log("711");
                 var type = SectionAt(n);
                 if (type != SectionType.Empty && type != SectionType.Outside)
                     return n;
@@ -805,38 +888,12 @@ public class TerrainBuilder : MonoBehaviour
         return nearest;
     }
 
-    #region Section Generators
-    private void GeneratePlain(Vector2Int center, int radius)
-    {
-        for (int x = -radius; x <= radius; x++)
-        {
-            for (int y = -radius; y <= radius; y++)
-            {
-                Vector2Int pos = center + new Vector2Int(x, y);
-
-                if (IsEmpty(pos))
-                {
-                    SectionAt(pos)= SectionType.Plains;
-                }
-            }
-        }
-    }
-    #endregion
-
     #region Helpers
-
-    private bool IsWalkable(Vector2Int pos)
-    {
-        if (!InBounds(pos)) return false;
-        SectionType type = SectionAt(pos);
-        return type != SectionType.Empty && type != SectionType.Outside;
-    }
 
     private bool IsType(Vector2Int pos, SectionType type)
     {
         return InBounds(pos) && SectionAt(pos) == type;
     }
-
     private Vector2Int[] GetNeighbors(Vector2Int pos)
     {
         return new Vector2Int[] { pos + Vector2Int.up, pos + Vector2Int.down, pos + Vector2Int.right, pos + Vector2Int.left };
@@ -848,7 +905,6 @@ public class TerrainBuilder : MonoBehaviour
         int y = pos.y + gridOffset;
         return (x >= 0 && x < worldSize && y >= 0 && y < worldSize);
     }
-
     private ref SectionType SectionAt(Vector2Int pos)
     {
         return ref sectionGrid[pos.x + gridOffset, pos.y + gridOffset];
@@ -866,28 +922,9 @@ public class TerrainBuilder : MonoBehaviour
     {
         return cubeInstances[pos.x + gridOffset, pos.y + gridOffset];
     }
-
     private void SetCubeAt(Vector2Int pos, Cube cube)
     {
         cubeInstances[pos.x + gridOffset, pos.y + gridOffset] = cube;
-    }
-    private void SpawnCubeAt(Vector2Int gridPos, SectionType type)
-    {
-        Cube prefab = GetMatchingCube(gridPos, type);
-        if (prefab != null)
-        {
-            GameObject obj = Instantiate(
-                prefab.cubePrefab,
-                GridToWorld(gridPos),
-                Quaternion.identity,
-                transform
-            );
-            SetCubeAt(gridPos, obj.GetComponent<Cube>());
-        }
-    }
-    private bool HasCube(Vector2Int pos)
-    {
-        return InBounds(pos) && cubeInstances[ToIndex(pos.x), ToIndex(pos.y)] != null;
     }
     private Vector3 GridToWorld(Vector2Int gridPos)
     {

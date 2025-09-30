@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class WeaponSpawner : MonoBehaviour
 {
-    [SerializeField] private GroundBuilder groundBuilder;
     [SerializeField] private Weapon[] weapons; 
 
 

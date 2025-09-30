@@ -42,8 +42,8 @@ public class ButtonMethods : MonoBehaviour
     {
         FindAnyObjectByType<SoundManager>().Play("buttonClick");
         GM.SaveGameData();
-        GUI.ShowNoGUI();
-        GUI.OpenMainMenu();
+        GUI.ShowNoHUDs();
+        GUI.ShowLoading();
         GM.MainMenu();
     }
 
@@ -78,8 +78,7 @@ public class ButtonMethods : MonoBehaviour
         FindAnyObjectByType<SoundManager>().Play("buttonClick");
         GUI.ShowNoGUI();
         GUI.ShowNoMM();
-        GUI.ShowAllHUDs();
-        GUI.SetHUDVals();
+        GUI.ShowLoading();
         GM.StartGame();
     }
 
