@@ -5,9 +5,6 @@ TextureImporter:
   - first:
       213: 6154272013534089665
     second: indoorTileMap_0
-  - first:
-      213: 3744598911063113738
-    second: indoorTileMap_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,6 +97,19 @@ TextureImporter:
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
     buildTarget: WindowsStoreApps
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -120,7 +130,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 160
+        y: 288
         width: 32
         height: 32
       alignment: 0
@@ -142,7 +152,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 32
-        y: 160
+        y: 288
         width: 32
         height: 32
       alignment: 0
@@ -151,10 +161,10 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: a004b30bedc77f330800000000000000
-      internalID: 3744598911063113738
+      spriteID: fb23e61b17860af439537ff1a48d38af
+      internalID: 1878423807
       vertices: []
       indices: 
       edges: []
@@ -164,7 +174,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 64
-        y: 160
+        y: 288
         width: 32
         height: 32
       alignment: 0
@@ -175,8 +185,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b9a7e7f2a7a65c24e9b2cbbe2b3abea2
-      internalID: 1198616257
+      spriteID: a22910d9d29b89c43a7f8eb0e8c52541
+      internalID: -1680636434
       vertices: []
       indices: 
       edges: []
@@ -186,7 +196,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 96
-        y: 160
+        y: 288
         width: 32
         height: 32
       alignment: 0
@@ -197,8 +207,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 527f903c57d20b4458d77f888f74358e
-      internalID: -921601291
+      spriteID: 434531bbeb738ca4395cbfe5f98dcb32
+      internalID: 1155569106
       vertices: []
       indices: 
       edges: []
@@ -207,8 +217,8 @@ TextureImporter:
       name: indoorTileMap_4
       rect:
         serializedVersion: 2
-        x: 160
-        y: 160
+        x: 128
+        y: 288
         width: 32
         height: 32
       alignment: 0
@@ -219,8 +229,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1b8d2404b4746334f8236a08409fbf79
-      internalID: 396785913
+      spriteID: bbb57677423e957419dbaf4eec6a1789
+      internalID: 383170168
       vertices: []
       indices: 
       edges: []
@@ -229,8 +239,8 @@ TextureImporter:
       name: indoorTileMap_5
       rect:
         serializedVersion: 2
-        x: 192
-        y: 160
+        x: 0
+        y: 256
         width: 32
         height: 32
       alignment: 0
@@ -241,8 +251,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1de9826b2141bc949a143c4046344d35
-      internalID: 240391558
+      spriteID: 14655a5ae99ac5e4fa7d6d3a2d8c67ee
+      internalID: -295324182
       vertices: []
       indices: 
       edges: []
@@ -251,8 +261,8 @@ TextureImporter:
       name: indoorTileMap_6
       rect:
         serializedVersion: 2
-        x: 224
-        y: 160
+        x: 128
+        y: 256
         width: 32
         height: 32
       alignment: 0
@@ -263,8 +273,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 88546a844e4a3d341ad5a948bcf20359
-      internalID: 1652175186
+      spriteID: 26f497693c2366840a0c3864882f6c33
+      internalID: 2025497353
       vertices: []
       indices: 
       edges: []
@@ -273,8 +283,8 @@ TextureImporter:
       name: indoorTileMap_7
       rect:
         serializedVersion: 2
-        x: 256
-        y: 160
+        x: 0
+        y: 224
         width: 32
         height: 32
       alignment: 0
@@ -285,8 +295,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f60e83abf1917db43af8918fbaf4ec28
-      internalID: -210553912
+      spriteID: a89c0f3de1cfa0547b5c1063ef88f8b2
+      internalID: -1631247775
       vertices: []
       indices: 
       edges: []
@@ -295,8 +305,8 @@ TextureImporter:
       name: indoorTileMap_8
       rect:
         serializedVersion: 2
-        x: 0
-        y: 128
+        x: 32
+        y: 224
         width: 32
         height: 32
       alignment: 0
@@ -307,8 +317,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 7973ac271d6381c41a258cbca5a39949
-      internalID: -2027352275
+      spriteID: 5841e146c90f41b49808b4808ffa5152
+      internalID: -513657464
       vertices: []
       indices: 
       edges: []
@@ -317,8 +327,8 @@ TextureImporter:
       name: indoorTileMap_9
       rect:
         serializedVersion: 2
-        x: 96
-        y: 128
+        x: 64
+        y: 224
         width: 32
         height: 32
       alignment: 0
@@ -329,8 +339,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 5c25ed671c749ea4ab60c8566d509429
-      internalID: -929415836
+      spriteID: 1978bd9a2a84917499094c1f0263c678
+      internalID: 937887042
       vertices: []
       indices: 
       edges: []
@@ -339,8 +349,8 @@ TextureImporter:
       name: indoorTileMap_10
       rect:
         serializedVersion: 2
-        x: 160
-        y: 128
+        x: 96
+        y: 224
         width: 32
         height: 32
       alignment: 0
@@ -351,8 +361,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: eb18b1014c6af354fa9637c815e11def
-      internalID: -11940224
+      spriteID: 94772244422144344ac33dc12d302e3b
+      internalID: -2046681609
       vertices: []
       indices: 
       edges: []
@@ -361,8 +371,8 @@ TextureImporter:
       name: indoorTileMap_11
       rect:
         serializedVersion: 2
-        x: 256
-        y: 128
+        x: 128
+        y: 224
         width: 32
         height: 32
       alignment: 0
@@ -373,8 +383,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 033360ae15552004da1d137bca42b676
-      internalID: -924897236
+      spriteID: a52e046798c3cf94f814560ba6a4897e
+      internalID: 1579890042
       vertices: []
       indices: 
       edges: []
@@ -384,7 +394,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 96
+        y: 192
         width: 32
         height: 32
       alignment: 0
@@ -395,8 +405,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: db5d79ae697618647822bc0da8da9c5d
-      internalID: 1617366270
+      spriteID: 12aa59222255cd5458cdb6428d9e7e31
+      internalID: -730502186
       vertices: []
       indices: 
       edges: []
@@ -406,7 +416,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 32
-        y: 96
+        y: 192
         width: 32
         height: 32
       alignment: 0
@@ -417,8 +427,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e70139ec40e76b541a155ed4680dc8cc
-      internalID: 413276825
+      spriteID: 19975460dafa8fe4fb59c0588a838147
+      internalID: 614044139
       vertices: []
       indices: 
       edges: []
@@ -428,7 +438,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 64
-        y: 96
+        y: 192
         width: 32
         height: 32
       alignment: 0
@@ -439,8 +449,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 301e64fec89230b4988deb295a426a5f
-      internalID: -48852917
+      spriteID: 824098289d0fc2847aeafb76624d4460
+      internalID: -59505580
       vertices: []
       indices: 
       edges: []
@@ -450,7 +460,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 96
-        y: 96
+        y: 192
         width: 32
         height: 32
       alignment: 0
@@ -461,8 +471,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 499ac2d59b7624d4e8a76de2cc0884b1
-      internalID: -2077889433
+      spriteID: ca05b508db8d45141802ce0f951fb4e1
+      internalID: 999727301
       vertices: []
       indices: 
       edges: []
@@ -471,8 +481,8 @@ TextureImporter:
       name: indoorTileMap_16
       rect:
         serializedVersion: 2
-        x: 160
-        y: 96
+        x: 0
+        y: 160
         width: 32
         height: 32
       alignment: 0
@@ -483,8 +493,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b667d220af6f0a244bc2ec55da1d5fdc
-      internalID: -1742068788
+      spriteID: 219c3bb0ec0e6fc41a66ec3e863f463d
+      internalID: -1588793063
       vertices: []
       indices: 
       edges: []
@@ -493,8 +503,8 @@ TextureImporter:
       name: indoorTileMap_17
       rect:
         serializedVersion: 2
-        x: 192
-        y: 96
+        x: 32
+        y: 160
         width: 32
         height: 32
       alignment: 0
@@ -505,8 +515,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e02d691720418104eb0feed93ad67bea
-      internalID: 933314929
+      spriteID: e435bcf03cdf4014cb0e6cf5ac3f5638
+      internalID: -859130525
       vertices: []
       indices: 
       edges: []
@@ -515,8 +525,8 @@ TextureImporter:
       name: indoorTileMap_18
       rect:
         serializedVersion: 2
-        x: 224
-        y: 96
+        x: 96
+        y: 160
         width: 32
         height: 32
       alignment: 0
@@ -527,8 +537,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a503743b593c6a44d854744adc723c7d
-      internalID: 7776147
+      spriteID: f28a6e217df9dbd429aa2a4d3e4d4d72
+      internalID: 1981426781
       vertices: []
       indices: 
       edges: []
@@ -537,7 +547,161 @@ TextureImporter:
       name: indoorTileMap_19
       rect:
         serializedVersion: 2
-        x: 256
+        x: 128
+        y: 160
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f274d42da435eed42b653e2d6acf78c1
+      internalID: -764518819
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: indoorTileMap_20
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 160
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f274a42695802d84fa2b56e941e01fd2
+      internalID: 493576621
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: indoorTileMap_21
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 128
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f1502ec3a3d434943823aef344373400
+      internalID: 1953379418
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: indoorTileMap_22
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 128
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 862b7a80d03726d46857109f02d08b1d
+      internalID: 832561787
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: indoorTileMap_23
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 128
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1e634b9ce40b41441b96f8ccc5244efc
+      internalID: 1935770530
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: indoorTileMap_24
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 128
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a0a0cfc6f5baf834388b59749ef105b5
+      internalID: 598119963
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: indoorTileMap_25
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 128
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a4199b6f16721bd4c83ea16df9836394
+      internalID: -1602725936
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: indoorTileMap_26
+      rect:
+        serializedVersion: 2
+        x: 96
         y: 96
         width: 32
         height: 32
@@ -549,162 +713,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 9a8f5b7f4d21c914fa9700d09cc64b71
-      internalID: -471471949
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: indoorTileMap_20
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 64
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 9f2fc374bfb2d1b4f9afbbe58df6e7e8
-      internalID: -1674491299
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: indoorTileMap_21
-      rect:
-        serializedVersion: 2
-        x: 32
-        y: 64
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: e7c89500e946b774a9df1d89085fc1b8
-      internalID: -1643747174
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: indoorTileMap_22
-      rect:
-        serializedVersion: 2
-        x: 160
-        y: 64
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 8544ad960f1ff2e4c8c9f0f1b01a683a
-      internalID: -1945241825
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: indoorTileMap_23
-      rect:
-        serializedVersion: 2
-        x: 192
-        y: 64
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: f771bb3fd4e835c47bb474df5b0863cc
-      internalID: 646648552
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: indoorTileMap_24
-      rect:
-        serializedVersion: 2
-        x: 96
-        y: 32
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: dfa13ae933ad79349a5096f799441da8
-      internalID: 930456406
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: indoorTileMap_25
-      rect:
-        serializedVersion: 2
-        x: 128
-        y: 32
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 33f1980c9edcb1641aa646e9528c74c7
-      internalID: -1254230978
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: indoorTileMap_26
-      rect:
-        serializedVersion: 2
-        x: 160
-        y: 32
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 66e6c9915c695e34490541062879c515
-      internalID: -378170179
+      spriteID: 217bc8032d0214a448a4f08175cc7780
+      internalID: -2011551493
       vertices: []
       indices: 
       edges: []
@@ -713,8 +723,8 @@ TextureImporter:
       name: indoorTileMap_27
       rect:
         serializedVersion: 2
-        x: 96
-        y: 0
+        x: 128
+        y: 96
         width: 32
         height: 32
       alignment: 0
@@ -725,8 +735,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3e3331436b8c5bf4d92be99dc1076df7
-      internalID: -1352722820
+      spriteID: 503d3056c1da413428f4057893c91b62
+      internalID: -936384186
       vertices: []
       indices: 
       edges: []
@@ -735,30 +745,8 @@ TextureImporter:
       name: indoorTileMap_28
       rect:
         serializedVersion: 2
-        x: 128
-        y: 0
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 9572ac071b3c02047be23f562288d5a2
-      internalID: 631798485
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: indoorTileMap_29
-      rect:
-        serializedVersion: 2
         x: 160
-        y: 0
+        y: 96
         width: 32
         height: 32
       alignment: 0
@@ -769,8 +757,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 9c5a10cf9de455844a73808ae1541bd0
-      internalID: 1168547302
+      spriteID: 611716122ca949343ad76d2478d15938
+      internalID: -973926076
       vertices: []
       indices: 
       edges: []
@@ -779,7 +767,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: f5ba060d13e01a54ea6d3d92c4f14b80
+    spriteID: 4641d0c159a8f5b4b9e84f7883528314
     internalID: 0
     vertices: []
     indices: 
@@ -790,35 +778,34 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       indoorTileMap_0: 6154272013534089665
-      indoorTileMap_1: 3744598911063113738
-      indoorTileMap_10: -11940224
-      indoorTileMap_11: -924897236
-      indoorTileMap_12: 1617366270
-      indoorTileMap_13: 413276825
-      indoorTileMap_14: -48852917
-      indoorTileMap_15: -2077889433
-      indoorTileMap_16: -1742068788
-      indoorTileMap_17: 933314929
-      indoorTileMap_18: 7776147
-      indoorTileMap_19: -471471949
-      indoorTileMap_2: 1198616257
-      indoorTileMap_20: -1674491299
-      indoorTileMap_21: -1643747174
-      indoorTileMap_22: -1945241825
-      indoorTileMap_23: 646648552
-      indoorTileMap_24: 930456406
-      indoorTileMap_25: -1254230978
-      indoorTileMap_26: -378170179
-      indoorTileMap_27: -1352722820
-      indoorTileMap_28: 631798485
-      indoorTileMap_29: 1168547302
-      indoorTileMap_3: -921601291
-      indoorTileMap_4: 396785913
-      indoorTileMap_5: 240391558
-      indoorTileMap_6: 1652175186
-      indoorTileMap_7: -210553912
-      indoorTileMap_8: -2027352275
-      indoorTileMap_9: -929415836
+      indoorTileMap_1: 1878423807
+      indoorTileMap_10: -2046681609
+      indoorTileMap_11: 1579890042
+      indoorTileMap_12: -730502186
+      indoorTileMap_13: 614044139
+      indoorTileMap_14: -59505580
+      indoorTileMap_15: 999727301
+      indoorTileMap_16: -1588793063
+      indoorTileMap_17: -859130525
+      indoorTileMap_18: 1981426781
+      indoorTileMap_19: -764518819
+      indoorTileMap_2: -1680636434
+      indoorTileMap_20: 493576621
+      indoorTileMap_21: 1953379418
+      indoorTileMap_22: 832561787
+      indoorTileMap_23: 1935770530
+      indoorTileMap_24: 598119963
+      indoorTileMap_25: -1602725936
+      indoorTileMap_26: -2011551493
+      indoorTileMap_27: -936384186
+      indoorTileMap_28: -973926076
+      indoorTileMap_3: 1155569106
+      indoorTileMap_4: 383170168
+      indoorTileMap_5: -295324182
+      indoorTileMap_6: 2025497353
+      indoorTileMap_7: -1631247775
+      indoorTileMap_8: -513657464
+      indoorTileMap_9: 937887042
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
