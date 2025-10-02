@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public enum SectionType { Empty, Outside, City, Plains, Road, Shack, Highway, rualBuildings}
+public enum SectionType { Empty, Outside, City, Plains, Road, Shack, Highway, rualBuildings, rualRoads, parks}
 public enum CityStyle { Auto, Grid, Organic }
 
 
@@ -463,16 +463,35 @@ public class TerrainBuilder : MonoBehaviour
             {
                 Vector2Int pos = new Vector2Int(x - gridOffset, y - gridOffset);
 
-                //Debug.Log("205");
                 if (InBounds(pos) && SectionAt(pos) == SectionType.Plains && Random.value < spawnChance)
                 {
-                    SetSection(pos, SectionType.Shack);
+                    if (IsSurroundedByPlains(pos, 4))
+                    {
+                        SetSection(pos, SectionType.Shack);
+                    }
                 }
             }
         }
     }
 
-    private void GenerateGridCity(Vector2Int center, int radius, float cityChance, int minRoadSpacing, int maxRoadSpacing)
+    private bool IsSurroundedByPlains(Vector2Int center, int radius)
+    {
+        for (int dx = -radius; dx <= radius; dx++)
+        {
+            for (int dy = -radius; dy <= radius; dy++)
+            {
+                if (dx == 0 && dy == 0) continue; // skip center itself
+
+                Vector2Int checkPos = new Vector2Int(center.x + dx, center.y + dy);
+
+                if (!InBounds(checkPos)) return false; // out of bounds not allowed
+                if (SectionAt(checkPos) != SectionType.Plains) return false;
+            }
+        }
+        return true;
+    }
+
+    private void GenerateGridCity(Vector2Int center, int radius, float cityChance, int minRoadSpacing, int maxRoadSpacing, float parkPercent = 0.3f)
     {
         int adjustedRadius = (radius % 2 == 0) ? radius : radius + 1;
 
@@ -519,7 +538,10 @@ public class TerrainBuilder : MonoBehaviour
                 if (isRoadLine && IsEmpty(pos))
                 {
                     //Debug.Log("457");
-                    SectionAt(pos) = SectionType.City;
+                    if(Random.value > parkPercent)
+                        SectionAt(pos) = SectionType.parks;
+                    else 
+                        SectionAt(pos) = SectionType.City;
                 }
             }
         }
