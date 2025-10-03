@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public enum SectionType { Empty, Outside, City, Plains, Road, Shack, Highway, rualBuildings, rualRoads, parks}
+public enum SectionType { Empty, Outside, City, Plains, Road, Shack, Highway, rualBuildings, rualRoads, parks, roadConnections, anything}
 public enum CityStyle { Auto, Grid, Organic }
 
 

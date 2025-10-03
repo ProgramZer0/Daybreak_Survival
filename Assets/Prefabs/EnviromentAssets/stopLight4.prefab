@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6369911085012876716}
   - component: {fileID: 9079588563044471021}
   - component: {fileID: 6721680382293672349}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: colHidden
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -106,7 +106,7 @@ GameObject:
   - component: {fileID: 5174457597013561722}
   - component: {fileID: 7418713848240811275}
   - component: {fileID: 1290921549521299997}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: stopLight4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
