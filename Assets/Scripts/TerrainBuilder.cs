@@ -77,6 +77,7 @@ public class TerrainBuilder : MonoBehaviour
     private Dictionary<SectionType, List<Cube>> cubeDict = new();
     private List<CityData> cityCenters = new();
     private List<RoadData> roadListObjs = new();
+    private List<Vector2Int> cityTilesToCheck = new();
 
     public bool isRunning = false;
     public bool isDeleting = false;
@@ -160,62 +161,44 @@ public class TerrainBuilder : MonoBehaviour
         isDeleting = false;
     }
 
-    private Cube GetMatchingCube(Vector2Int gridPos, SectionType fallbackType)
+    private Cube GetMatchingCube(Vector2Int gridPos, SectionType fallbackType, List<Vector2Int> cityPlaced = null)
     {
-        // Step 1: Gather required sides from neighbors
-        Dictionary<SideDirection, SectionType[]> requiredSides = new();
+        // Step 1: Gather neighbor SectionTypes directly
+        Dictionary<SideDirection, SectionType> neighborTypes = new();
 
         foreach (SideDirection dir in System.Enum.GetValues(typeof(SideDirection)))
         {
             Vector2Int neighborPos = gridPos + DirFromSide(dir);
 
             if (!InBounds(neighborPos))
-                continue;
-
-            Cube neighbor = CubeAt(neighborPos);
-            if (neighbor != null)
             {
-                SideDirection opposite = OppositeDirection(dir);
-                cubeSide neighborSide = neighbor.sides.Find(s => s.sideDirection == opposite);
-                if (neighborSide != null && neighborSide.sideType.Length > 0)
-                {
-                    requiredSides[dir] = neighborSide.sideType;
-                }
+                neighborTypes[dir] = SectionType.Outside;
+                continue;
             }
+
+            neighborTypes[dir] = SectionAt(neighborPos);
         }
 
-        // Step 2: Get all cubes of the requested type
-        if (!cubeDict.TryGetValue(fallbackType, out List<Cube> cubeList) || cubeList.Count == 0)
+        // Step 2: Get prefabs of target section type
+        if (!cubeDict.TryGetValue(fallbackType, out var cubeList) || cubeList.Count == 0)
             return null;
 
-        // Step 3: Filter candidates that match at least one type per required side
         List<Cube> candidates = new();
+
+        // Step 3: Check each prefab against neighbor SectionTypes
         foreach (Cube prefab in cubeList)
         {
             bool matches = true;
 
-            foreach (var req in requiredSides)
+            foreach (var side in prefab.sides)
             {
-                cubeSide side = prefab.sides.Find(s => s.sideDirection == req.Key);
+                if (!neighborTypes.TryGetValue(side.sideDirection, out var neighborType))
+                    continue; // shouldn’t happen but safe guard
 
-                if (side == null)
-                {
-                    matches = false;
-                    break;
-                }
+                if (side.sideType.Contains(SectionType.anything))
+                    continue;
 
-                // Check for any overlap between neighbor's allowed types and this cube's allowed types
-                bool hasOverlap = false;
-                foreach (var type in side.sideType)
-                {
-                    if (req.Value.Contains(type))
-                    {
-                        hasOverlap = true;
-                        break;
-                    }
-                }
-
-                if (!hasOverlap)
+                if (!side.sideType.Contains(neighborType))
                 {
                     matches = false;
                     break;
@@ -226,11 +209,18 @@ public class TerrainBuilder : MonoBehaviour
                 candidates.Add(prefab);
         }
 
-        // Step 4: Return a candidate if found, otherwise fallback
-        if (candidates.Count > 0)
-            return candidates[Random.Range(0, candidates.Count)];
+        // Step 4: Pick one, track city placements
+        Cube result = candidates.Count > 0
+            ? candidates[Random.Range(0, candidates.Count)]
+            : GetRandomCube(fallbackType);
 
-        return GetRandomCube(fallbackType);
+        if (result != null && cityPlaced != null)
+        {
+            if (fallbackType == SectionType.City || fallbackType == SectionType.Road || fallbackType == SectionType.parks)
+                cityPlaced.Add(gridPos);
+        }
+
+        return result;
     }
 
     private Cube GetRandomCube(SectionType type)
@@ -347,20 +337,24 @@ public class TerrainBuilder : MonoBehaviour
     IEnumerator SpawnAllCubes()
     {
         int half = worldSize / 2;
+        cityTilesToCheck.Clear();
 
         for (int gx = -half; gx <= half; gx++)
         {
             for (int gy = -half; gy <= half; gy++)
             {
                 Vector2Int gridPos = new Vector2Int(gx, gy);
-                //Debug.Log("298");
-                SectionType type = SectionType.Empty;
+                if (!InBounds(gridPos)) continue;
 
-                if (InBounds(gridPos))
-                    type = SectionAt(gridPos);
-                    
-
+                SectionType type = SectionAt(gridPos);
                 if (type == SectionType.Empty) continue;
+
+                // Skip city tiles but record them
+                if (type == SectionType.City)
+                {
+                    cityTilesToCheck.Add(gridPos);
+                    continue;
+                }
 
                 Cube prefab = GetMatchingCube(gridPos, type);
                 if (prefab != null)
@@ -370,40 +364,82 @@ public class TerrainBuilder : MonoBehaviour
                 }
             }
 
-            // Yield after each row to keep frame responsive
             yield return null;
         }
 
+        // After normal cubes, process cities
+        ProcessCityTiles();
+
         isRunning = false;
+    }
+    private void ProcessCityTiles()
+    {
+        foreach (var cityPos in cityTilesToCheck)
+        {
+            GameObject prefabToSpawn = null;
+
+            foreach (SideDirection dir in System.Enum.GetValues(typeof(SideDirection)))
+            {
+                Vector2Int neighborPos = cityPos + DirFromSide(dir);
+                if (!InBounds(neighborPos)) continue;
+
+                Cube neighbor = CubeAt(neighborPos);
+                if (neighbor == null) continue;
+
+                // Look at the side of neighbor facing the city
+                SideDirection opposite = OppositeDirection(dir);
+                cubeSide side = neighbor.sides.Find(s => s.sideDirection == opposite);
+
+                if (side != null && side.isDefinedConnected && side.PrefabNeeded != null)
+                {
+                    prefabToSpawn = side.PrefabNeeded;
+                    break; // we found a valid connection
+                }
+            }
+
+            if (prefabToSpawn == null)
+                prefabToSpawn = GetRandomParkPrefab();
+
+            if (prefabToSpawn != null)
+            {
+                GameObject obj = Instantiate(prefabToSpawn, GridToWorld(cityPos), Quaternion.identity, transform);
+                SetCubeAt(cityPos, obj.GetComponent<Cube>());
+            }
+        }
+
+        cityTilesToCheck.Clear();
+    }
+
+    private GameObject GetRandomParkPrefab()
+    {
+        if (!cubeDict.TryGetValue(SectionType.parks, out var parks) || parks.Count == 0)
+            return null;
+
+        Cube parkCube = parks[Random.Range(0, parks.Count)];
+        return parkCube.cubePrefab;
     }
 
     private void ConnectAllCities()
     {
         if (cityCenters.Count < 2) return;
 
-        // Sort cities randomly or by some heuristic (optional)
         var cities = cityCenters.OrderBy(_ => Random.value).ToList();
+        HashSet<int> connected = new() { 0 };
 
-        // We'll connect each city to the nearest unconnected city
-        HashSet<int> connectedCities = new();
-        connectedCities.Add(0); // start with the first city
-
-        while (connectedCities.Count < cities.Count)
+        while (connected.Count < cities.Count)
         {
             float minDist = float.MaxValue;
             int fromIndex = -1, toIndex = -1;
 
-            foreach (int i in connectedCities)
+            foreach (int i in connected)
             {
                 Vector2Int fromCity = cities[i].center;
 
                 for (int j = 0; j < cities.Count; j++)
                 {
-                    if (connectedCities.Contains(j)) continue;
+                    if (connected.Contains(j)) continue;
 
-                    Vector2Int toCity = cities[j].center;
-                    float dist = Vector2Int.Distance(fromCity, toCity);
-
+                    float dist = Vector2Int.Distance(fromCity, cities[j].center);
                     if (dist < minDist)
                     {
                         minDist = dist;
@@ -415,14 +451,103 @@ public class TerrainBuilder : MonoBehaviour
 
             if (fromIndex != -1 && toIndex != -1)
             {
-                Vector2Int from = cities[fromIndex].center;
-                Vector2Int to = cities[toIndex].center;
-                int radius = Mathf.Max(cities[fromIndex].radius, cities[toIndex].radius);
+                var from = cities[fromIndex];
+                var to = cities[toIndex];
+                int radius = Mathf.Max(from.radius, to.radius);
 
-                CreateCityRoad(from, to, from, radius);
-
-                connectedCities.Add(toIndex);
+                CreateCityRoad(from.center, to.center, from.radius, to.radius);
+                connected.Add(toIndex);
             }
+        }
+    }
+
+    private void CreateCityRoad(Vector2Int startCity, Vector2Int endCity, int startRadius, int endRadius)
+    {
+        Vector2Int current = startCity;
+        int safety = 0, safetyLimit = 5000;
+
+        while (current != endCity && safety++ < safetyLimit)
+        {
+            Vector2Int delta = endCity - current;
+
+            // Weighted axis decision for smoother paths
+            bool moveX = Mathf.Abs(delta.x) > Mathf.Abs(delta.y)
+                ? Random.value > 0.3f
+                : Random.value > 0.7f;
+
+            Vector2Int step = moveX
+                ? new Vector2Int(Mathf.Clamp(delta.x, -1, 1), 0)
+                : new Vector2Int(0, Mathf.Clamp(delta.y, -1, 1));
+
+            Vector2Int next = current + step;
+            if (!InBounds(next)) break;
+
+            SectionType section = SectionAt(next);
+
+            // Allow overwriting terrain, not buildings
+            if (section == SectionType.Empty || section == SectionType.Plains || section == SectionType.rualBuildings)
+                SetSection(next, SectionType.Highway);
+
+            // If we hit a valid road type — we’re done
+            if (section == SectionType.Road || section == SectionType.rualRoads)
+                return;
+
+            // Stop if too close to city edge, but not yet on road
+            if (isAdjacentToType(next, SectionType.City) && Vector2Int.Distance(next, startCity) > startRadius)
+            {
+                // After stopping, find the nearest road/rural road to connect to
+                Vector2Int? nearestRoad = FindNearestRoad(next, 15); // search radius 15 tiles
+                if (nearestRoad.HasValue)
+                    ConnectToRoad(next, nearestRoad.Value);
+                break;
+            }
+
+            current = next;
+        }
+    }
+    private Vector2Int? FindNearestRoad(Vector2Int start, int searchRadius)
+    {
+        for (int r = 1; r <= searchRadius; r++)
+        {
+            for (int dx = -r; dx <= r; dx++)
+            {
+                for (int dy = -r; dy <= r; dy++)
+                {
+                    Vector2Int pos = new Vector2Int(start.x + dx, start.y + dy);
+                    if (!InBounds(pos)) continue;
+
+                    SectionType type = SectionAt(pos);
+                    if (type == SectionType.Road || type == SectionType.rualRoads)
+                        return pos;
+                }
+            }
+        }
+
+        return null; // none found
+    }
+
+    private void ConnectToRoad(Vector2Int from, Vector2Int to)
+    {
+        Vector2Int current = from;
+        int safety = 0, safetyLimit = 1000;
+
+        while (current != to && safety++ < safetyLimit)
+        {
+            Vector2Int step = new Vector2Int(
+                Mathf.Clamp(to.x - current.x, -1, 1),
+                Mathf.Clamp(to.y - current.y, -1, 1)
+            );
+
+            current += step;
+
+            if (!InBounds(current)) break;
+
+            SectionType section = SectionAt(current);
+            if (section == SectionType.Empty || section == SectionType.Plains || section == SectionType.rualBuildings)
+                SetSection(current, SectionType.Highway);
+
+            if (section == SectionType.Road || section == SectionType.rualRoads)
+                break;
         }
     }
 
@@ -729,42 +854,6 @@ public class TerrainBuilder : MonoBehaviour
         }
 
         return current;
-    }
-
-    private void CreateCityRoad(Vector2Int startCity, Vector2Int endCity, Vector2Int startingPoint, int cityRadius)
-    {
-        Vector2Int current = startingPoint;
-        Vector2Int target = endCity;
-        int safetyLimit = 1000; // fallback to prevent infinite loops
-        int safety = 0;
-
-        while (current != target && safety++ < safetyLimit)
-        {
-            Vector2Int nextStep = current;
-
-            // Decide whether to move horizontally or vertically
-            if (current.x != target.x)
-            {
-                nextStep.x += (target.x > current.x) ? 1 : -1;
-            }
-            else if (current.y != target.y)
-            {
-                nextStep.y += (target.y > current.y) ? 1 : -1;
-            }
-
-
-
-            // Skip placing if already occupied
-            if (IsEmpty(nextStep))
-                SetSection(nextStep, SectionType.Highway);
-
-            // Stop if we hit a building outside the city
-            bool isBuilding = isAdjacentToType(nextStep, SectionType.City) || isAdjacentToType(nextStep, SectionType.Road) || isAdjacentToType(nextStep, SectionType.rualBuildings);
-            if (isBuilding && Vector2Int.Distance(nextStep, startCity) > cityRadius)
-                break;
-
-            current = nextStep;
-        }
     }
     private bool isAdjacentToCell(Vector2Int pos, List<Vector2Int> blacklist)
     {
