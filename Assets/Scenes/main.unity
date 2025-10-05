@@ -6517,7 +6517,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SM: {fileID: 276416484}
-  player: {fileID: 868446135}
+  player: {fileID: 0}
   sliderType: 1
 --- !u!114 &192016307
 MonoBehaviour:
@@ -7031,7 +7031,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SM: {fileID: 276416484}
-  player: {fileID: 868446135}
+  player: {fileID: 0}
   sliderType: 2
 --- !u!114 &216598699
 MonoBehaviour:
@@ -8072,7 +8072,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SM: {fileID: 276416484}
-  player: {fileID: 868446135}
+  player: {fileID: 0}
   sliderType: 0
 --- !u!114 &385859664
 MonoBehaviour:
@@ -8480,7 +8480,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SM: {fileID: 276416484}
-  player: {fileID: 868446135}
+  player: {fileID: 0}
   sliderType: 0
 --- !u!114 &574454085
 MonoBehaviour:
@@ -10223,9 +10223,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 868446134}
-  - component: {fileID: 868446135}
   - component: {fileID: 868446137}
   - component: {fileID: 868446136}
+  - component: {fileID: 868446138}
   m_Layer: 3
   m_Name: Player
   m_TagString: Untagged
@@ -10255,7 +10255,71 @@ Transform:
   - {fileID: 276416485}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &868446135
+--- !u!70 &868446136
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 868446131}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: -0.028090253, y: -0.009363443}
+  m_Size: {x: 0.38617566, y: 0.6483515}
+  m_Direction: 0
+--- !u!50 &868446137
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 868446131}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 2
+  m_LinearDamping: 0.5
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 6200000, guid: cf3b4c712cea4e549bce059e73cb8ccc, type: 2}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 1
+  m_Constraints: 4
+--- !u!114 &868446138
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -10353,70 +10417,6 @@ MonoBehaviour:
   ModSeeDistance: 0
   ModlightDistance: 0
   hasNightVison: 0
---- !u!70 &868446136
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 868446131}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: -0.028090253, y: -0.009363443}
-  m_Size: {x: 0.38617566, y: 0.6483515}
-  m_Direction: 0
---- !u!50 &868446137
-Rigidbody2D:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 868446131}
-  m_BodyType: 0
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 2
-  m_LinearDamping: 0.5
-  m_AngularDamping: 0.05
-  m_GravityScale: 1
-  m_Material: {fileID: 6200000, guid: cf3b4c712cea4e549bce059e73cb8ccc, type: 2}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 1
-  m_Constraints: 4
 --- !u!1 &883150801
 GameObject:
   m_ObjectHideFlags: 0
@@ -12987,7 +12987,7 @@ MonoBehaviour:
   lifestyleGUI: {fileID: 68430708}
   loadingScreen: {fileID: 755944895}
   empty: {fileID: 11400000, guid: 9a2f54c0965595243b6b677a4fb077ec, type: 2}
-  player: {fileID: 868446135}
+  player: {fileID: 868446138}
   GM: {fileID: 1754269201}
 --- !u!114 &1460363060
 MonoBehaviour:
@@ -14575,7 +14575,7 @@ MonoBehaviour:
   GUI: {fileID: 1460363059}
   LSC: {fileID: 1754269203}
   TB: {fileID: 4724984432564986264}
-  player: {fileID: 868446135}
+  player: {fileID: 868446138}
   playerRenderer: {fileID: 935512252}
   enemyController: {fileID: 1754269202}
   SM: {fileID: 276416484}
@@ -14638,7 +14638,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef087f5a1730e3c49bd07ad7ada10e95, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 868446135}
+  player: {fileID: 868446138}
   maxLifestyles: 10
   toolTipPreFab: {fileID: 6287030776202556268, guid: 15df2d2663f2b3e4d91f4e90cf0988c7, type: 3}
   allLifestyles:
@@ -16061,7 +16061,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SM: {fileID: 276416484}
-  player: {fileID: 868446135}
+  player: {fileID: 0}
   sliderType: 2
 --- !u!114 &1980960441
 MonoBehaviour:
@@ -16732,7 +16732,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SM: {fileID: 276416484}
-  player: {fileID: 868446135}
+  player: {fileID: 0}
   sliderType: 1
 --- !u!114 &2015075546
 MonoBehaviour:
@@ -17429,19 +17429,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   worldSize: 100
   outsideRingThickness: 3
-  sectionSpawnMargin: 4
+  sectionSpawnMargin: 10
   cubeSize: 25
   sectionSettings:
   - type: 2
     minSections: 2
     maxSections: 5
     minSize: 4
-    maxSize: 9
+    maxSize: 8
     loadOrder: 0
     cityToRoadChance: 0.6
     cityStyle: 1
     minRoadSpacing: 2
-    maxRoadSpacing: 3
+    maxRoadSpacing: 2
   - type: 2
     minSections: 2
     maxSections: 5
@@ -17452,36 +17452,8 @@ MonoBehaviour:
     cityStyle: 2
     minRoadSpacing: 3
     maxRoadSpacing: 8
-  - type: 3
-    minSections: 1
-    maxSections: 2
-    minSize: 4
-    maxSize: 10
-    loadOrder: 2
-    cityToRoadChance: 0.7
-    cityStyle: 0
-    minRoadSpacing: 1
-    maxRoadSpacing: 8
   allCubes:
   - {fileID: 5516276053283988616, guid: 3e65d83e23e0d3840b59d997d984432d, type: 3}
-  - {fileID: 7390423912284533387, guid: 9343b74e5a926d741ad159a5b53f751c, type: 3}
-  - {fileID: 7390423912284533387, guid: 80093ddbfab016b4ab6ec9beb8754121, type: 3}
-  - {fileID: 7390423912284533387, guid: ef2f7ad5a4dcb1f49821f33e6977f336, type: 3}
-  - {fileID: 5516276053283988616, guid: 7f91b7ff7df4c2c478a96be341eafe22, type: 3}
-  - {fileID: 5516276053283988616, guid: ec7f090de702a254e9198248386ec0d8, type: 3}
-  - {fileID: 5516276053283988616, guid: 93a660c0c24c33748a362ef7240381b8, type: 3}
-  - {fileID: 7912342884281958728, guid: aafce54bc3d7b284e958d4bc1c3119d4, type: 3}
-  - {fileID: 7912342884281958728, guid: 9648c575d6b2d144495512a6aab3a2ab, type: 3}
-  - {fileID: 7912342884281958728, guid: 244386affc8b88244b34f3fbb03da72b, type: 3}
-  - {fileID: 2997057928643260658, guid: 77e47bfbef348184fa2a426629fb0a48, type: 3}
-  - {fileID: 2997057928643260658, guid: a15ed9872ee203241b9d6785471e1804, type: 3}
-  - {fileID: 2997057928643260658, guid: 3715b6fba6d73e742ad279bdffeacdd5, type: 3}
-  - {fileID: 1860352396384261728, guid: f3e5e67b3e5fd2e49919e82b26be3ff0, type: 3}
-  - {fileID: 1860352396384261728, guid: 5f179aebf32f0114e95e287d6a754de1, type: 3}
-  - {fileID: 1860352396384261728, guid: 19ed67ab4c8fb164dae832274c5f3ffb, type: 3}
-  - {fileID: 3296305304993741269, guid: 54104062c50e84646bee256f7e901210, type: 3}
-  - {fileID: 3296305304993741269, guid: de5ed73635336ab4dbf7e1a8050edfb5, type: 3}
-  - {fileID: 3296305304993741269, guid: 57089ec34c2ded348a37e23118442223, type: 3}
   - {fileID: 2390302947462879489, guid: fa9eba809f2b7a44aa5979874cba35e2, type: 3}
   - {fileID: 5559418178236922227, guid: df21b0e54bcf0994e8a211e0586d2a39, type: 3}
   - {fileID: 5033481907361620, guid: c40ee4860320a954781d70d92bd82260, type: 3}
@@ -17519,6 +17491,24 @@ MonoBehaviour:
   - {fileID: 5516276053283988616, guid: da77a0f77f662d64f85482965fc7a461, type: 3}
   - {fileID: 1860352396384261728, guid: 1141092d6f2fc474ebb1ad92f9f8f8ad, type: 3}
   - {fileID: 2390302947462879489, guid: 24eb2d58039cf9a4d8cbf241bfab0d4c, type: 3}
+  - {fileID: 9045218815094624750, guid: 9343b74e5a926d741ad159a5b53f751c, type: 3}
+  - {fileID: 2761419323278077801, guid: 80093ddbfab016b4ab6ec9beb8754121, type: 3}
+  - {fileID: -7068880738394937091, guid: ef2f7ad5a4dcb1f49821f33e6977f336, type: 3}
+  - {fileID: -4311047653807739138, guid: 7f91b7ff7df4c2c478a96be341eafe22, type: 3}
+  - {fileID: 8793519746056240957, guid: ec7f090de702a254e9198248386ec0d8, type: 3}
+  - {fileID: 1855436375553628317, guid: 93a660c0c24c33748a362ef7240381b8, type: 3}
+  - {fileID: -1127283049002094731, guid: aafce54bc3d7b284e958d4bc1c3119d4, type: 3}
+  - {fileID: -3870516244580935564, guid: 9648c575d6b2d144495512a6aab3a2ab, type: 3}
+  - {fileID: -9169459939870189608, guid: 244386affc8b88244b34f3fbb03da72b, type: 3}
+  - {fileID: 8401444965759315514, guid: 77e47bfbef348184fa2a426629fb0a48, type: 3}
+  - {fileID: -2454398666289105140, guid: a15ed9872ee203241b9d6785471e1804, type: 3}
+  - {fileID: 2364455195655981295, guid: 3715b6fba6d73e742ad279bdffeacdd5, type: 3}
+  - {fileID: -4365669484078054171, guid: f3e5e67b3e5fd2e49919e82b26be3ff0, type: 3}
+  - {fileID: 2973958199368758830, guid: 5f179aebf32f0114e95e287d6a754de1, type: 3}
+  - {fileID: 6782186048934246170, guid: 19ed67ab4c8fb164dae832274c5f3ffb, type: 3}
+  - {fileID: 752077980124611204, guid: 54104062c50e84646bee256f7e901210, type: 3}
+  - {fileID: 6906483831264584630, guid: de5ed73635336ab4dbf7e1a8050edfb5, type: 3}
+  - {fileID: -5450793219677654809, guid: 57089ec34c2ded348a37e23118442223, type: 3}
   cityMinDistance: 7
   maxCityPlacementTries: 10
   gridCityBias: 0.294

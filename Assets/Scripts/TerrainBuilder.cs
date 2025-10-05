@@ -172,6 +172,7 @@ public class TerrainBuilder : MonoBehaviour
 
             if (!InBounds(neighborPos))
             {
+                Debug.LogWarning($"not in bounds at {neighborPos}");
                 neighborTypes[dir] = SectionType.Outside;
                 continue;
             }
@@ -181,7 +182,10 @@ public class TerrainBuilder : MonoBehaviour
 
         // Step 2: Get prefabs of target section type
         if (!cubeDict.TryGetValue(fallbackType, out var cubeList) || cubeList.Count == 0)
+        {
+            Debug.LogError($"no cubes found");
             return null;
+        }
 
         List<Cube> candidates = new();
 
@@ -190,16 +194,23 @@ public class TerrainBuilder : MonoBehaviour
         {
             bool matches = true;
 
+            if (prefab.cubeType != fallbackType)
+                continue;
+
             foreach (var side in prefab.sides)
             {
                 if (!neighborTypes.TryGetValue(side.sideDirection, out var neighborType))
-                    continue; // shouldn’t happen but safe guard
+                    continue;
 
                 if (side.sideType.Contains(SectionType.anything))
+                {
+                    Debug.Log($"contains anything");
                     continue;
+                }
 
                 if (!side.sideType.Contains(neighborType))
                 {
+                    Debug.Log($"cube {prefab} does not match side {side.sideDirection}");
                     matches = false;
                     break;
                 }
@@ -208,11 +219,17 @@ public class TerrainBuilder : MonoBehaviour
             if (matches)
                 candidates.Add(prefab);
         }
-
+        Cube result;
         // Step 4: Pick one, track city placements
-        Cube result = candidates.Count > 0
-            ? candidates[Random.Range(0, candidates.Count)]
-            : GetRandomCube(fallbackType);
+        if (candidates.Count > 0)
+        {
+            result = candidates[Random.Range(0, candidates.Count)];
+        }
+        else
+        {
+            Debug.LogWarning($"getting failback cube at location {gridPos}");
+            result = GetRandomCube(fallbackType);
+        }
 
         if (result != null && cityPlaced != null)
         {
@@ -356,6 +373,7 @@ public class TerrainBuilder : MonoBehaviour
                     continue;
                 }
 
+                //Cube prefab = GetRandomCube(type);
                 Cube prefab = GetMatchingCube(gridPos, type);
                 if (prefab != null)
                 {
@@ -381,8 +399,11 @@ public class TerrainBuilder : MonoBehaviour
             foreach (SideDirection dir in System.Enum.GetValues(typeof(SideDirection)))
             {
                 Vector2Int neighborPos = cityPos + DirFromSide(dir);
-                if (!InBounds(neighborPos)) continue;
-
+                if (!InBounds(neighborPos))
+                {
+                    Debug.LogWarning($"not in bounds at {neighborPos}");
+                    continue;
+                }
                 Cube neighbor = CubeAt(neighborPos);
                 if (neighbor == null) continue;
 
@@ -635,7 +656,7 @@ public class TerrainBuilder : MonoBehaviour
 
         int roadSpacing = validSpacings[Random.Range(0, validSpacings.Count)];
 
-        //Debug.Log($"[GridCity] center {center}, radius {radius}, adjusting Radius {adjustedRadius}, spacing {roadSpacing}");
+        Debug.Log($"[GridCity] center {center}, radius {radius}, adjusting Radius {adjustedRadius}, spacing {roadSpacing}");
 
         // Roads
         for (int x = -adjustedRadius; x <= adjustedRadius; x++)
@@ -644,11 +665,8 @@ public class TerrainBuilder : MonoBehaviour
             {
                 Vector2Int pos = center + new Vector2Int(x, y);
                 bool isRoadLine = (x % roadSpacing == 0 || y % roadSpacing == 0);
-
-                if (isRoadLine && Random.value > cityChance)
-                {
-                    if (InBounds(pos)) SectionAt(pos) = SectionType.Road;
-                }
+                
+                if (InBounds(pos) && isRoadLine) SectionAt(pos) = SectionType.Road;
             }
         }
 
@@ -658,29 +676,15 @@ public class TerrainBuilder : MonoBehaviour
             for (int y = -adjustedRadius; y <= adjustedRadius; y++)
             {
                 Vector2Int pos = center + new Vector2Int(x, y);
-                bool isRoadLine = (x % roadSpacing == 0 || y % roadSpacing == 0);
 
-                if (isRoadLine && IsEmpty(pos))
+
+                if (IsEmpty(pos))
                 {
                     //Debug.Log("457");
-                    if(Random.value > parkPercent)
+                    if(Random.value < parkPercent)
                         SectionAt(pos) = SectionType.parks;
                     else 
                         SectionAt(pos) = SectionType.City;
-                }
-            }
-        }
-
-        // Fill Plains
-        for (int x = -adjustedRadius; x <= adjustedRadius; x++)
-        {
-            for (int y = -adjustedRadius; y <= adjustedRadius; y++)
-            {
-                Vector2Int pos = center + new Vector2Int(x, y);
-                if (IsEmpty(pos))
-                {
-                    //Debug.Log("471");
-                    SectionAt(pos) = SectionType.Plains;
                 }
             }
         }
@@ -688,7 +692,7 @@ public class TerrainBuilder : MonoBehaviour
 
     private void GenerateOrganicCity(Vector2Int center, int radius)
     {
-        //Debug.Log($"[OrganicCity] center {center}, radius {radius}");
+        Debug.Log($"[OrganicCity] center {center}, radius {radius}");
 
         roadListObjs.Clear();
         List<Vector2Int> buildings = new();
@@ -710,11 +714,7 @@ public class TerrainBuilder : MonoBehaviour
                 {
                     buildings.Add(randomCell);
 
-                    //Debug.Log("502");
-                    if (Random.value > .7)
-                        SectionAt(randomCell) = SectionType.City;
-                    else
-                        SectionAt(randomCell) = SectionType.rualBuildings;
+                    SectionAt(randomCell) = SectionType.rualBuildings;
                     placed++;
 
                 }
@@ -839,7 +839,7 @@ public class TerrainBuilder : MonoBehaviour
             if (IsEmpty(current))
             {
                 //Debug.Log("627");
-                SectionAt(current) = SectionType.Road;
+                SectionAt(current) = SectionType.rualRoads;
                 localRoads.Add(current);
             }
 

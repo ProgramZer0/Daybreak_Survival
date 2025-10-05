@@ -2185,7 +2185,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7092d813880563439a9b3caa4bdf680, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sideType: 03000000
+  sideType: 0b000000
   sideDirection: 2
   isDefinedConnected: 0
   PrefabNeeded: {fileID: 0}
@@ -2401,7 +2401,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8006102051271248406}
-  - component: {fileID: 3296305304993741269}
+  - component: {fileID: 6906483831264584630}
   m_Layer: 0
   m_Name: highway8 1
   m_TagString: Untagged
@@ -2433,7 +2433,7 @@ Transform:
   - {fileID: 8808315697607704003}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3296305304993741269
+--- !u!114 &6906483831264584630
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2455,11 +2455,10 @@ MonoBehaviour:
   cubePrefab: {fileID: 4222908096220696472}
   cubeType: 6
   weaponSpawners: []
-  enemySpawners:
-  - {fileID: 5331980402121438451}
+  enemySpawners: []
   doorLayer:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 0
 --- !u!1 &4786614787477013446
 GameObject:
   m_ObjectHideFlags: 0
@@ -2504,7 +2503,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7092d813880563439a9b3caa4bdf680, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sideType: 03000000
+  sideType: 0b000000
   sideDirection: 0
   isDefinedConnected: 0
   PrefabNeeded: {fileID: 0}
