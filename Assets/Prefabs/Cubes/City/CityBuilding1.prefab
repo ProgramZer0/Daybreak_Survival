@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5019013562645767967}
   - component: {fileID: 5516276053283988616}
   m_Layer: 0
-  m_Name: CityRoad3 1
+  m_Name: CityBuilding1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

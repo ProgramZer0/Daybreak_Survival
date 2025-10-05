@@ -64,6 +64,7 @@ public class GameManager : MonoBehaviour
 
     private void ResetPlayer()
     {
+        playerRenderer.color = Color.white;
         player.transform.position = Vector2.zero;
         player.ResetPlayerData();
     }

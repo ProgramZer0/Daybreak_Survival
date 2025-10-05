@@ -60,6 +60,7 @@ public class TerrainBuilder : MonoBehaviour
 
     [Header("Prefabs")]
     public List<Cube> allCubes;
+    public List<Cube> testCubes;
 
     [Header("City Settings")]
     public int cityMinDistance = 10;
@@ -75,12 +76,14 @@ public class TerrainBuilder : MonoBehaviour
     private int gridOffset;
 
     private Dictionary<SectionType, List<Cube>> cubeDict = new();
+    private Dictionary<SectionType, List<Cube>> cubeTestDict = new();
     private List<CityData> cityCenters = new();
     private List<RoadData> roadListObjs = new();
     private List<Vector2Int> cityTilesToCheck = new();
 
     public bool isRunning = false;
     public bool isDeleting = false;
+    public bool useTest = false;
 
     public void GenerateTerrain()
     {   
@@ -114,6 +117,13 @@ public class TerrainBuilder : MonoBehaviour
             if (!cubeDict.ContainsKey(cube.cubeType))
                 cubeDict[cube.cubeType] = new List<Cube>();
             cubeDict[cube.cubeType].Add(cube);
+        }
+
+        foreach (Cube cube in testCubes)
+        {
+            if (!cubeTestDict.ContainsKey(cube.cubeType))
+                cubeTestDict[cube.cubeType] = new List<Cube>();
+            cubeTestDict[cube.cubeType].Add(cube);
         }
     }
 
@@ -242,9 +252,18 @@ public class TerrainBuilder : MonoBehaviour
 
     private Cube GetRandomCube(SectionType type)
     {
-        if (!cubeDict.ContainsKey(type) || cubeDict[type].Count == 0)
-            return null;
-        return cubeDict[type][Random.Range(0, cubeDict[type].Count)];
+        if (useTest)
+        {
+            if (!cubeTestDict.ContainsKey(type) || cubeTestDict[type].Count == 0)
+                return null;
+            return cubeTestDict[type][Random.Range(0, cubeTestDict[type].Count)];
+        }
+        else
+        {
+            if (!cubeDict.ContainsKey(type) || cubeDict[type].Count == 0)
+                return null;
+            return cubeDict[type][Random.Range(0, cubeDict[type].Count)];
+        }
     }
     #endregion
 
@@ -372,9 +391,13 @@ public class TerrainBuilder : MonoBehaviour
                     cityTilesToCheck.Add(gridPos);
                     continue;
                 }
+                Cube prefab;
 
-                //Cube prefab = GetRandomCube(type);
-                Cube prefab = GetMatchingCube(gridPos, type);
+                if (useTest)
+                    prefab = GetRandomCube(type);
+                else
+                    prefab = GetMatchingCube(gridPos, type);
+
                 if (prefab != null)
                 {
                     GameObject obj = Instantiate(prefab.cubePrefab, GridToWorld(gridPos), Quaternion.identity, transform);
@@ -419,7 +442,16 @@ public class TerrainBuilder : MonoBehaviour
             }
 
             if (prefabToSpawn == null)
-                prefabToSpawn = GetRandomParkPrefab();
+            {
+                if(useTest)
+                    prefabToSpawn = GetRandomCube(SectionType.parks).cubePrefab;
+                else
+                    prefabToSpawn = GetRandomParkPrefab();
+            }
+            else
+                if (useTest)
+                    prefabToSpawn = GetRandomCube(SectionType.City).cubePrefab;
+
 
             if (prefabToSpawn != null)
             {
@@ -506,7 +538,7 @@ public class TerrainBuilder : MonoBehaviour
             SectionType section = SectionAt(next);
 
             // Allow overwriting terrain, not buildings
-            if (section == SectionType.Empty || section == SectionType.Plains || section == SectionType.rualBuildings)
+            if (section == SectionType.Empty || section == SectionType.Plains)
                 SetSection(next, SectionType.Highway);
 
             // If we hit a valid road type — we’re done
@@ -514,7 +546,7 @@ public class TerrainBuilder : MonoBehaviour
                 return;
 
             // Stop if too close to city edge, but not yet on road
-            if (isAdjacentToType(next, SectionType.City) && Vector2Int.Distance(next, startCity) > startRadius)
+            if (isAdjacentToType(next, SectionType.rualBuildings) && Vector2Int.Distance(next, startCity) > startRadius)
             {
                 // After stopping, find the nearest road/rural road to connect to
                 Vector2Int? nearestRoad = FindNearestRoad(next, 15); // search radius 15 tiles
@@ -538,7 +570,7 @@ public class TerrainBuilder : MonoBehaviour
                     if (!InBounds(pos)) continue;
 
                     SectionType type = SectionAt(pos);
-                    if (type == SectionType.Road || type == SectionType.rualRoads)
+                    if (type == SectionType.rualRoads)
                         return pos;
                 }
             }
@@ -564,7 +596,7 @@ public class TerrainBuilder : MonoBehaviour
             if (!InBounds(current)) break;
 
             SectionType section = SectionAt(current);
-            if (section == SectionType.Empty || section == SectionType.Plains || section == SectionType.rualBuildings)
+            if (section == SectionType.Empty || section == SectionType.Plains)
                 SetSection(current, SectionType.Highway);
 
             if (section == SectionType.Road || section == SectionType.rualRoads)
