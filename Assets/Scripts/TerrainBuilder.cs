@@ -6,7 +6,6 @@ using UnityEngine;
 public enum SectionType { Empty, Outside, City, Plains, Road, Shack, Highway, rualBuildings, rualRoads, parks, roadConnections, anything}
 public enum CityStyle { Auto, Grid, Organic }
 
-
 [System.Serializable]
 public struct RoadData
 {
