@@ -11,7 +11,5 @@ public class Cube : MonoBehaviour
     public SectionType cubeType;
     public GameObject[] weaponSpawners;     
     public GameObject[] enemySpawners;
-    [SerializeField] private LayerMask doorLayer;
-    
-
+    //[SerializeField] private LayerMask doorLayer;
 }

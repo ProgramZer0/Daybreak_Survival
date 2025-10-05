@@ -17457,14 +17457,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4cd58449cac0087429e36aaace00554f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  worldSize: 100
+  worldSize: 30
   outsideRingThickness: 3
   sectionSpawnMargin: 10
   cubeSize: 25
   sectionSettings:
   - type: 2
-    minSections: 2
-    maxSections: 5
+    minSections: 1
+    maxSections: 1
     minSize: 4
     maxSize: 8
     loadOrder: 0
@@ -17473,8 +17473,8 @@ MonoBehaviour:
     minRoadSpacing: 2
     maxRoadSpacing: 2
   - type: 2
-    minSections: 2
-    maxSections: 5
+    minSections: 1
+    maxSections: 1
     minSize: 3
     maxSize: 6
     loadOrder: 1
