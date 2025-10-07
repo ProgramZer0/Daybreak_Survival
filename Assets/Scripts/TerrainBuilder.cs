@@ -473,42 +473,67 @@ public class TerrainBuilder : MonoBehaviour
 
     private void ConnectAllCities()
     {
-        if (cityCenters.Count < 2) return;
+        if (cityCenters.Count < 2)
+        {
+            Debug.Log("has less than 2 cities skipping roads");
+            return;
+        }
+        
 
         var cities = cityCenters.OrderBy(_ => Random.value).ToList();
-        HashSet<int> connected = new() { 0 };
+        List<CityData> connectedCities = new List<CityData>();
+        int safety = 0, safetyLimit = 5000;
+        CityData fromCity = cities[0];
 
-        while (connected.Count < cities.Count)
+        float distance = float.MaxValue;
+        foreach (CityData c in cities)
         {
-            float minDist = float.MaxValue;
+            
+            if(Vector2Int.Distance(Vector2Int.zero, c.center) < distance)
+            {
+                distance = Vector2Int.Distance(Vector2Int.zero, c.center);
+                fromCity = c;
+            }
+        }
+
+        connectedCities.Add(fromCity);
+        Debug.Log($"city count {cities.Count}, from city {fromCity.center}");
+
+        while (connectedCities.Count < cities.Count && safety++ < safetyLimit)
+        {
+            float minDist;
             int fromIndex = -1, toIndex = -1;
 
-            foreach (int i in connected)
+            for (int j = 0; j < cities.Count; j++)
             {
-                Vector2Int fromCity = cities[i].center;
-
-                for (int j = 0; j < cities.Count; j++)
+                if (connectedCities.Contains(cities[j]))
                 {
-                    if (connected.Contains(j)) continue;
+                    Debug.Log($"CONNECTED contains {cities[j].center} {j}");
+                    j++;
+                    continue;
+                }
 
-                    float dist = Vector2Int.Distance(fromCity, cities[j].center);
-                    if (dist < minDist)
-                    {
-                        minDist = dist;
-                        fromIndex = i;
-                        toIndex = j;
-                    }
+                minDist = (fromCity.radius * 2);
+
+                float dist = Vector2Int.Distance(fromCity.center, cities[j].center);
+                minDist = dist;
+                toIndex = j;
+
+                if (dist > minDist)
+                {
+                    Debug.Log($"too close to city from city {fromCity} to {cities[j].center} is {dist} away");
                 }
             }
 
             if (fromIndex != -1 && toIndex != -1)
             {
-                var from = cities[fromIndex];
+                var from = fromCity;
                 var to = cities[toIndex];
                 int radius = Mathf.Max(from.radius, to.radius);
 
                 CreateCityRoad(from.center, to.center, from.radius, to.radius);
-                connected.Add(toIndex);
+                Debug.Log($"adding city {from.center} to {to.center}");
+                connectedCities.Add(to);
             }
         }
     }
@@ -532,17 +557,29 @@ public class TerrainBuilder : MonoBehaviour
                 : new Vector2Int(0, Mathf.Clamp(delta.y, -1, 1));
 
             Vector2Int next = current + step;
-            if (!InBounds(next)) break;
+            if (!InBounds(next))
+            {
+                Debug.Log($"Out of bounds at {next}");
+                break;
+            }
+                
 
             SectionType section = SectionAt(next);
 
-            // Allow overwriting terrain, not buildings
-            if (section == SectionType.Empty || section == SectionType.Plains)
-                SetSection(next, SectionType.Highway);
+            if (section == SectionType.Empty || section == SectionType.Plains || section == SectionType.rualBuildings) 
+            {
+                Debug.LogWarning($"setting highway at {next}");
+                SetSection(next, SectionType.Highway); 
+            }
+
 
             // If we hit a valid road type — we’re done
-            if (section == SectionType.Road || section == SectionType.rualRoads)
+            bool isRoad = section == SectionType.Road || section == SectionType.rualRoads;
+            if (isRoad && Vector2Int.Distance(next, startCity) > startRadius)
+            {
+                Debug.Log($"hit valid road at {next}");
                 return;
+            }
 
             // Stop if too close to city edge, but not yet on road
             if (isAdjacentToType(next, SectionType.rualBuildings) && Vector2Int.Distance(next, startCity) > startRadius)
@@ -551,6 +588,8 @@ public class TerrainBuilder : MonoBehaviour
                 Vector2Int? nearestRoad = FindNearestRoad(next, 15); // search radius 15 tiles
                 if (nearestRoad.HasValue)
                     ConnectToRoad(next, nearestRoad.Value);
+
+                Debug.Log($"Stop if too close to city edge {startCity} , but not yet on road on {next} too close {startRadius}");
                 break;
             }
 
