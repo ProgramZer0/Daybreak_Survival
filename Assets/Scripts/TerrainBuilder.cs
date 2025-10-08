@@ -22,11 +22,13 @@ public struct CityData
 {
     public Vector2Int center;
     public int radius; // now radius instead of size
+    public CityStyle type;
 
-    public CityData(Vector2Int c, int r)
+    public CityData(Vector2Int c, int r, CityStyle t)
     {
         center = c;
         radius = r;
+        type = t;
     }
 }
 
@@ -79,6 +81,8 @@ public class TerrainBuilder : MonoBehaviour
     private List<CityData> cityCenters = new();
     private List<RoadData> roadListObjs = new();
     private List<Vector2Int> cityTilesToCheck = new();
+    private List<Vector2Int> highwayRoads = new();
+    private List<CityData> connectedCities;
 
     public bool isRunning = false;
     public bool isDeleting = false;
@@ -92,6 +96,7 @@ public class TerrainBuilder : MonoBehaviour
 
         sectionGrid = new SectionType[worldSize, worldSize];
         cubeInstances = new Cube[worldSize, worldSize];
+        connectedCities = new List<CityData>();
 
         for (int x = 0; x < worldSize; x++)
         {
@@ -348,11 +353,16 @@ public class TerrainBuilder : MonoBehaviour
                         }
 
                         if (chosenStyle == CityStyle.Grid)
+                        {
                             GenerateGridCity(center, radius, section.cityToRoadChance, section.minRoadSpacing, section.maxRoadSpacing);
+                            cityCenters.Add(new CityData(center, radius, CityStyle.Grid));
+                        }
                         else
+                        {
                             GenerateOrganicCity(center, radius);
+                            cityCenters.Add(new CityData(center, radius, CityStyle.Organic));
+                        }
 
-                        cityCenters.Add(new CityData(center, radius));
                         break;
 
                     case SectionType.Plains:
@@ -362,7 +372,11 @@ public class TerrainBuilder : MonoBehaviour
             }
         }
 
-        ConnectAllCities();
+        ConnectAllCities(new Vector2Int(0 - gridOffset, 0 - gridOffset));
+        ConnectAllCities(new Vector2Int(0 + gridOffset, 0 + gridOffset));
+        ConnectAllCities(new Vector2Int(0 - gridOffset, 0 + gridOffset));
+        ConnectAllCities(new Vector2Int(0 + gridOffset, 0 - gridOffset));
+        ConnectAllCities(Vector2Int.zero);
         FillEmptyWithPlains();
         PopulatePlainsWithShacks(shackChance);
 
@@ -471,7 +485,7 @@ public class TerrainBuilder : MonoBehaviour
         return parkCube.cubePrefab;
     }
 
-    private void ConnectAllCities()
+    private void ConnectAllCities(Vector2Int closeTo)
     {
         if (cityCenters.Count < 2)
         {
@@ -481,67 +495,60 @@ public class TerrainBuilder : MonoBehaviour
         
 
         var cities = cityCenters.OrderBy(_ => Random.value).ToList();
-        List<CityData> connectedCities = new List<CityData>();
-        int safety = 0, safetyLimit = 5000;
-        CityData fromCity = cities[0];
+        CityData from = cities[0];
 
         float distance = float.MaxValue;
+
         foreach (CityData c in cities)
         {
+            //if (c.type != CityStyle.Grid) continue;
             
-            if(Vector2Int.Distance(Vector2Int.zero, c.center) < distance)
+            if(Vector2Int.Distance(closeTo, c.center) < distance)
             {
-                distance = Vector2Int.Distance(Vector2Int.zero, c.center);
-                fromCity = c;
+                distance = Vector2Int.Distance(closeTo, c.center);
+                from = c;
             }
         }
 
-        connectedCities.Add(fromCity);
-        Debug.Log($"city count {cities.Count}, from city {fromCity.center}");
+        Debug.Log($"city count {cities.Count}, from city {from.center}");
 
-        while (connectedCities.Count < cities.Count && safety++ < safetyLimit)
+        
+        foreach (CityData city in cities)
         {
-            float minDist;
-            int fromIndex = -1, toIndex = -1;
+            if (connectedCities.Contains(city)) continue;
+            var to = city;
+            int radius = Mathf.Max(from.radius, to.radius);
+            CreateCityRoad(from.center, to.center, from.radius, to.radius);
 
-            for (int j = 0; j < cities.Count; j++)
+            Debug.Log($"adding city {from.center} to {to.center}");
+            
+            if(isNearType(city, SectionType.Highway))
+                connectedCities.Add(city);
+        }
+    }
+
+    private bool isNearType(CityData city, SectionType type)
+    {
+        int radius = city.radius + 1;
+        //if any section grid near the city in the city.radius is the section type then we return true otherwise return false.
+        for (int i = city.center.x - radius; i < city.center.x + radius; i++)
+        {
+            for (int j = city.center.y - radius; j < city.center.y + radius; j++)
             {
-                if (connectedCities.Contains(cities[j]))
-                {
-                    Debug.Log($"CONNECTED contains {cities[j].center} {j}");
-                    j++;
-                    continue;
-                }
-
-                minDist = (fromCity.radius * 2);
-
-                float dist = Vector2Int.Distance(fromCity.center, cities[j].center);
-                minDist = dist;
-                toIndex = j;
-
-                if (dist > minDist)
-                {
-                    Debug.Log($"too close to city from city {fromCity} to {cities[j].center} is {dist} away");
-                }
-            }
-
-            if (fromIndex != -1 && toIndex != -1)
-            {
-                var from = fromCity;
-                var to = cities[toIndex];
-                int radius = Mathf.Max(from.radius, to.radius);
-
-                CreateCityRoad(from.center, to.center, from.radius, to.radius);
-                Debug.Log($"adding city {from.center} to {to.center}");
-                connectedCities.Add(to);
+                if (IsType(new Vector2Int(i, j), type)) return true;
             }
         }
+        
+        return false;
     }
 
     private void CreateCityRoad(Vector2Int startCity, Vector2Int endCity, int startRadius, int endRadius)
     {
+        highwayRoads.Clear();
+
         Vector2Int current = startCity;
         int safety = 0, safetyLimit = 5000;
+        //highwayRoads.Add(current);
 
         while (current != endCity && safety++ < safetyLimit)
         {
@@ -549,17 +556,25 @@ public class TerrainBuilder : MonoBehaviour
 
             // Weighted axis decision for smoother paths
             bool moveX = Mathf.Abs(delta.x) > Mathf.Abs(delta.y)
-                ? Random.value > 0.3f
+                ? Random.value > 0.5f
                 : Random.value > 0.7f;
 
             Vector2Int step = moveX
                 ? new Vector2Int(Mathf.Clamp(delta.x, -1, 1), 0)
                 : new Vector2Int(0, Mathf.Clamp(delta.y, -1, 1));
 
+            
+            if (isAdjacentToType(current, SectionType.Highway, highwayRoads))
+            {
+                Debug.Log($"hit valid highway at {current} for city {startCity} to {endCity}");
+                return;
+            }
+
             Vector2Int next = current + step;
+
             if (!InBounds(next))
             {
-                Debug.Log($"Out of bounds at {next}");
+                Debug.Log($"Out of bounds at {next} for city {startCity} to {endCity}");
                 break;
             }
                 
@@ -568,16 +583,16 @@ public class TerrainBuilder : MonoBehaviour
 
             if (section == SectionType.Empty || section == SectionType.Plains || section == SectionType.rualBuildings) 
             {
-                Debug.LogWarning($"setting highway at {next}");
+                Debug.LogWarning($"setting highway at {next} for city {startCity} to {endCity}");
                 SetSection(next, SectionType.Highway); 
             }
 
 
             // If we hit a valid road type — we’re done
             bool isRoad = section == SectionType.Road || section == SectionType.rualRoads;
-            if (isRoad && Vector2Int.Distance(next, startCity) > startRadius)
+            if (isRoad && Vector2Int.Distance(next, endCity) < endRadius + 2)
             {
-                Debug.Log($"hit valid road at {next}");
+                Debug.Log($"hit valid road at {next} for city {startCity} to {endCity}");
                 return;
             }
 
@@ -589,10 +604,11 @@ public class TerrainBuilder : MonoBehaviour
                 if (nearestRoad.HasValue)
                     ConnectToRoad(next, nearestRoad.Value);
 
-                Debug.Log($"Stop if too close to city edge {startCity} , but not yet on road on {next} too close {startRadius}");
+                Debug.Log($"Stop if too close to city edge {startCity} , but not yet on road on {next} too close {startRadius} for city {startCity} to {endCity}");
                 break;
             }
 
+            highwayRoads.Add(next);
             current = next;
         }
     }
@@ -936,6 +952,22 @@ public class TerrainBuilder : MonoBehaviour
                 //Debug.Log("696");
                 var type = SectionAt(n);
                 if (type != SectionType.Empty && type != SectionType.Outside)
+                    return true;
+            }
+        }
+        return false;
+    }
+    private bool isAdjacentToType(Vector2Int pos, SectionType typeChecked, List<Vector2Int> blacklist)
+    {
+        foreach (var n in GetNeighbors(pos))
+        {
+            if (blacklist.Contains(n)) continue;
+
+            if (InBounds(n))
+            {
+                //Debug.Log("696");
+                var type = SectionAt(n);
+                if (type == typeChecked)
                     return true;
             }
         }
