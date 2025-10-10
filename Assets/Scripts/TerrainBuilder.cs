@@ -23,12 +23,14 @@ public struct CityData
     public Vector2Int center;
     public int radius; // now radius instead of size
     public CityStyle type;
+    public int highwayConnections;
 
     public CityData(Vector2Int c, int r, CityStyle t)
     {
         center = c;
         radius = r;
         type = t;
+        highwayConnections = 0;
     }
 }
 
@@ -197,54 +199,67 @@ public class TerrainBuilder : MonoBehaviour
         // Step 2: Get prefabs of target section type
         if (!cubeDict.TryGetValue(fallbackType, out var cubeList) || cubeList.Count == 0)
         {
-            Debug.LogError($"no cubes found");
+            Debug.LogError($"no cubes found for type {fallbackType}");
             return null;
         }
 
-        List<Cube> candidates = new();
+        List<Cube> exactMatches = new();
+        List<Cube> fallbackMatches = new();
 
         // Step 3: Check each prefab against neighbor SectionTypes
         foreach (Cube prefab in cubeList)
         {
-            bool matches = true;
-
             if (prefab.cubeType != fallbackType)
                 continue;
+
+            bool usesAnything = false;
+            bool matches = true;
 
             foreach (var side in prefab.sides)
             {
                 if (!neighborTypes.TryGetValue(side.sideDirection, out var neighborType))
                     continue;
 
-                if (side.sideType.Contains(SectionType.anything))
-                {
-                    Debug.Log($"contains anything");
-                    continue;
-                }
-
                 if (!side.sideType.Contains(neighborType))
                 {
-                    Debug.Log($"cube {prefab} does not match side {side.sideDirection}");
-                    matches = false;
-                    break;
+                    if (side.sideType.Contains(SectionType.anything))
+                    {
+                        usesAnything = true; // mark as fallback
+                    }
+                    else
+                    {
+                        matches = false;
+                        break; // does not match
+                    }
                 }
             }
 
             if (matches)
-                candidates.Add(prefab);
+            {
+                if (usesAnything)
+                    fallbackMatches.Add(prefab);
+                else
+                    exactMatches.Add(prefab);
+            }
         }
+
+        // Step 4: Pick one cube: exact matches first, fallback if none
         Cube result;
-        // Step 4: Pick one, track city placements
-        if (candidates.Count > 0)
+        if (exactMatches.Count > 0)
         {
-            result = candidates[Random.Range(0, candidates.Count)];
+            result = exactMatches[Random.Range(0, exactMatches.Count)];
+        }
+        else if (fallbackMatches.Count > 0)
+        {
+            result = fallbackMatches[Random.Range(0, fallbackMatches.Count)];
         }
         else
         {
-            Debug.LogWarning($"getting failback cube at location {gridPos}");
+            Debug.LogWarning($"No matching cubes found at {gridPos}, using random fallback.");
             result = GetRandomCube(fallbackType);
         }
 
+        // Step 5: Track city placements
         if (result != null && cityPlaced != null)
         {
             if (fallbackType == SectionType.City || fallbackType == SectionType.Road || fallbackType == SectionType.parks)
@@ -354,7 +369,7 @@ public class TerrainBuilder : MonoBehaviour
 
                         if (chosenStyle == CityStyle.Grid)
                         {
-                            GenerateGridCity(center, radius, section.cityToRoadChance, section.minRoadSpacing, section.maxRoadSpacing);
+                            radius = GenerateGridCity(center, radius, section.cityToRoadChance, section.minRoadSpacing, section.maxRoadSpacing);
                             cityCenters.Add(new CityData(center, radius, CityStyle.Grid));
                         }
                         else
@@ -373,10 +388,15 @@ public class TerrainBuilder : MonoBehaviour
         }
 
         ConnectAllCities(new Vector2Int(0 - gridOffset, 0 - gridOffset));
-        ConnectAllCities(new Vector2Int(0 + gridOffset, 0 + gridOffset));
-        ConnectAllCities(new Vector2Int(0 - gridOffset, 0 + gridOffset));
-        ConnectAllCities(new Vector2Int(0 + gridOffset, 0 - gridOffset));
-        ConnectAllCities(Vector2Int.zero);
+        if (CheckAllCityConnections())
+            ConnectAllCities(new Vector2Int(0 + gridOffset, 0 + gridOffset));
+        if (CheckAllCityConnections())
+            ConnectAllCities(new Vector2Int(0 - gridOffset, 0 + gridOffset));
+        if (CheckAllCityConnections())
+            ConnectAllCities(new Vector2Int(0 + gridOffset, 0 - gridOffset));
+        if (CheckAllCityConnections())
+            ConnectAllCities(Vector2Int.zero);
+
         FillEmptyWithPlains();
         PopulatePlainsWithShacks(shackChance);
 
@@ -485,6 +505,24 @@ public class TerrainBuilder : MonoBehaviour
         return parkCube.cubePrefab;
     }
 
+    private bool CheckAllCityConnections()
+    {
+        bool hasACityThatHasNoRoads = false;
+
+        foreach (CityData city in cityCenters)
+        {
+            if (!isNearType(city, SectionType.Highway))
+            {
+                Debug.Log($" city {city.center} is not near road ");
+                hasACityThatHasNoRoads = true;
+            }
+                
+        }
+
+        return hasACityThatHasNoRoads;
+    }
+
+    
     private void ConnectAllCities(Vector2Int closeTo)
     {
         if (cityCenters.Count < 2)
@@ -492,7 +530,6 @@ public class TerrainBuilder : MonoBehaviour
             Debug.Log("has less than 2 cities skipping roads");
             return;
         }
-        
 
         var cities = cityCenters.OrderBy(_ => Random.value).ToList();
         CityData from = cities[0];
@@ -501,7 +538,7 @@ public class TerrainBuilder : MonoBehaviour
 
         foreach (CityData c in cities)
         {
-            //if (c.type != CityStyle.Grid) continue;
+            if (c.type != CityStyle.Grid) continue;
             
             if(Vector2Int.Distance(closeTo, c.center) < distance)
             {
@@ -509,6 +546,8 @@ public class TerrainBuilder : MonoBehaviour
                 from = c;
             }
         }
+        if(!connectedCities.Contains(from))
+            connectedCities.Add(from);
 
         Debug.Log($"city count {cities.Count}, from city {from.center}");
 
@@ -523,10 +562,14 @@ public class TerrainBuilder : MonoBehaviour
             Debug.Log($"adding city {from.center} to {to.center}");
             
             if(isNearType(city, SectionType.Highway))
+            {
                 connectedCities.Add(city);
+                Debug.Log($"city has highway {city.center}");
+
+            }
         }
     }
-
+    
     private bool isNearType(CityData city, SectionType type)
     {
         int radius = city.radius + 1;
@@ -535,7 +578,11 @@ public class TerrainBuilder : MonoBehaviour
         {
             for (int j = city.center.y - radius; j < city.center.y + radius; j++)
             {
-                if (IsType(new Vector2Int(i, j), type)) return true;
+                if (IsType(new Vector2Int(i, j), type))
+                {
+                    Debug.Log($"city has highway {city.center} at {i},{j}");
+                    return true;
+                }
             }
         }
         
@@ -546,13 +593,158 @@ public class TerrainBuilder : MonoBehaviour
     {
         highwayRoads.Clear();
 
-        Vector2Int current = startCity;
+        Vector2 endCityDir = (endCity - startCity);
+        endCityDir.Normalize();
+
+        Vector2Int IntDir = new Vector2Int(Mathf.RoundToInt(endCityDir.x), Mathf.RoundToInt(endCityDir.y));
+
+        if(Random.value > 0.5f)
+        {
+            if (IntDir.x != 0)
+                IntDir.y = 0;
+        }
+        else
+        {
+            if (IntDir.y != 0)
+                IntDir.x = 0;
+        }
+
+        //Debug.LogError($"int dir is {IntDir}");
+        Vector2Int current = startCity + (IntDir * (startRadius + 1));
+        Debug.Log($"current is {current} start city is {startCity} goal is {endCity} and int dir is {IntDir}");
+
         int safety = 0, safetyLimit = 5000;
-        //highwayRoads.Add(current);
+        bool isFirst = true;
+        bool isSecond = true;
 
         while (current != endCity && safety++ < safetyLimit)
         {
             Vector2Int delta = endCity - current;
+
+            if (isFirst)
+            {
+                SetSection(current, SectionType.Highway);
+                highwayRoads.Add(current);
+                isFirst = false;
+                continue;
+            }
+
+            Vector2Int step;
+
+            // Weighted random movement for natural flow
+            if (isSecond)
+            {
+                step = IntDir;
+                isSecond = false;
+            }
+            else
+            {
+                bool moveX = Mathf.Abs(delta.x) > Mathf.Abs(delta.y)
+                ? Random.value > 0.5f
+                : Random.value > 0.7f;
+
+                step = moveX
+                    ? new Vector2Int(Mathf.Clamp(delta.x, -1, 1), 0)
+                    : new Vector2Int(0, Mathf.Clamp(delta.y, -1, 1));
+            }
+
+            if (isAdjacentToType(current, SectionType.Highway, highwayRoads))
+            {
+                Debug.Log($"hit valid highway at {current} for city {startCity} to {endCity}");
+                return;
+            }
+
+            Vector2Int next = current + step;
+
+            if (!InBounds(next))
+            {
+                Debug.Log($"Out of bounds at {next} for city {startCity} to {endCity}");
+                break;
+            }
+
+            // --- Avoid passing too close to other cities ---
+            bool nearOtherCity = cityCenters.Any(c =>
+                c.center != startCity &&
+                c.center != endCity &&
+                Vector2Int.Distance(next, c.center) < c.radius + 3);
+
+            if (nearOtherCity)
+            {
+                CityData closest = cityCenters.OrderBy(c => Vector2Int.Distance(next, c.center)).First();
+                Vector2 away = ((Vector2)current - (Vector2)closest.center).normalized;
+                next += new Vector2Int(Mathf.RoundToInt(away.x), Mathf.RoundToInt(away.y));
+                Debug.Log($"Steering around city at {closest.center}");
+            }
+
+            SectionType section = SectionAt(next);
+
+            // Stop early if hitting a road outside start radius
+            if ((section == SectionType.Road || section == SectionType.rualRoads)
+                && Vector2Int.Distance(next, startCity) > startRadius + 2)
+            {
+                Debug.Log($"Stopping early near {current}, hit road outside city radius for {startCity}");
+                return;
+            }
+
+            // --- Merge highways into rural buildings/roads ---
+            if ((section == SectionType.rualRoads || section == SectionType.rualBuildings)
+                && Vector2Int.Distance(next, endCity) < endRadius + 4)
+            {
+                SetSection(current, SectionType.rualRoads);
+                Debug.Log($"Merged highway into rural road at {current}");
+                return;
+            }
+
+            // --- Normal highway painting ---
+            if (section == SectionType.Empty || section == SectionType.Plains || section == SectionType.rualBuildings)
+            {
+                SetSection(next, SectionType.Highway);
+                highwayRoads.Add(next);
+            }
+
+            // --- Stop if too close to city edge ---
+            if (isAdjacentToType(next, SectionType.rualBuildings) && Vector2Int.Distance(next, startCity) > startRadius)
+            {
+                Vector2Int? nearestRoad = FindNearestRoad(next, 15);
+                if (nearestRoad.HasValue)
+                    ConnectToRoad(next, nearestRoad.Value);
+
+                Debug.Log($"Stopped near city edge at {next}, connecting to nearest road");
+                break;
+            }
+
+            current = next;
+        }
+    }
+
+    /*
+    private void CreateCityRoad(Vector2Int startCity, Vector2Int endCity, int startRadius, int endRadius)
+    {
+        highwayRoads.Clear();
+
+        Vector2 endCityDir = (endCity - startCity);
+        endCityDir.Normalize();
+
+        endCityDir = endCityDir * (startRadius + 3);
+        Vector2Int IntDir = new Vector2Int((int)endCityDir.x, (int)endCityDir.y);
+
+        
+        Vector2Int current = startCity + IntDir;
+        Debug.Log($"current is {current} start city is {startCity} goal is {endCity} and int dir is {IntDir}");
+        int safety = 0, safetyLimit = 5000;
+        //highwayRoads.Add(current);
+        bool isFirst = true;
+
+        while (current != endCity && safety++ < safetyLimit)
+        {
+            Vector2Int delta = endCity - current;
+
+            if (isFirst)
+            {
+                SetSection(current, SectionType.Highway);
+                highwayRoads.Add(current);
+                isFirst = false;
+            }
 
             // Weighted axis decision for smoother paths
             bool moveX = Mathf.Abs(delta.x) > Mathf.Abs(delta.y)
@@ -577,7 +769,6 @@ public class TerrainBuilder : MonoBehaviour
                 Debug.Log($"Out of bounds at {next} for city {startCity} to {endCity}");
                 break;
             }
-                
 
             SectionType section = SectionAt(next);
 
@@ -588,9 +779,12 @@ public class TerrainBuilder : MonoBehaviour
             }
 
 
-            // If we hit a valid road type — we’re done
-            bool isRoad = section == SectionType.Road || section == SectionType.rualRoads;
-            if (isRoad && Vector2Int.Distance(next, endCity) < endRadius + 2)
+            if (section == SectionType.rualRoads && Vector2Int.Distance(next, endCity) < endRadius + 2)
+            {
+                Debug.Log($"setting {current} as rual road");
+                SetSection(current, SectionType.rualRoads);
+                return;
+            } else if (section == SectionType.Road && Vector2Int.Distance(next, endCity) < endRadius + 2)
             {
                 Debug.Log($"hit valid road at {next} for city {startCity} to {endCity}");
                 return;
@@ -612,6 +806,8 @@ public class TerrainBuilder : MonoBehaviour
             current = next;
         }
     }
+    */
+
     private Vector2Int? FindNearestRoad(Vector2Int start, int searchRadius)
     {
         for (int r = 1; r <= searchRadius; r++)
@@ -723,7 +919,7 @@ public class TerrainBuilder : MonoBehaviour
         return true;
     }
 
-    private void GenerateGridCity(Vector2Int center, int radius, float cityChance, int minRoadSpacing, int maxRoadSpacing, float parkPercent = 0.3f)
+    private int GenerateGridCity(Vector2Int center, int radius, float cityChance, int minRoadSpacing, int maxRoadSpacing, float parkPercent = 0.3f)
     {
         int adjustedRadius = (radius % 2 == 0) ? radius : radius + 1;
 
@@ -774,37 +970,44 @@ public class TerrainBuilder : MonoBehaviour
                 }
             }
         }
+
+        return adjustedRadius;
     }
 
     private void GenerateOrganicCity(Vector2Int center, int radius)
     {
         Debug.Log($"[OrganicCity] center {center}, radius {radius}");
 
-        roadListObjs.Clear();
+        roadListObjs.Clear();           
         List<Vector2Int> buildings = new();
         int buildingLimit = Mathf.Max(2, (radius * radius) / 2);
-        int buildingCount = Random.Range(2, buildingLimit);
+        int buildingCount = Mathf.Max(2, Random.Range(2, buildingLimit));
 
         int placed = 0;
         int attempts = 0;
-        while (placed < buildingCount && attempts < buildingCount * 10)
+        while (placed < buildingCount && attempts < buildingCount * 20)
         {
-            attempts++;
             Vector2Int randomCell = WorldToGrid(
-                (Vector2)GridToWorld(center) + Random.insideUnitCircle * (radius * cubeSize)
-            );
+            (Vector2)GridToWorld(center) + Random.insideUnitCircle * (radius * cubeSize));
 
-            if (!buildings.Contains(randomCell))
-            {
-                if (IsEmpty(randomCell))
-                {
-                    buildings.Add(randomCell);
+            if (!InBounds(randomCell))
+                continue;
 
-                    SectionAt(randomCell) = SectionType.rualBuildings;
-                    placed++;
+            // Skip if already placed or adjacent to any building
+            if (buildings.Contains(randomCell))
+                continue;
 
-                }
-            }
+            if (isAdjacentToType(randomCell, SectionType.rualBuildings))
+                continue;
+
+            // Skip if not empty
+            if (!IsEmpty(randomCell))
+                continue;
+
+            // Place the building
+            buildings.Add(randomCell);
+            SetSection(randomCell, SectionType.rualBuildings);
+            placed++;
         }
 
         Dictionary<Vector2Int, bool> isConnected = new();
@@ -1110,6 +1313,10 @@ public class TerrainBuilder : MonoBehaviour
     private Vector2Int[] GetNeighbors(Vector2Int pos)
     {
         return new Vector2Int[] { pos + Vector2Int.up, pos + Vector2Int.down, pos + Vector2Int.right, pos + Vector2Int.left };
+    }
+    private CityData GetClosestCity(Vector2Int pos)
+    {
+        return cityCenters.OrderBy(c => Vector2Int.Distance(pos, c.center)).First();
     }
     private int ToIndex(int coord) => coord + gridOffset;
     private bool InBounds(Vector2Int pos)
