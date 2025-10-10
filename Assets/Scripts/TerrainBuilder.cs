@@ -572,7 +572,11 @@ public class TerrainBuilder : MonoBehaviour
     
     private bool isNearType(CityData city, SectionType type)
     {
-        int radius = city.radius + 1;
+        int radius;
+        if (city.type == CityStyle.Grid)
+            radius = city.radius + 1;
+        else
+            radius = 3;
         //if any section grid near the city in the city.radius is the section type then we return true otherwise return false.
         for (int i = city.center.x - radius; i < city.center.x + radius; i++)
         {
