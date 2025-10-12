@@ -557,7 +557,7 @@ public class TerrainBuilder : MonoBehaviour
             if (connectedCities.Contains(city)) continue;
             var to = city;
             int radius = Mathf.Max(from.radius, to.radius);
-            CreateCityRoad(from.center, to.center, from.radius, to.radius);
+            CreateCityRoad(from, to);
 
             Debug.Log($"adding city {from.center} to {to.center}");
             
@@ -569,14 +569,77 @@ public class TerrainBuilder : MonoBehaviour
             }
         }
     }
-    
-    private bool isNearType(CityData city, SectionType type)
+
+    private bool isNearType(CityData city, SectionType type) 
+    {
+        //if (city.type == CityStyle.Grid)
+            return isNearTypeGrid(city, type);
+        //else
+            //return isNearTypeOrganic(city, type);
+    }
+    private bool isNearTypeOrganic(CityData city, SectionType type) 
+    {
+        List<Vector2Int> oragnicTiles = ReturnAllofTypeInRange(city.center, city.radius, SectionType.rualRoads, SectionType.rualBuildings);
+
+        foreach (Vector2Int tile in oragnicTiles)
+        {
+            if (isAdjacentToType(tile, type))
+                return true;
+        }
+
+        return false;
+    }
+
+    private List<Vector2Int> ReturnAllofTypeInRange(Vector2Int pos, int range, SectionType type, SectionType type2)    
+    {
+        List<Vector2Int> list = new List<Vector2Int>();
+
+        for (int i = pos.x - range; i < pos.x + range; i++)
+        {
+            for (int j = pos.y - range; j < pos.y + range; j++)
+            {
+                if (IsType(new Vector2Int(i, j), type) || IsType(new Vector2Int(i, j), type2))
+                {
+                    list.Add(new Vector2Int(i, j));
+                }
+            }
+        }
+
+        bool needToBeReChecked = true;
+
+        while (needToBeReChecked)
+        {
+            needToBeReChecked = false;
+
+            List<Vector2Int> t = list;
+
+            foreach (Vector2Int vec in t)
+            {
+
+                if (isAdjacentToType(vec, SectionType.rualRoads, t) || isAdjacentToType(vec, SectionType.rualBuildings, t))
+                {
+                    foreach (var n in GetNeighbors(vec))
+                    {
+                        if (IsType(n, SectionType.rualRoads) || IsType(n, SectionType.rualBuildings))
+                            if (!list.Contains(n))
+                                list.Add(n);
+                    }
+                    needToBeReChecked = true;
+                }
+            }
+        }
+
+        return list;
+    }
+
+    private bool isNearTypeGrid(CityData city, SectionType type)
     {
         int radius;
         if (city.type == CityStyle.Grid)
             radius = city.radius + 1;
         else
             radius = 3;
+
         //if any section grid near the city in the city.radius is the section type then we return true otherwise return false.
         for (int i = city.center.x - radius; i < city.center.x + radius; i++)
         {
@@ -593,8 +656,13 @@ public class TerrainBuilder : MonoBehaviour
         return false;
     }
 
-    private void CreateCityRoad(Vector2Int startCity, Vector2Int endCity, int startRadius, int endRadius)
+    private void CreateCityRoad(CityData startCityData, CityData endCityData)
     {
+        Vector2Int startCity = startCityData.center;
+        Vector2Int endCity = endCityData.center;
+        int startRadius = startCityData.radius;
+        int endRadius = endCityData.radius;
+
         highwayRoads.Clear();
 
         Vector2 endCityDir = (endCity - startCity);
@@ -620,197 +688,216 @@ public class TerrainBuilder : MonoBehaviour
         int safety = 0, safetyLimit = 5000;
         bool isFirst = true;
         bool isSecond = true;
-
-        while (current != endCity && safety++ < safetyLimit)
-        {
-            Vector2Int delta = endCity - current;
-
-            if (isFirst)
-            {
-                SetSection(current, SectionType.Highway);
-                highwayRoads.Add(current);
-                isFirst = false;
-                continue;
-            }
-
-            Vector2Int step;
-
-            // Weighted random movement for natural flow
-            if (isSecond)
-            {
-                step = IntDir;
-                isSecond = false;
-            }
-            else
-            {
-                bool moveX = Mathf.Abs(delta.x) > Mathf.Abs(delta.y)
-                ? Random.value > 0.5f
-                : Random.value > 0.7f;
-
-                step = moveX
-                    ? new Vector2Int(Mathf.Clamp(delta.x, -1, 1), 0)
-                    : new Vector2Int(0, Mathf.Clamp(delta.y, -1, 1));
-            }
-
-            if (isAdjacentToType(current, SectionType.Highway, highwayRoads))
-            {
-                Debug.Log($"hit valid highway at {current} for city {startCity} to {endCity}");
-                return;
-            }
-
-            Vector2Int next = current + step;
-
-            if (!InBounds(next))
-            {
-                Debug.Log($"Out of bounds at {next} for city {startCity} to {endCity}");
-                break;
-            }
-
-            // --- Avoid passing too close to other cities ---
-            bool nearOtherCity = cityCenters.Any(c =>
-                c.center != startCity &&
-                c.center != endCity &&
-                Vector2Int.Distance(next, c.center) < c.radius + 3);
-
-            if (nearOtherCity)
-            {
-                CityData closest = cityCenters.OrderBy(c => Vector2Int.Distance(next, c.center)).First();
-                Vector2 away = ((Vector2)current - (Vector2)closest.center).normalized;
-                next += new Vector2Int(Mathf.RoundToInt(away.x), Mathf.RoundToInt(away.y));
-                Debug.Log($"Steering around city at {closest.center}");
-            }
-
-            SectionType section = SectionAt(next);
-
-            // Stop early if hitting a road outside start radius
-            if ((section == SectionType.Road || section == SectionType.rualRoads)
-                && Vector2Int.Distance(next, startCity) > startRadius + 2)
-            {
-                Debug.Log($"Stopping early near {current}, hit road outside city radius for {startCity}");
-                return;
-            }
-
-            // --- Merge highways into rural buildings/roads ---
-            if ((section == SectionType.rualRoads || section == SectionType.rualBuildings)
-                && Vector2Int.Distance(next, endCity) < endRadius + 4)
-            {
-                SetSection(current, SectionType.rualRoads);
-                Debug.Log($"Merged highway into rural road at {current}");
-                return;
-            }
-
-            // --- Normal highway painting ---
-            if (section == SectionType.Empty || section == SectionType.Plains || section == SectionType.rualBuildings)
-            {
-                SetSection(next, SectionType.Highway);
-                highwayRoads.Add(next);
-            }
-
-            // --- Stop if too close to city edge ---
-            if (isAdjacentToType(next, SectionType.rualBuildings) && Vector2Int.Distance(next, startCity) > startRadius)
-            {
-                Vector2Int? nearestRoad = FindNearestRoad(next, 15);
-                if (nearestRoad.HasValue)
-                    ConnectToRoad(next, nearestRoad.Value);
-
-                Debug.Log($"Stopped near city edge at {next}, connecting to nearest road");
-                break;
-            }
-
-            current = next;
-        }
-    }
-
-    /*
-    private void CreateCityRoad(Vector2Int startCity, Vector2Int endCity, int startRadius, int endRadius)
-    {
-        highwayRoads.Clear();
-
-        Vector2 endCityDir = (endCity - startCity);
-        endCityDir.Normalize();
-
-        endCityDir = endCityDir * (startRadius + 3);
-        Vector2Int IntDir = new Vector2Int((int)endCityDir.x, (int)endCityDir.y);
-
         
-        Vector2Int current = startCity + IntDir;
-        Debug.Log($"current is {current} start city is {startCity} goal is {endCity} and int dir is {IntDir}");
-        int safety = 0, safetyLimit = 5000;
-        //highwayRoads.Add(current);
-        bool isFirst = true;
-
-        while (current != endCity && safety++ < safetyLimit)
+        if(endCityData.type == CityStyle.Organic)
         {
-            Vector2Int delta = endCity - current;
+            endCity = FindNearestOfType(endCity, SectionType.rualRoads);
 
-            if (isFirst)
+            while (current != endCity && safety++ < safetyLimit)
             {
-                SetSection(current, SectionType.Highway);
-                highwayRoads.Add(current);
-                isFirst = false;
+                Vector2Int delta = endCity - current;
+
+                if (isFirst)
+                {
+                    SetSection(current, SectionType.Highway);
+                    highwayRoads.Add(current);
+                    isFirst = false;
+                    continue;
+                }
+
+                Vector2Int step;
+
+                // Weighted random movement for natural flow
+                if (isSecond)
+                {
+                    step = IntDir;
+                    isSecond = false;
+                }
+                else
+                {
+                    bool moveX = Mathf.Abs(delta.x) > Mathf.Abs(delta.y)
+                    ? Random.value > 0.5f
+                    : Random.value > 0.7f;
+
+                    step = moveX
+                        ? new Vector2Int(Mathf.Clamp(delta.x, -1, 1), 0)
+                        : new Vector2Int(0, Mathf.Clamp(delta.y, -1, 1));
+                }
+
+                if (isAdjacentToType(current, SectionType.Highway, highwayRoads))
+                {
+                    Debug.Log($"hit valid highway at {current} for city {startCity} to {endCity}");
+                    return;
+                }
+
+                Vector2Int next = current + step;
+
+                if (!InBounds(next))
+                {
+                    Debug.Log($"Out of bounds at {next} for city {startCity} to {endCity}");
+                    break;
+                }
+
+                // --- Avoid passing too close to other cities ---
+                bool nearOtherCity = cityCenters.Any(c =>
+                    c.center != startCity &&
+                    c.center != endCity &&
+                    Vector2Int.Distance(next, c.center) < c.radius + 3);
+
+                if (nearOtherCity)
+                {
+                    CityData closest = cityCenters.OrderBy(c => Vector2Int.Distance(next, c.center)).First();
+                    Vector2 away = ((Vector2)current - (Vector2)closest.center).normalized;
+                    next += new Vector2Int(Mathf.RoundToInt(away.x), Mathf.RoundToInt(away.y));
+                    Debug.Log($"Steering around city at {closest.center}");
+                }
+
+                SectionType section = SectionAt(next);
+
+                // Stop early if hitting a road outside start radius
+                if ((section == SectionType.Road || section == SectionType.rualRoads)
+                    && Vector2Int.Distance(next, startCity) > startRadius + 2)
+                {
+                    Debug.Log($"Stopping early near {current}, hit road outside city radius for {startCity}");
+                    return;
+                }
+
+                // --- Merge highways into rural buildings/roads ---
+                if ((section == SectionType.rualRoads || section == SectionType.rualBuildings)
+                    && Vector2Int.Distance(next, endCity) < endRadius + 4)
+                {
+                    SetSection(current, SectionType.rualRoads);
+                    Debug.Log($"Merged highway into rural road at {current}");
+                    return;
+                }
+
+                // --- Normal highway painting ---
+                if (section == SectionType.Empty || section == SectionType.Plains || section == SectionType.rualBuildings)
+                {
+                    SetSection(next, SectionType.Highway);
+                    highwayRoads.Add(next);
+                }
+
+                // --- Stop if too close to city edge ---
+                if (isAdjacentToType(next, SectionType.rualBuildings) && Vector2Int.Distance(next, startCity) > startRadius)
+                {
+                    Vector2Int? nearestRoad = FindNearestRoad(next, 15);
+                    if (nearestRoad.HasValue)
+                        ConnectToRoad(next, nearestRoad.Value);
+
+                    Debug.Log($"Stopped near city edge at {next}, connecting to nearest road");
+                    break;
+                }
+
+                current = next;
             }
-
-            // Weighted axis decision for smoother paths
-            bool moveX = Mathf.Abs(delta.x) > Mathf.Abs(delta.y)
-                ? Random.value > 0.5f
-                : Random.value > 0.7f;
-
-            Vector2Int step = moveX
-                ? new Vector2Int(Mathf.Clamp(delta.x, -1, 1), 0)
-                : new Vector2Int(0, Mathf.Clamp(delta.y, -1, 1));
-
-            
-            if (isAdjacentToType(current, SectionType.Highway, highwayRoads))
+        }
+        else
+        {
+            while (current != endCity && safety++ < safetyLimit)
             {
-                Debug.Log($"hit valid highway at {current} for city {startCity} to {endCity}");
-                return;
+                Vector2Int delta = endCity - current;
+
+                if (isFirst)
+                {
+                    SetSection(current, SectionType.Highway);
+                    highwayRoads.Add(current);
+                    isFirst = false;
+                    continue;
+                }
+
+                Vector2Int step;
+
+                // Weighted random movement for natural flow
+                if (isSecond)
+                {
+                    step = IntDir;
+                    isSecond = false;
+                }
+                else
+                {
+                    bool moveX = Mathf.Abs(delta.x) > Mathf.Abs(delta.y)
+                    ? Random.value > 0.5f
+                    : Random.value > 0.7f;
+
+                    step = moveX
+                        ? new Vector2Int(Mathf.Clamp(delta.x, -1, 1), 0)
+                        : new Vector2Int(0, Mathf.Clamp(delta.y, -1, 1));
+                }
+
+                if (isAdjacentToType(current, SectionType.Highway, highwayRoads))
+                {
+                    Debug.Log($"hit valid highway at {current} for city {startCity} to {endCity}");
+                    return;
+                }
+
+                Vector2Int next = current + step;
+
+                if (!InBounds(next))
+                {
+                    Debug.Log($"Out of bounds at {next} for city {startCity} to {endCity}");
+                    break;
+                }
+
+                // --- Avoid passing too close to other cities ---
+                bool nearOtherCity = cityCenters.Any(c =>
+                    c.center != startCity &&
+                    c.center != endCity &&
+                    Vector2Int.Distance(next, c.center) < c.radius + 3);
+
+                if (nearOtherCity)
+                {
+                    CityData closest = cityCenters.OrderBy(c => Vector2Int.Distance(next, c.center)).First();
+                    Vector2 away = ((Vector2)current - (Vector2)closest.center).normalized;
+                    next += new Vector2Int(Mathf.RoundToInt(away.x), Mathf.RoundToInt(away.y));
+                    Debug.Log($"Steering around city at {closest.center}");
+                }
+
+                SectionType section = SectionAt(next);
+
+                // Stop early if hitting a road outside start radius
+                if ((section == SectionType.Road || section == SectionType.rualRoads)
+                    && Vector2Int.Distance(next, startCity) > startRadius + 2)
+                {
+                    Debug.Log($"Stopping early near {current}, hit road outside city radius for {startCity}");
+                    return;
+                }
+
+                // --- Merge highways into rural buildings/roads ---
+                if ((section == SectionType.rualRoads || section == SectionType.rualBuildings)
+                    && Vector2Int.Distance(next, endCity) < endRadius + 4)
+                {
+                    SetSection(current, SectionType.rualRoads);
+                    SetSection(next, SectionType.rualRoads);
+                    Debug.Log($"Merged highway into rural road at {current}");
+                    return;
+                }
+
+                // --- Normal highway painting ---
+                if (section == SectionType.Empty || section == SectionType.Plains || section == SectionType.rualBuildings)
+                {
+                    SetSection(next, SectionType.Highway);
+                    highwayRoads.Add(next);
+                }
+
+                // --- Stop if too close to city edge ---
+                if (isAdjacentToType(next, SectionType.rualBuildings) && Vector2Int.Distance(next, startCity) > startRadius)
+                {
+                    Vector2Int? nearestRoad = FindNearestRoad(next, 15);
+                    if (nearestRoad.HasValue)
+                        ConnectToRoad(next, nearestRoad.Value);
+
+                    Debug.Log($"Stopped near city edge at {next}, connecting to nearest road");
+                    break;
+                }
+
+                if (next == endCity)
+                    SetSection(next, SectionType.rualRoads);
+
+                current = next;
             }
-
-            Vector2Int next = current + step;
-
-            if (!InBounds(next))
-            {
-                Debug.Log($"Out of bounds at {next} for city {startCity} to {endCity}");
-                break;
-            }
-
-            SectionType section = SectionAt(next);
-
-            if (section == SectionType.Empty || section == SectionType.Plains || section == SectionType.rualBuildings) 
-            {
-                Debug.LogWarning($"setting highway at {next} for city {startCity} to {endCity}");
-                SetSection(next, SectionType.Highway); 
-            }
-
-
-            if (section == SectionType.rualRoads && Vector2Int.Distance(next, endCity) < endRadius + 2)
-            {
-                Debug.Log($"setting {current} as rual road");
-                SetSection(current, SectionType.rualRoads);
-                return;
-            } else if (section == SectionType.Road && Vector2Int.Distance(next, endCity) < endRadius + 2)
-            {
-                Debug.Log($"hit valid road at {next} for city {startCity} to {endCity}");
-                return;
-            }
-
-            // Stop if too close to city edge, but not yet on road
-            if (isAdjacentToType(next, SectionType.rualBuildings) && Vector2Int.Distance(next, startCity) > startRadius)
-            {
-                // After stopping, find the nearest road/rural road to connect to
-                Vector2Int? nearestRoad = FindNearestRoad(next, 15); // search radius 15 tiles
-                if (nearestRoad.HasValue)
-                    ConnectToRoad(next, nearestRoad.Value);
-
-                Debug.Log($"Stop if too close to city edge {startCity} , but not yet on road on {next} too close {startRadius} for city {startCity} to {endCity}");
-                break;
-            }
-
-            highwayRoads.Add(next);
-            current = next;
         }
     }
-    */
 
     private Vector2Int? FindNearestRoad(Vector2Int start, int searchRadius)
     {
@@ -1208,6 +1295,49 @@ public class TerrainBuilder : MonoBehaviour
         }
         return Vector2Int.zero;
     }
+
+    private Vector2Int FindNearestOfType(Vector2Int origin, SectionType targetType, int maxDistance = 30)
+    {
+        if (!InBounds(origin))
+            return Vector2Int.zero;
+
+        Queue<Vector2Int> queue = new();
+        HashSet<Vector2Int> visited = new();
+
+        queue.Enqueue(origin);
+        visited.Add(origin);
+
+        Vector2Int[] dirs = {
+        new(1,0), new(-1,0), new(0,1), new(0,-1)    };
+
+        int safety = worldSize * worldSize; // ultimate safety cap
+
+        while (queue.Count > 0 && safety-- > 0)
+        {
+            Vector2Int current = queue.Dequeue();
+            int distance = Mathf.Abs(current.x - origin.x) + Mathf.Abs(current.y - origin.y);
+
+            if (distance > maxDistance)
+                continue;
+
+            if (SectionAt(current) == targetType)
+                return current;
+
+            foreach (var dir in dirs)
+            {
+                Vector2Int next = current + dir;
+                if (InBounds(next) && !visited.Contains(next))
+                {
+                    visited.Add(next);
+                    queue.Enqueue(next);
+                }
+            }
+        }
+
+        Debug.Log($"[FindNearestOfTypeBFS] No {targetType} found near {origin} within {maxDistance} tiles.");
+        return Vector2Int.zero;
+    }
+
     private void ConnectAllRoadSegmentsOptimized()
     {
         if (roadListObjs.Count <= 1) return;
