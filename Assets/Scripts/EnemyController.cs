@@ -6,6 +6,7 @@ public class EnemyController : MonoBehaviour
 {
     [SerializeField] private GameManager GM;
     [SerializeField] protected SoundManager SM;
+    [SerializeField] protected TerrainBuilder TB;
     [SerializeField] private Transform player;
     [SerializeField] private GameObject[] enemyPrefabs;
 
@@ -47,7 +48,7 @@ public class EnemyController : MonoBehaviour
     {
         if (enemies.Count >= maxEnemyCount) return; 
 
-        /*var possibleSpawners = planetBuilder.enemySpawnersObj
+        var possibleSpawners = TB.enemySpawnersObj
             .Where(s =>
             {
                 float dist = Vector2.Distance(player.position, s.transform.position);
@@ -64,7 +65,7 @@ public class EnemyController : MonoBehaviour
         if (enemy != null)
         {
             enemies.Add(enemy);
-        }*/
+        }
     }
     public void SetIsDay(bool _isDay)
     {

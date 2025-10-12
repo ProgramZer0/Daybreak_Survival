@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using NavMeshPlus;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
+using NavMeshPlus.Components;
 
 public class GameManager : MonoBehaviour
 {
@@ -18,7 +20,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private EnemyController enemyController;
     [SerializeField] private SoundManager SM;
     [SerializeField] private Light2D daylight;
-
+    [SerializeField] private NavMeshSurface surface;
+        
     [Header("night/day cycle")]
     [SerializeField] private float daylightTimeSec = 800f;
     [SerializeField] private float nightTimeSec = 500f;
@@ -82,10 +85,12 @@ public class GameManager : MonoBehaviour
             enemyController.enableSpawning(true);
             SetEnvMusic(10f);
             SetAmbiance();
+            surface.BuildNavMesh();
             LSC.AddAllActive();
             GUI.ShowNoGUI();
             GUI.ShowAllHUDs();
             GUI.SetHUDVals();
+            
             startedGame = false;
             Debug.Log("Bulding done");
         }

@@ -10505,7 +10505,7 @@ MonoBehaviour:
   m_BuildHeightMesh: 0
   m_MinRegionArea: 0
   m_HideEditorLogs: 0
-  m_NavMeshData: {fileID: 0}
+  m_NavMeshData: {fileID: 23800000, guid: e6e8114df672bc54e91ed32fb530b3c9, type: 2}
 --- !u!4 &883150804
 Transform:
   m_ObjectHideFlags: 0
@@ -14607,6 +14607,7 @@ MonoBehaviour:
   enemyController: {fileID: 1754269202}
   SM: {fileID: 276416484}
   daylight: {fileID: 5045635640186557265}
+  surface: {fileID: 883150803}
   daylightTimeSec: 800
   nightTimeSec: 500
   debugTimeMult: 1
@@ -14645,6 +14646,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GM: {fileID: 1754269201}
   SM: {fileID: 276416484}
+  TB: {fileID: 4724984432564986264}
   player: {fileID: 868446134}
   enemyPrefabs:
   - {fileID: 5394958092232953006, guid: 53c7ffdc9b740d647806c99cade168fb, type: 3}
@@ -17559,6 +17561,8 @@ MonoBehaviour:
   maxCityPlacementTries: 10
   gridCityBias: 0.294
   shackChance: 0.01
+  enemySpawnersObj: []
+  weaponSpawnerobj: []
   isRunning: 0
   isDeleting: 0
   useTest: 0

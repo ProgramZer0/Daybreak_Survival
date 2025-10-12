@@ -85,6 +85,9 @@ public class TerrainBuilder : MonoBehaviour
     private List<Vector2Int> cityTilesToCheck = new();
     private List<Vector2Int> highwayRoads = new();
     private List<CityData> connectedCities;
+    
+    public List<GameObject> enemySpawnersObj = new();
+    public List<GameObject> weaponSpawnerobj = new();
 
     public bool isRunning = false;
     public bool isDeleting = false;
@@ -152,6 +155,8 @@ public class TerrainBuilder : MonoBehaviour
 
         cityCenters.Clear();
         roadListObjs.Clear();
+        enemySpawnersObj.Clear();
+        weaponSpawnerobj.Clear();
 
         Debug.Log("[TerrainBuilder] Terrain cleared.");
     }
@@ -435,6 +440,12 @@ public class TerrainBuilder : MonoBehaviour
                 {
                     GameObject obj = Instantiate(prefab.cubePrefab, GridToWorld(gridPos), Quaternion.identity, transform);
                     SetCubeAt(gridPos, obj.GetComponent<Cube>());
+
+                    foreach (GameObject o in obj.GetComponent<Cube>().enemySpawners)
+                        enemySpawnersObj.Add(o);
+
+                    foreach (GameObject o in obj.GetComponent<Cube>().weaponSpawners)
+                        weaponSpawnerobj.Add(o);
                 }
             }
 
