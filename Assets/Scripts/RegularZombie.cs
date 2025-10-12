@@ -98,7 +98,7 @@ public class RegularZombie : EnemyBase
     private void Awake()
     {
         frameOffset = Random.Range(0, detectionIntervalFrames);
-        walkingSound.GetComponent<AudioSource>().volume = walkingSound.GetComponent<AudioSource>().volume * SM.GetSoundMod();
+        //walkingSound.GetComponent<AudioSource>().volume = walkingSound.GetComponent<AudioSource>().volume * SM.GetSoundMod();
     }
     private bool ShouldDetectThisFrame()
     {

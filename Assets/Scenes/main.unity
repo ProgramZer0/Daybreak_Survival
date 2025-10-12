@@ -6523,7 +6523,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SM: {fileID: 276416484}
-  player: {fileID: 0}
+  player: {fileID: 868446138}
   sliderType: 1
 --- !u!114 &192016307
 MonoBehaviour:
@@ -7040,7 +7040,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SM: {fileID: 276416484}
-  player: {fileID: 0}
+  player: {fileID: 868446138}
   sliderType: 2
 --- !u!114 &216598699
 MonoBehaviour:
@@ -8044,7 +8044,7 @@ GameObject:
   m_Component:
   - component: {fileID: 385859662}
   - component: {fileID: 385859664}
-  - component: {fileID: 385859663}
+  - component: {fileID: 385859665}
   m_Layer: 5
   m_Name: Slider
   m_TagString: Untagged
@@ -8074,21 +8074,6 @@ RectTransform:
   m_AnchoredPosition: {x: 81.072, y: -0.1174}
   m_SizeDelta: {x: 162.14, y: 23.1041}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &385859663
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 385859661}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a0607013a5cf7d4c80e61932f70b15a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SM: {fileID: 276416484}
-  player: {fileID: 0}
-  sliderType: 0
 --- !u!114 &385859664
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8152,6 +8137,21 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &385859665
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 385859661}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a0607013a5cf7d4c80e61932f70b15a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SliderMethods
+  SM: {fileID: 276416484}
+  player: {fileID: 868446138}
+  sliderType: 0
 --- !u!1 &445052778
 GameObject:
   m_ObjectHideFlags: 0
@@ -8495,7 +8495,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SM: {fileID: 276416484}
-  player: {fileID: 0}
+  player: {fileID: 868446138}
   sliderType: 0
 --- !u!114 &574454085
 MonoBehaviour:
@@ -16090,7 +16090,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SM: {fileID: 276416484}
-  player: {fileID: 0}
+  player: {fileID: 868446138}
   sliderType: 2
 --- !u!114 &1980960441
 MonoBehaviour:
@@ -16761,7 +16761,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SM: {fileID: 276416484}
-  player: {fileID: 0}
+  player: {fileID: 868446138}
   sliderType: 1
 --- !u!114 &2015075546
 MonoBehaviour:

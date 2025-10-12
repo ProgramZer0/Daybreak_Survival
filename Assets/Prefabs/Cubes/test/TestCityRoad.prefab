@@ -65,9 +65,6 @@ MonoBehaviour:
   weaponSpawners: []
   enemySpawners:
   - {fileID: 1448088013300927209}
-  doorLayer:
-    serializedVersion: 2
-    m_Bits: 256
 --- !u!1 &834474033520857052
 GameObject:
   m_ObjectHideFlags: 0

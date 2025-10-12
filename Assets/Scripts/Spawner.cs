@@ -51,7 +51,7 @@ public class Spawner : MonoBehaviour
     {
         if (spawns.Count >= maxSpawns) return null;
 
-        GameObject o = Instantiate(prefab, transform.position, Quaternion.identity);
+        GameObject o = Instantiate(prefab, transform.position, prefab.transform.rotation);
         spawns.Add(o);
 
         IEnemy enemy = o.GetComponent<IEnemy>();
