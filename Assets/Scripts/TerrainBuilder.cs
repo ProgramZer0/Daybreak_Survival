@@ -188,7 +188,6 @@ public class TerrainBuilder : MonoBehaviour
 
             if (!InBounds(neighborPos))
             {
-                Debug.LogWarning($"not in bounds at {neighborPos}");
                 neighborTypes[dir] = SectionType.Outside;
                 continue;
             }
@@ -203,55 +202,56 @@ public class TerrainBuilder : MonoBehaviour
             return null;
         }
 
-        List<Cube> exactMatches = new();
-        List<Cube> fallbackMatches = new();
+        // Step 3: Check and score each prefab
+        List<(Cube cube, int exactMatches, int anythingUsed)> scored = new();
 
-        // Step 3: Check each prefab against neighbor SectionTypes
         foreach (Cube prefab in cubeList)
         {
             if (prefab.cubeType != fallbackType)
                 continue;
 
-            bool usesAnything = false;
             bool matches = true;
+            int exactMatches = 0;
+            int anythingUsed = 0;
 
             foreach (var side in prefab.sides)
             {
                 if (!neighborTypes.TryGetValue(side.sideDirection, out var neighborType))
                     continue;
 
-                if (!side.sideType.Contains(neighborType))
+                if (side.sideType.Contains(neighborType))
                 {
-                    if (side.sideType.Contains(SectionType.anything))
-                    {
-                        usesAnything = true; // mark as fallback
-                    }
-                    else
-                    {
-                        matches = false;
-                        break; // does not match
-                    }
+                    exactMatches++; // Perfect match
+                }
+                else if (side.sideType.Contains(SectionType.anything))
+                {
+                    anythingUsed++; // Used "anything" to cover mismatch
+                }
+                else
+                {
+                    matches = false;
+                    break; // Total mismatch
                 }
             }
 
             if (matches)
-            {
-                if (usesAnything)
-                    fallbackMatches.Add(prefab);
-                else
-                    exactMatches.Add(prefab);
-            }
+                scored.Add((prefab, exactMatches, anythingUsed));
         }
 
-        // Step 4: Pick one cube: exact matches first, fallback if none
-        Cube result;
-        if (exactMatches.Count > 0)
+        // Step 4: Choose the cube with the highest exact match count, lowest "anything" usage
+        Cube result = null;
+
+        if (scored.Count > 0)
         {
-            result = exactMatches[Random.Range(0, exactMatches.Count)];
-        }
-        else if (fallbackMatches.Count > 0)
-        {
-            result = fallbackMatches[Random.Range(0, fallbackMatches.Count)];
+            int maxExact = scored.Max(s => s.exactMatches);
+            var bestByExact = scored.Where(s => s.exactMatches == maxExact).ToList();
+
+            int minAnything = bestByExact.Min(s => s.anythingUsed);
+            var bestFinal = bestByExact.Where(s => s.anythingUsed == minAnything).ToList();
+
+            result = bestFinal[Random.Range(0, bestFinal.Count)].cube;
+
+            Debug.Log($"Selected cube at {gridPos} with {maxExact} exact matches and {minAnything} 'anything' sides.");
         }
         else
         {
