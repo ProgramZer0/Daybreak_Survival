@@ -256,11 +256,11 @@ public class TerrainBuilder : MonoBehaviour
 
             result = bestFinal[Random.Range(0, bestFinal.Count)].cube;
 
-            Debug.Log($"Selected cube at {gridPos} with {maxExact} exact matches and {minAnything} 'anything' sides.");
+            //Debug.Log($"Selected cube at {gridPos} with {maxExact} exact matches and {minAnything} 'anything' sides.");
         }
         else
         {
-            Debug.LogWarning($"No matching cubes found at {gridPos}, using random fallback.");
+            //Debug.LogWarning($"No matching cubes found at {gridPos}, using random fallback.");
             result = GetRandomCube(fallbackType);
         }
 
@@ -581,21 +581,67 @@ public class TerrainBuilder : MonoBehaviour
         }
     }
 
-    private bool isNearType(CityData city, SectionType type) 
+    private bool isNearType(CityData city, SectionType type)
     {
-        //if (city.type == CityStyle.Grid)
-            return isNearTypeGrid(city, type);
-        //else
-            //return isNearTypeOrganic(city, type);
+        return city.type == CityStyle.Grid
+            ? isNearTypeGrid(city, type)
+            : isNearTypeOrganic(city, type);
     }
-    private bool isNearTypeOrganic(CityData city, SectionType type) 
-    {
-        List<Vector2Int> oragnicTiles = ReturnAllofTypeInRange(city.center, city.radius, SectionType.rualRoads, SectionType.rualBuildings);
 
-        foreach (Vector2Int tile in oragnicTiles)
+    private bool isNearTypeOrganic(CityData city, SectionType type)
+    {
+        // 1. Start with all rural buildings and roads in range
+        HashSet<Vector2Int> ruralTiles = new();
+
+        for (int x = city.center.x - city.radius; x <= city.center.x + city.radius; x++)
         {
-            if (isAdjacentToType(tile, type))
-                return true;
+            for (int y = city.center.y - city.radius; y <= city.center.y + city.radius; y++)
+            {
+                Vector2Int tile = new(x, y);
+                if (!InBounds(tile)) continue;
+
+                if (IsType(tile, SectionType.rualBuildings) || IsType(tile, SectionType.rualRoads))
+                    ruralTiles.Add(tile);
+            }
+        }
+
+        // 2. Expand to include any connected rural roads/buildings
+        bool expanded = true;
+        while (expanded)
+        {
+            expanded = false;
+            // Take a snapshot so we don’t modify while iterating
+            List<Vector2Int> currentTiles = new(ruralTiles);
+
+            foreach (var tile in currentTiles)
+            {
+                foreach (var neighbor in GetNeighbors(tile))
+                {
+                    if (!InBounds(neighbor)) continue;
+
+                    if ((IsType(neighbor, SectionType.rualBuildings) || IsType(neighbor, SectionType.rualRoads))
+                        && !ruralTiles.Contains(neighbor))
+                    {
+                        ruralTiles.Add(neighbor);
+                        expanded = true;
+                    }
+                }
+            }
+        }
+
+        // 3. Check if any rural tile borders the requested type (e.g., highway)
+        foreach (var tile in ruralTiles)
+        {
+            foreach (var neighbor in GetNeighbors(tile))
+            {
+                if (!InBounds(neighbor)) continue;
+
+                if (IsType(neighbor, type))
+                {
+                    Debug.Log($"[OrganicCheck] {city.center} is near {type} at {neighbor}");
+                    return true;
+                }
+            }
         }
 
         return false;
@@ -750,10 +796,7 @@ public class TerrainBuilder : MonoBehaviour
                 }
 
                 // --- Avoid passing too close to other cities ---
-                bool nearOtherCity = cityCenters.Any(c =>
-                    c.center != startCity &&
-                    c.center != endCity &&
-                    Vector2Int.Distance(next, c.center) < c.radius + 3);
+                bool nearOtherCity = cityCenters.Any(c => c.center != startCityData.center && c.center != endCityData.center && Vector2Int.Distance(next, c.center) < c.radius + 3);
 
                 if (nearOtherCity)
                 {
@@ -836,7 +879,7 @@ public class TerrainBuilder : MonoBehaviour
                         : new Vector2Int(0, Mathf.Clamp(delta.y, -1, 1));
                 }
 
-                if (isAdjacentToType(current, SectionType.Highway, highwayRoads))
+                if (isAdjacentToType(current, SectionType.Highway, highwayRoads) && Vector2Int.Distance(current, startCity) > startRadius + 3)
                 {
                     Debug.Log($"hit valid highway at {current} for city {startCity} to {endCity}");
                     return;
@@ -851,10 +894,7 @@ public class TerrainBuilder : MonoBehaviour
                 }
 
                 // --- Avoid passing too close to other cities ---
-                bool nearOtherCity = cityCenters.Any(c =>
-                    c.center != startCity &&
-                    c.center != endCity &&
-                    Vector2Int.Distance(next, c.center) < c.radius + 3);
+                bool nearOtherCity = cityCenters.Any(c => c.center != startCityData.center && c.center != endCityData.center && Vector2Int.Distance(next, c.center) < c.radius + 3);
 
                 if (nearOtherCity)
                 {
