@@ -634,15 +634,11 @@ public class TerrainBuilder : MonoBehaviour
         // 3. Check if any rural tile borders the requested type (e.g., highway)
         foreach (var tile in ruralTiles)
         {
-            foreach (var neighbor in GetNeighbors(tile))
+            Debug.Log($"[OrganicCheck] {city.center} has tile {tile}");
+            if (isAdjacentToType(tile, type))
             {
-                if (!InBounds(neighbor)) continue;
-
-                if (IsType(neighbor, type))
-                {
-                    Debug.Log($"[OrganicCheck] {city.center} is near {type} at {neighbor}");
-                    return true;
-                }
+                Debug.Log($"[OrganicCheck] {city.center} is near {type}");
+                return true;
             }
         }
 
@@ -995,7 +991,7 @@ public class TerrainBuilder : MonoBehaviour
                     return;
                 }
 
-                // --- Normal highway painting ---
+                // --- Normal highway painting --- 
                 if (section == SectionType.Empty || section == SectionType.Plains || section == SectionType.rualBuildings)
                 {
                     SetSection(next, SectionType.Highway);
@@ -1475,30 +1471,33 @@ public class TerrainBuilder : MonoBehaviour
 
         foreach (var building in buildings)
         {
-            //Debug.Log("looking at building " + building);
+            //Debug.Log($"looking at building {building} for city {center}");
 
             //step 1  if building is next to building or a road stop
             Vector2Int adjacentTile = isAdjacentToCellVector(building);
             if (adjacentTile != Vector2Int.zero)
             {
                 //Debug.Log("building " + building + " is adjecent to something ");
-                roadListObjs.Add(new RoadData(new List<Vector2Int> {building, adjacentTile }));
+                roadListObjs.Add(new RoadData(new List<Vector2Int> { building, adjacentTile }));
                 continue;
-            }
+            }   
+            
+            //step 3 road goes straight towards another building (if there is a building that has a connection we go towards that if not pick random one)
+            Vector2Int target = PickTargetBuilding(buildings, building, center, isConnected);
 
             //step 2 road starts from direction towards center
             Vector2Int startingDir;
-            if (building.x > center.x)
+            if (building.x > target.x)
             {
-                //to the right of center
+                //to the right of target
 
-                if (building.y > center.y)
+                if (building.y > target.y)
                 {
                     //building is above
                     if (Random.value >= 0.5f)
                         startingDir = Vector2Int.left;
                     else
-                        startingDir = Vector2Int.up;
+                        startingDir = Vector2Int.down;
                 }
                 else
                 {
@@ -1511,15 +1510,15 @@ public class TerrainBuilder : MonoBehaviour
             }
             else
             {
-                //to the left of center
+                //to the left of target
 
-                if (building.y > center.y)
+                if (building.y > target.y)
                 {
                     //building is above
                     if (Random.value >= 0.5f)
                         startingDir = Vector2Int.right;
                     else
-                        startingDir = Vector2Int.up;
+                        startingDir = Vector2Int.down;
                 }
                 else
                 {
@@ -1532,9 +1531,6 @@ public class TerrainBuilder : MonoBehaviour
             }
 
             //Debug.Log("direction towards center is  " + startingDir.ToString());
-
-            //step 3 road goes straight towards another building (if there is a building that has a connection we go towards that if not pick random one)
-            Vector2Int target = PickTargetBuilding(buildings, building, center, isConnected);
 
             //Debug.Log("target is " + target);
 
@@ -1565,7 +1561,76 @@ public class TerrainBuilder : MonoBehaviour
         //Step 5 connect any local roads to center
         ConnectAllRoadSegmentsOptimized();
     }
+    private void ConnectAllRoadSegmentsOptimized()
+    {
+        if (roadListObjs.Count <= 1) return;
 
+        // Separate connected / disconnected roads
+        List<RoadData> connected = new();
+        List<RoadData> disconnected = new(roadListObjs);
+
+        // Start with the first road segment
+        connected.Add(disconnected[0]);
+        disconnected.RemoveAt(0);
+
+        // Build a global hash set for fast adjacency checks
+        HashSet<Vector2Int> connectedTiles = new HashSet<Vector2Int>();
+        foreach (var vec in connected[0].roads)
+            connectedTiles.Add(vec);
+
+        int maxIterations = 1000;
+        int iteration = 0;
+        bool added;
+
+        do
+        {
+
+            added = false;
+            iteration++;
+
+            if (iteration > maxIterations)
+            {
+                Debug.LogWarning("[TerrainBuilder] ConnectAllRoadSegments reached max iterations. Forcing remaining connections.");
+                break;
+            }
+
+            for (int i = disconnected.Count - 1; i >= 0; i--)
+            {
+                RoadData road = disconnected[i];
+
+                if (IsAdjacentToConnectedTiles(road, connectedTiles))
+                {
+                    // Add to connected
+                    connected.Add(road);
+                    disconnected.RemoveAt(i);
+
+                    // Add all tiles to the global set
+                    foreach (var vec in road.roads)
+                        connectedTiles.Add(vec);
+
+                    added = true;
+                }
+            }
+
+        } while (added);
+
+        // Connect any remaining disconnected segments
+        foreach (var road in disconnected)
+        {
+            Vector2Int from = road.roads[Random.Range(0, road.roads.Count)];
+            Vector2Int to = FindNearestRoadVector(from, connectedTiles);
+
+            // Create a direct road between them
+            CreateRoad(from, to, 50, from, false);
+
+            // Add tiles to connected set
+            foreach (var vec in road.roads)
+                connectedTiles.Add(vec);
+
+            connected.Add(road);
+            Debug.Log($"adding road from {from} to {to}");
+        }
+    }
     private Vector2Int PickTargetBuilding(List<Vector2Int> buildings, Vector2Int current, Vector2Int center, Dictionary<Vector2Int, bool> connected)
     {
         // Prefer already connected buildings
@@ -1587,7 +1652,7 @@ public class TerrainBuilder : MonoBehaviour
 
         while (current != end && safety++ < safetyLimit * safetyLimit)
         {
-            if(!firstStep)
+            if (!firstStep)
             {
                 if (Mathf.Abs(end.x - current.x) > Mathf.Abs(end.y - current.y))
                     current.x += (end.x > current.x) ? 1 : -1;
@@ -1717,76 +1782,6 @@ public class TerrainBuilder : MonoBehaviour
         return Vector2Int.zero;
     }
 
-    private void ConnectAllRoadSegmentsOptimized()
-    {
-        if (roadListObjs.Count <= 1) return;
-
-        // Separate connected / disconnected roads
-        List<RoadData> connected = new();
-        List<RoadData> disconnected = new(roadListObjs);
-
-        // Start with the first road segment
-        connected.Add(disconnected[0]);
-        disconnected.RemoveAt(0);
-
-        // Build a global hash set for fast adjacency checks
-        HashSet<Vector2Int> connectedTiles = new HashSet<Vector2Int>();
-        foreach (var vec in connected[0].roads)
-            connectedTiles.Add(vec);
-
-        int maxIterations = 1000;
-        int iteration = 0;
-        bool added;
-
-        do
-        {
-
-            added = false;
-            iteration++;
-
-            if (iteration > maxIterations)
-            {
-                Debug.LogWarning("[TerrainBuilder] ConnectAllRoadSegments reached max iterations. Forcing remaining connections.");
-                break;
-            }
-
-            for (int i = disconnected.Count - 1; i >= 0; i--)
-            {
-                RoadData road = disconnected[i];
-
-                if (IsAdjacentToConnectedTiles(road, connectedTiles))
-                {
-                    // Add to connected
-                    connected.Add(road);
-                    disconnected.RemoveAt(i);
-
-                    // Add all tiles to the global set
-                    foreach (var vec in road.roads)
-                        connectedTiles.Add(vec);
-
-                    added = true;
-                }
-            }
-
-        } while (added);
-
-        // Connect any remaining disconnected segments
-        foreach (var road in disconnected)
-        {
-            Vector2Int from = road.roads[Random.Range(0, road.roads.Count)];
-            Vector2Int to = FindNearestRoadVector(from, connectedTiles);
-
-            // Create a direct road between them
-            CreateRoad(from, to, 50, from, false);
-
-            // Add tiles to connected set
-            foreach (var vec in road.roads)
-                connectedTiles.Add(vec);
-
-            connected.Add(road);
-            Debug.Log($"adding road from {from} to {to}");
-        }
-    }
 
     private bool IsAdjacentToConnectedTiles(RoadData road, HashSet<Vector2Int> connectedTiles)
     {
