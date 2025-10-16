@@ -20,6 +20,7 @@ public class MainGUIController : MonoBehaviour
     [SerializeField] private GameObject mainMenu;
     [SerializeField] private GameObject lifestyleGUI;
     [SerializeField] private GameObject loadingScreen;
+    [SerializeField] private GameObject deathMenu;
 
     [SerializeField] private Weapon empty;
     [SerializeField] private PlayerInterface player;
@@ -100,13 +101,26 @@ public class MainGUIController : MonoBehaviour
     }
     public void OpenLifestyle()
     {
-        setInUI();
+        SetInUI();
         lifestyleGUI.SetActive(true);
+    }
+
+    public void ShowNoDeath()
+    {
+        inUI = false;
+        player.LockMovement(false);
+
+        deathMenu.SetActive(false);
+    }
+    public void OpenDeath()
+    {
+        SetInUI();
+        deathMenu.SetActive(true);
     }
 
     public void ShowLoading()
     {
-        setInUI();
+        SetInUI();
         loadingScreen.SetActive(true);
     }
 
@@ -137,35 +151,35 @@ public class MainGUIController : MonoBehaviour
 
     public void OpenQuestView()
     {
-        setInUI();
+        SetInUI();
         questView.SetActive(true);
     }
     public void OpenPause()
     {
-        setInUI();
+        SetInUI();
         pauseMenu.SetActive(true);
         Time.timeScale = 0f;
     }
     public void OpenSettingsMenuPM()
     {
-        setInUI();
+        SetInUI();
         settingMenuPM.SetActive(true);
         Time.timeScale = 0f;
     }
     public void OpenSettingsMenuMM()
     {
-        setInUI();
+        SetInUI();
         settingMenuMM.SetActive(true);
         Time.timeScale = 0f;
     }
     public void OpenMainMenu()
     {
-        setInUI();
+        SetInUI();
         mainMenu.SetActive(true);
         GM.MainMenu();
     }
 
-    private void setInUI()
+    private void SetInUI()
     {
         inUI = true;
         player.LockMovement(true);

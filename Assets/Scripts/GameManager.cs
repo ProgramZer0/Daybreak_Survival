@@ -186,7 +186,12 @@ public class GameManager : MonoBehaviour
 
     public void EndGameFail()
     {
+        Time.timeScale = 0f;
 
+        GUI.ShowNoGUI();
+        GUI.ShowAllHUDs();
+        GUI.OpenDeath();
+        SaveGameData();
     }
 
     public void SaveGameData()

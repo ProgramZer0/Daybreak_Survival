@@ -90,6 +90,7 @@ public class PlayerInterface : MonoBehaviour
     private bool wentOverSprint = false;
     private bool isSeenAndChased = false;
     private bool stepActive = false;
+    private bool triggeredDeath = true;
     private float inputH = 0f;
     private float inputV = 0f;
     private float currentHP;
@@ -182,6 +183,7 @@ public class PlayerInterface : MonoBehaviour
         canSprint = true;
         isSeenAndChased = false;
         stepActive = false;
+        triggeredDeath = true;
         ResetModValues();
 }
 
@@ -285,7 +287,12 @@ public class PlayerInterface : MonoBehaviour
     {
         if(currentHP < 0)
         {
-            GM.EndGameFail();
+            if (triggeredDeath)
+            {
+                GM.EndGameFail();
+                triggeredDeath = false;
+            }
+            
         }
 
         if (cannotMove) 
