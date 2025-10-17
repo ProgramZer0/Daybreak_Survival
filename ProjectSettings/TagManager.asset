@@ -20,7 +20,7 @@ TagManager:
   - EnvriomentAssets
   - IgnoreNavMesh
   - HitBox
-  - 
+  - IgnoreVision
   - 
   - 
   - 
@@ -49,6 +49,9 @@ TagManager:
     locked: 0
   - name: Enviroment
     uniqueID: 3855091775
+    locked: 0
+  - name: Furniture
+    uniqueID: 40936525
     locked: 0
   - name: Pickups
     uniqueID: 2667294639
