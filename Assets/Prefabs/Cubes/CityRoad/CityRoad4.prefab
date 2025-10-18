@@ -30,8 +30,61 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8212625470731252550}
+  - {fileID: 2264756345421532506}
+  - {fileID: 4630140596496629649}
+  - {fileID: 5927166445574446653}
+  - {fileID: 3166016560801802414}
   m_Father: {fileID: 4442981773743780508}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &503833458905322979
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5927166445574446653}
+  - component: {fileID: 8668979420842416445}
+  m_Layer: 0
+  m_Name: spawner (7)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5927166445574446653
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 503833458905322979}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 1.45, y: -6.1, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8289740435943699695}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8668979420842416445
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 503833458905322979}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68ac24ac3819c5444b21019197735dd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spawns: []
+  maxSpawns: 1
+  spawnDistance: 0
+  spawnChance: 0.2
+  lifeStyles: []
 --- !u!1 &688519751533573886
 GameObject:
   m_ObjectHideFlags: 0
@@ -1723,7 +1776,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 1341307341
-  m_SortingLayer: 11
+  m_SortingLayer: 12
   m_SortingOrder: 0
   m_Sprite: {fileID: -2071883303, guid: 4e24efec5f65ca84f96735c04daed8f3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -1792,6 +1845,55 @@ MonoBehaviour:
   - {fileID: 11400000, guid: c16a7dc150737494eabf51b89fed3cf0, type: 2}
   - {fileID: 11400000, guid: 6ea87abcae8c3074ca13bc919f53a7b8, type: 2}
   - {fileID: 11400000, guid: 5c0ea0825a7ce3d48b24ec33493db971, type: 2}
+--- !u!1 &1645058199613284876
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3166016560801802414}
+  - component: {fileID: 2171904598805097779}
+  m_Layer: 0
+  m_Name: spawner (8)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3166016560801802414
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1645058199613284876}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -7.15, y: -7.85, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8289740435943699695}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2171904598805097779
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1645058199613284876}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68ac24ac3819c5444b21019197735dd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spawns: []
+  maxSpawns: 1
+  spawnDistance: 0
+  spawnChance: 0.2
+  lifeStyles: []
 --- !u!1 &1654031093185615719
 GameObject:
   m_ObjectHideFlags: 0
@@ -1934,7 +2036,7 @@ TilemapRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -1922352313
-  m_SortingLayer: 12
+  m_SortingLayer: 13
   m_SortingOrder: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
@@ -2046,6 +2148,55 @@ MonoBehaviour:
   maxSpawns: 13
   spawnDistance: 8
   spawnChance: 1
+  lifeStyles: []
+--- !u!1 &2841974732019870848
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4630140596496629649}
+  - component: {fileID: 7556557652390552209}
+  m_Layer: 0
+  m_Name: spawner (6)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4630140596496629649
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2841974732019870848}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -4.51, y: -10.58, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8289740435943699695}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7556557652390552209
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2841974732019870848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68ac24ac3819c5444b21019197735dd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spawns: []
+  maxSpawns: 1
+  spawnDistance: 0
+  spawnChance: 0.2
   lifeStyles: []
 --- !u!1 &2908275611211244691
 GameObject:
@@ -2172,7 +2323,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 1341307341
-  m_SortingLayer: 11
+  m_SortingLayer: 12
   m_SortingOrder: 0
   m_Sprite: {fileID: -2071883303, guid: 4e24efec5f65ca84f96735c04daed8f3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -2262,7 +2413,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 1341307341
-  m_SortingLayer: 11
+  m_SortingLayer: 12
   m_SortingOrder: 0
   m_Sprite: {fileID: 1965602202, guid: 4e24efec5f65ca84f96735c04daed8f3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -4519,7 +4670,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 1341307341
-  m_SortingLayer: 11
+  m_SortingLayer: 12
   m_SortingOrder: 0
   m_Sprite: {fileID: -196225834, guid: 4e24efec5f65ca84f96735c04daed8f3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -6163,7 +6314,7 @@ TilemapRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -1922352313
-  m_SortingLayer: 12
+  m_SortingLayer: 13
   m_SortingOrder: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
@@ -6294,6 +6445,55 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2b3bf8963e3e9e04a8184b1a1af363f6, type: 2}
   - {fileID: 11400000, guid: 342fb5ba60edf6b4cb45bae5d9f6c4d0, type: 2}
   - {fileID: 11400000, guid: 855d51f187561ee42be04122d63fbd50, type: 2}
+--- !u!1 &7569364976224255036
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2264756345421532506}
+  - component: {fileID: 2909235789196015458}
+  m_Layer: 0
+  m_Name: spawner (5)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2264756345421532506
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7569364976224255036}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 1.83, y: -10.48, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8289740435943699695}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2909235789196015458
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7569364976224255036}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68ac24ac3819c5444b21019197735dd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spawns: []
+  maxSpawns: 1
+  spawnDistance: 0
+  spawnChance: 0.2
+  lifeStyles: []
 --- !u!1 &7836401243147205716
 GameObject:
   m_ObjectHideFlags: 0
@@ -6456,6 +6656,11 @@ MonoBehaviour:
   enemySpawners:
   - {fileID: 8738210480536173906}
   - {fileID: 2576782554013374774}
+  ammoSpawners:
+  - {fileID: 7569364976224255036}
+  - {fileID: 2841974732019870848}
+  - {fileID: 503833458905322979}
+  - {fileID: 1645058199613284876}
 --- !u!1 &8287797300791830151
 GameObject:
   m_ObjectHideFlags: 0
@@ -15204,7 +15409,7 @@ TilemapRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -1922352313
-  m_SortingLayer: 12
+  m_SortingLayer: 13
   m_SortingOrder: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}

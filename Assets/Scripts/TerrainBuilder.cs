@@ -90,6 +90,7 @@ public class TerrainBuilder : MonoBehaviour
     public List<GameObject> weaponSpawnerobj = new();
     public List<GameObject> lifeStyleSpawnerobj = new();
     public List<GameObject> collectorsSpawnerobj = new();
+    public List<GameObject> ammoSpawnerobj = new(); 
 
 
     public bool isRunning = false;
@@ -454,6 +455,9 @@ public class TerrainBuilder : MonoBehaviour
 
                     foreach (GameObject o in obj.GetComponent<Cube>().lifeStyleSpawners)
                         lifeStyleSpawnerobj.Add(o);
+
+                    foreach (GameObject o in obj.GetComponent<Cube>().ammoSpawners)
+                        ammoSpawnerobj.Add(o);
                 }
             }
 

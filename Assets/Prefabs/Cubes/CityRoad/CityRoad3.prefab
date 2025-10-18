@@ -122,6 +122,8 @@ MonoBehaviour:
   enemySpawners:
   - {fileID: 1448088013300927209}
   - {fileID: 85648665859283312}
+  ammoSpawners:
+  - {fileID: 3738586931728340375}
 --- !u!1 &834474033520857052
 GameObject:
   m_ObjectHideFlags: 0
@@ -1103,7 +1105,7 @@ TilemapRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -1922352313
-  m_SortingLayer: 12
+  m_SortingLayer: 13
   m_SortingOrder: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
@@ -1295,6 +1297,55 @@ Transform:
   - {fileID: 7225608897846844058}
   m_Father: {fileID: 5019013562645767967}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3738586931728340375
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2721037946862942499}
+  - component: {fileID: 3591454026772458152}
+  m_Layer: 0
+  m_Name: spawner (5)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2721037946862942499
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3738586931728340375}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -9.48, y: 7.55, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3590188865864763935}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3591454026772458152
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3738586931728340375}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68ac24ac3819c5444b21019197735dd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spawns: []
+  maxSpawns: 1
+  spawnDistance: 0
+  spawnChance: 0.2
+  lifeStyles: []
 --- !u!1 &4173491053115650402
 GameObject:
   m_ObjectHideFlags: 0
@@ -1798,7 +1849,7 @@ TilemapRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -1922352313
-  m_SortingLayer: 12
+  m_SortingLayer: 13
   m_SortingOrder: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
@@ -1940,6 +1991,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 38432704356320749}
+  - {fileID: 2721037946862942499}
   m_Father: {fileID: 5019013562645767967}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5650980010687888123
@@ -5532,7 +5584,7 @@ TilemapRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -1922352313
-  m_SortingLayer: 12
+  m_SortingLayer: 13
   m_SortingOrder: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
@@ -12948,7 +13000,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3718250282021352871, guid: edc5b22b42b74344ea13efae83fe5f6d, type: 3}
       propertyPath: m_SortingLayer
-      value: 11
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 3718250282021352871, guid: edc5b22b42b74344ea13efae83fe5f6d, type: 3}
       propertyPath: m_SortingLayerID
@@ -14676,7 +14728,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3718250282021352871, guid: edc5b22b42b74344ea13efae83fe5f6d, type: 3}
       propertyPath: m_SortingLayer
-      value: 11
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 3718250282021352871, guid: edc5b22b42b74344ea13efae83fe5f6d, type: 3}
       propertyPath: m_SortingLayerID
@@ -17112,7 +17164,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3718250282021352871, guid: edc5b22b42b74344ea13efae83fe5f6d, type: 3}
       propertyPath: m_SortingLayer
-      value: 11
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 3718250282021352871, guid: edc5b22b42b74344ea13efae83fe5f6d, type: 3}
       propertyPath: m_SortingLayerID
@@ -17504,7 +17556,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3718250282021352871, guid: edc5b22b42b74344ea13efae83fe5f6d, type: 3}
       propertyPath: m_SortingLayer
-      value: 11
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 3718250282021352871, guid: edc5b22b42b74344ea13efae83fe5f6d, type: 3}
       propertyPath: m_SortingLayerID

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8023852995085857678}
   - component: {fileID: 2854921991721973566}
   m_Layer: 0
-  m_Name: ammo
+  m_Name: Shells
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -54,6 +54,8 @@ SpriteRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -75,10 +77,11 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -1627672657
-  m_SortingLayer: 4
+  m_SortingLayer: 5
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 102e8cc9cdf758d43b4d7b68b7b32df2, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f8089d3add5c92442b4217794e8a2f91, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -102,10 +105,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weapon: {fileID: 0}
-  pickupType: 0
-  weaponAmmoType: 0
-  ammoAmmount: 15
+  pickupType: 1
   lifeStyle: {fileID: 0}
+  ammo: {fileID: 11400000, guid: da486f1af6ab0ac41b74d0df57af3ba4, type: 2}
   currentAmmo: 0
 --- !u!61 &2854921991721973566
 BoxCollider2D:
@@ -145,7 +147,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0

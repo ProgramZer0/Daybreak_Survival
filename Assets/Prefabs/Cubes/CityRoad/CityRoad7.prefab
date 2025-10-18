@@ -97,6 +97,55 @@ MonoBehaviour:
   spawnDistance: 2
   spawnChance: 1
   lifeStyles: []
+--- !u!1 &502632824914321956
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4372306998735262599}
+  - component: {fileID: 1120279634693419699}
+  m_Layer: 0
+  m_Name: spawner (6)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4372306998735262599
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 502632824914321956}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -9.55, y: 7.3, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8492303669183994104}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1120279634693419699
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 502632824914321956}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68ac24ac3819c5444b21019197735dd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spawns: []
+  maxSpawns: 1
+  spawnDistance: 0
+  spawnChance: 0.4
+  lifeStyles: []
 --- !u!1 &689082373545493459
 GameObject:
   m_ObjectHideFlags: 0
@@ -261,10 +310,18 @@ MonoBehaviour:
   Rarity: 0
   cubePrefab: {fileID: 1423078721326364465}
   cubeType: 4
-  lifeStyleSpawners: []
-  weaponSpawners: []
+  lifeStyleSpawners:
+  - {fileID: 3367769437790978490}
+  - {fileID: 2462592913528198616}
+  weaponSpawners:
+  - {fileID: 1675798135917914938}
   enemySpawners:
-  - {fileID: 0}
+  - {fileID: 99282776407616745}
+  - {fileID: 2526580336850904121}
+  ammoSpawners:
+  - {fileID: 502632824914321956}
+  - {fileID: 2749280190539440800}
+  - {fileID: 5788295356876390805}
 --- !u!1 &1675798135917914938
 GameObject:
   m_ObjectHideFlags: 0
@@ -1129,6 +1186,8 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6322297002454541073}
+  - {fileID: 4372306998735262599}
+  - {fileID: 8197896443884503463}
   - {fileID: 5936178135726833254}
   m_Father: {fileID: 4657292411122350584}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1235,6 +1294,55 @@ MonoBehaviour:
   maxSpawns: 15
   spawnDistance: 10
   spawnChance: 1
+  lifeStyles: []
+--- !u!1 &2749280190539440800
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8197896443884503463}
+  - component: {fileID: 4479053309965169670}
+  m_Layer: 0
+  m_Name: spawner (7)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8197896443884503463
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2749280190539440800}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -5.37, y: 4.51, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8492303669183994104}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4479053309965169670
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2749280190539440800}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68ac24ac3819c5444b21019197735dd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spawns: []
+  maxSpawns: 1
+  spawnDistance: 0
+  spawnChance: 0.4
   lifeStyles: []
 --- !u!1 &3180704523908395050
 GameObject:
@@ -4503,7 +4611,7 @@ TilemapRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -1922352313
-  m_SortingLayer: 12
+  m_SortingLayer: 13
   m_SortingOrder: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
@@ -4818,7 +4926,7 @@ TilemapRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -1922352313
-  m_SortingLayer: 12
+  m_SortingLayer: 13
   m_SortingOrder: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}

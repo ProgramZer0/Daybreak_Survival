@@ -12,9 +12,8 @@ public class pickup : MonoBehaviour
 {
     public Weapon weapon;
     [SerializeField] private pickupType pickupType = pickupType.weapon;
-    [SerializeField] private WeaponAmmoType weaponAmmoType;
-    [SerializeField] private int ammoAmmount = 0;
     [SerializeField] private LifeStyles lifeStyle;
+    [SerializeField] private Ammo ammo;
     public int currentAmmo = 0;
 
 
@@ -30,7 +29,7 @@ public class pickup : MonoBehaviour
             }
             else if(pickupType == pickupType.Ammo)
             {
-                if (player.AddAmmo(weaponAmmoType, ammoAmmount))
+                if (player.AddAmmo(ammo.weaponAmmoType, ammo.ammoAmount))
                 {
                     Destroy(transform.gameObject);
                 }

@@ -5,6 +5,7 @@ public class OtherSpawner : MonoBehaviour
 {
     [SerializeField] private Weapon[] weapons;
     [SerializeField] private LifeStyles[] LifeStyles;
+    [SerializeField] private Ammo[] ammos;
     [SerializeField] private TerrainBuilder TB;
 
     private List<GameObject> spawnobjs;
@@ -22,6 +23,19 @@ public class OtherSpawner : MonoBehaviour
 
             Weapon weaponInit = GetRandomByRarity(weapons);
             GameObject spawn = obj.GetComponent<Spawner>().Spawn(weaponInit.prefab);
+            if (spawn != null)
+            {
+                spawnobjs.Add(spawn);
+            }
+        }
+
+        foreach (GameObject obj in TB.ammoSpawnerobj)
+        {
+            if (obj == null) continue;
+
+            Ammo ammoInit = ammos[Random.Range(0, ammos.Length)];
+            GameObject spawn = obj.GetComponent<Spawner>().Spawn(ammoInit.prefab);
+
             if (spawn != null)
             {
                 spawnobjs.Add(spawn);

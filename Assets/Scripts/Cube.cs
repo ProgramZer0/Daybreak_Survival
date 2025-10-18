@@ -12,5 +12,6 @@ public class Cube : MonoBehaviour
     public GameObject[] lifeStyleSpawners;
     public GameObject[] weaponSpawners;
     public GameObject[] enemySpawners;
+    public GameObject[] ammoSpawners;
     //[SerializeField] private LayerMask doorLayer;
 }
