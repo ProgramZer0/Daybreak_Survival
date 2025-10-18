@@ -12,34 +12,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 093041cb943546348bdffcfc855cd123, type: 3}
   m_Name: Demolistist
   m_EditorClassIdentifier: 
-  lifestyleName: 'Thief '
-  id: 3
+  lifestyleName: Demolistist
+  id: 2
   scriptName: BasicLifeStyle
   rarity: 0
-  lifestyleObj: {fileID: 0}
-  displaySpirte: {fileID: 21300000, guid: e2e78dfdf84ad834e8e0c88e77dbda08, type: 3}
-  description: You're very sneaky and quite, which reduces noticing, but you're pickup
-    range and interact range is decreased, and a bit slower walking and running but
-    faster at sneaking.
+  prefab: {fileID: 7949104354352373042, guid: cd42fed5bb3193a43a94678e140812d0, type: 3}
+  displaySpirte: {fileID: 21300000, guid: e54246dd7e5f4e147bd3e87cf0d3ee5d, type: 3}
+  description: Having working in destruction, your swings are powerful and you can
+    take lots of hits but you are much louder and slower.
   lifestyleTriggeredEveryFrame: 0
   hasLimit: 0
   triggerLimit: 1
   eachTriggerTime: 0
-  ModNormSpeed: -0.2
-  ModSprintSpeed: -0.5
-  ModCrouchSpeed: 0.2
+  ModNormSpeed: -0.5
+  ModSprintSpeed: -1
+  ModCrouchSpeed: -0.5
   ModDashCooldown: 0
   ModDashRange: 0
   ModDashOffset: 0
   ModSprintTime: 0
   ModSprintCooldown: 0
   ModMaxSprintDebuffTime: 0
-  ModInteractRange: -0.5
-  ModPickupRange: -0.5
+  ModInteractRange: 0
+  ModPickupRange: 0
   ModHordeForgetTime: 0
-  ModMaxHP: 0
+  ModMaxHP: 5
+  ModDeathTimeAdd: 0
   ModSeeDistance: 0
   ModlightDistance: 0
   hasNightVison: 0
-  ModEnemySeeRange: -3
-  ModLoudness: -2
+  ModEnemySeeRange: 0
+  ModLoudness: 0
+  ModMeleeAttackDamage: 0.5
+  ModMeleeAttackRange: 0.5
+  ModMaxAmmo: 0
+  ModWeaponDamage: 0

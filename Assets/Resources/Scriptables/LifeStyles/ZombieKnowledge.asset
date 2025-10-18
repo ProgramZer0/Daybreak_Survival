@@ -12,34 +12,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 093041cb943546348bdffcfc855cd123, type: 3}
   m_Name: ZombieKnowledge
   m_EditorClassIdentifier: 
-  lifestyleName: 'Thief '
-  id: 3
+  lifestyleName: Zombie Knowledge
+  id: 16
   scriptName: BasicLifeStyle
-  rarity: 0
-  lifestyleObj: {fileID: 0}
-  displaySpirte: {fileID: 21300000, guid: e2e78dfdf84ad834e8e0c88e77dbda08, type: 3}
-  description: You're very sneaky and quite, which reduces noticing, but you're pickup
-    range and interact range is decreased, and a bit slower walking and running but
-    faster at sneaking.
+  rarity: 4
+  prefab: {fileID: 8289925648229407107, guid: 3923e50162a4bd74c8ed5fe48f7c8209, type: 3}
+  displaySpirte: {fileID: 21300000, guid: 55bf158b231a2794292083ecdd61f76a, type: 3}
+  description: As a past zombie enthusist you've done lots of research including
+    how to delay zombie bite turning.
   lifestyleTriggeredEveryFrame: 0
   hasLimit: 0
   triggerLimit: 1
   eachTriggerTime: 0
-  ModNormSpeed: -0.2
-  ModSprintSpeed: -0.5
-  ModCrouchSpeed: 0.2
+  ModNormSpeed: 0
+  ModSprintSpeed: 0
+  ModCrouchSpeed: 0
   ModDashCooldown: 0
   ModDashRange: 0
   ModDashOffset: 0
   ModSprintTime: 0
   ModSprintCooldown: 0
   ModMaxSprintDebuffTime: 0
-  ModInteractRange: -0.5
-  ModPickupRange: -0.5
+  ModInteractRange: 0
+  ModPickupRange: 0
   ModHordeForgetTime: 0
   ModMaxHP: 0
+  ModDeathTimeAdd: 1500
   ModSeeDistance: 0
   ModlightDistance: 0
   hasNightVison: 0
-  ModEnemySeeRange: -3
-  ModLoudness: -2
+  ModEnemySeeRange: 0
+  ModLoudness: 0
+  ModMeleeAttackDamage: 0
+  ModMeleeAttackRange: 0
+  ModMaxAmmo: 0
+  ModWeaponDamage: 0

@@ -12,34 +12,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 093041cb943546348bdffcfc855cd123, type: 3}
   m_Name: Miner
   m_EditorClassIdentifier: 
-  lifestyleName: 'Thief '
-  id: 3
+  lifestyleName: Miner
+  id: 10
   scriptName: BasicLifeStyle
-  rarity: 0
-  lifestyleObj: {fileID: 0}
-  displaySpirte: {fileID: 21300000, guid: e2e78dfdf84ad834e8e0c88e77dbda08, type: 3}
-  description: You're very sneaky and quite, which reduces noticing, but you're pickup
-    range and interact range is decreased, and a bit slower walking and running but
-    faster at sneaking.
+  rarity: 2
+  prefab: {fileID: 4565816326249342395, guid: dae76e32a9f25514f8dca867530f9a41, type: 3}
+  displaySpirte: {fileID: 21300000, guid: fe704352eb4c68447a8b9c73f53aa000, type: 3}
+  description: You're used to swinging large objects which makes your swing range
+    bigger and you do hit a bit harder, but you are a bit smelly so zombies can remeber
+    where you are longer.
   lifestyleTriggeredEveryFrame: 0
   hasLimit: 0
   triggerLimit: 1
   eachTriggerTime: 0
-  ModNormSpeed: -0.2
-  ModSprintSpeed: -0.5
-  ModCrouchSpeed: 0.2
+  ModNormSpeed: 0
+  ModSprintSpeed: 0
+  ModCrouchSpeed: 0
   ModDashCooldown: 0
   ModDashRange: 0
   ModDashOffset: 0
   ModSprintTime: 0
   ModSprintCooldown: 0
   ModMaxSprintDebuffTime: 0
-  ModInteractRange: -0.5
-  ModPickupRange: -0.5
-  ModHordeForgetTime: 0
-  ModMaxHP: 0
+  ModInteractRange: 0
+  ModPickupRange: 0
+  ModHordeForgetTime: 3
+  ModMaxHP: 4
+  ModDeathTimeAdd: 0
   ModSeeDistance: 0
   ModlightDistance: 0
   hasNightVison: 0
-  ModEnemySeeRange: -3
-  ModLoudness: -2
+  ModEnemySeeRange: 0
+  ModLoudness: 0
+  ModMeleeAttackDamage: 0.25
+  ModMeleeAttackRange: 1.25
+  ModMaxAmmo: 0
+  ModWeaponDamage: 0

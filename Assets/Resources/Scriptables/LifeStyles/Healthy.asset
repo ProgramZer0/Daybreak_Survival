@@ -12,22 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 093041cb943546348bdffcfc855cd123, type: 3}
   m_Name: Healthy
   m_EditorClassIdentifier: 
-  lifestyleName: 'Athelete '
-  id: 0
+  lifestyleName: Healthy
+  id: 4
   scriptName: BasicLifeStyle
-  rarity: 0
-  lifestyleObj: {fileID: 0}
-  displaySpirte: {fileID: 21300000, guid: e2e78dfdf84ad834e8e0c88e77dbda08, type: 3}
-  description: You are crazy fast! Now in this life you seem to be amazing at running
-    and keeping up speed for longer. You don't seem as sneaky though... "RUN FOREST
-    RUN!!!"
+  rarity: 3
+  prefab: {fileID: 7800812400696906869, guid: e79f9dc3da8f5c144987d75425a6c281, type: 3}
+  displaySpirte: {fileID: 21300000, guid: e00724eb6d908594f9a4589e61e43868, type: 3}
+  description: An apple a way keeps you really healthy, you seem to be able to run
+    way faster! Really no downside to being healthy.
   lifestyleTriggeredEveryFrame: 0
   hasLimit: 0
   triggerLimit: 1
   eachTriggerTime: 0
   ModNormSpeed: 0.5
-  ModSprintSpeed: 2
-  ModCrouchSpeed: -0.5
+  ModSprintSpeed: 1
+  ModCrouchSpeed: 0
   ModDashCooldown: 0
   ModDashRange: 0
   ModDashOffset: 0
@@ -38,8 +37,13 @@ MonoBehaviour:
   ModPickupRange: 0
   ModHordeForgetTime: 0
   ModMaxHP: 0
+  ModDeathTimeAdd: 0
   ModSeeDistance: 0
   ModlightDistance: 0
   hasNightVison: 0
   ModEnemySeeRange: 0
   ModLoudness: 0
+  ModMeleeAttackDamage: 0
+  ModMeleeAttackRange: 0
+  ModMaxAmmo: 0
+  ModWeaponDamage: 0

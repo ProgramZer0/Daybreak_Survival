@@ -34,12 +34,16 @@ public class LifeStyles : ScriptableObject, IRarityItem
     public float ModPickupRange = 0f;
     public float ModHordeForgetTime = 0f;
     public float ModMaxHP = 0f;
+    public float ModDeathTimeAdd = 0f;
     public float ModSeeDistance = 0f;
     public float ModlightDistance = 0f;
     public bool hasNightVison = false;
     public float ModEnemySeeRange = 0f;
     public float ModLoudness = 0f;
-
+    public float ModMeleeAttackDamage = 0f;
+    public float ModMeleeAttackRange = 0f;
+    public float ModMaxAmmo = 0f;
+    public float ModWeaponDamage = 0f;
     public Rarity Rarity => rarity; // exposes the field to the interface
 
 }

@@ -34,7 +34,12 @@ public class BasicLifeStyle : lifestyleScript
         player.ModMaxHP += LS.ModMaxHP;
         player.ModLoudness += LS.ModLoudness;
         player.ModEnemySeeRange += LS.ModEnemySeeRange;
-    }                   
+        player.ModMeleeAttackDamage += LS.ModMeleeAttackDamage;
+        player.ModMeleeAttackRange += LS.ModMeleeAttackRange;
+        player.ModDeathTimeAdd += LS.ModDeathTimeAdd;
+        player.ModMaxAmmo += LS.ModMaxAmmo;
+        player.ModWeaponDamage += LS.ModWeaponDamage;
+    }
 
     protected override void Tick()
     {

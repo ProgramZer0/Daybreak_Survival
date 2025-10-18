@@ -12,34 +12,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 093041cb943546348bdffcfc855cd123, type: 3}
   m_Name: Soldier
   m_EditorClassIdentifier: 
-  lifestyleName: 'Thief '
-  id: 3
+  lifestyleName: Soldier
+  id: 13
   scriptName: BasicLifeStyle
-  rarity: 0
-  lifestyleObj: {fileID: 0}
-  displaySpirte: {fileID: 21300000, guid: e2e78dfdf84ad834e8e0c88e77dbda08, type: 3}
-  description: You're very sneaky and quite, which reduces noticing, but you're pickup
-    range and interact range is decreased, and a bit slower walking and running but
-    faster at sneaking.
+  rarity: 4
+  prefab: {fileID: 1861764474463239807, guid: 30c8c2756e0202f4fb862bb394935c10, type: 3}
+  displaySpirte: {fileID: 21300000, guid: 89960ea2593699841a5f5f3558cd3d5b, type: 3}
+  description: As a soldier you are an expert of weapons and ammo, and you are stronger
+    and can run faster, but since you've been smoking since 12 you'll likely die
+    from any disease quickly.
   lifestyleTriggeredEveryFrame: 0
   hasLimit: 0
   triggerLimit: 1
   eachTriggerTime: 0
-  ModNormSpeed: -0.2
-  ModSprintSpeed: -0.5
-  ModCrouchSpeed: 0.2
-  ModDashCooldown: 0
-  ModDashRange: 0
+  ModNormSpeed: 1
+  ModSprintSpeed: 2
+  ModCrouchSpeed: 1.25
+  ModDashCooldown: -1
+  ModDashRange: 2
   ModDashOffset: 0
-  ModSprintTime: 0
-  ModSprintCooldown: 0
-  ModMaxSprintDebuffTime: 0
-  ModInteractRange: -0.5
-  ModPickupRange: -0.5
+  ModSprintTime: 20
+  ModSprintCooldown: 3
+  ModMaxSprintDebuffTime: -2
+  ModInteractRange: 0
+  ModPickupRange: 0
   ModHordeForgetTime: 0
-  ModMaxHP: 0
-  ModSeeDistance: 0
+  ModMaxHP: 5
+  ModDeathTimeAdd: -2000
+  ModSeeDistance: 1
   ModlightDistance: 0
   hasNightVison: 0
-  ModEnemySeeRange: -3
+  ModEnemySeeRange: 0
   ModLoudness: -2
+  ModMeleeAttackDamage: 0.2
+  ModMeleeAttackRange: 0.2
+  ModMaxAmmo: 0.5
+  ModWeaponDamage: 0.2

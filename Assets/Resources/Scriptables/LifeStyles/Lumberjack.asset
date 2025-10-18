@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: Lumberjack
   m_EditorClassIdentifier: 
   lifestyleName: LumberJack
-  id: 1
+  id: 8
   scriptName: BasicLifeStyle
-  rarity: 0
-  lifestyleObj: {fileID: 0}
-  displaySpirte: {fileID: 21300000, guid: e2e78dfdf84ad834e8e0c88e77dbda08, type: 3}
-  description: built like a ox you make more noise but can take quite a bit more
+  rarity: 2
+  prefab: {fileID: 6896011308839275583, guid: 242a536ddfc00a041b7c0f3d968f389c, type: 3}
+  displaySpirte: {fileID: 21300000, guid: b95267bc84df5fe4f9024594debc39b0, type: 3}
+  description: Built like a ox you make more noise but can take quite a bit more
     damage.
   lifestyleTriggeredEveryFrame: 0
   hasLimit: 0
@@ -36,9 +36,14 @@ MonoBehaviour:
   ModInteractRange: 0
   ModPickupRange: 0
   ModHordeForgetTime: 0
-  ModMaxHP: 10
+  ModMaxHP: 5
+  ModDeathTimeAdd: 0
   ModSeeDistance: 0
   ModlightDistance: 0
   hasNightVison: 0
   ModEnemySeeRange: 3
   ModLoudness: 5
+  ModMeleeAttackDamage: 0
+  ModMeleeAttackRange: 0
+  ModMaxAmmo: 0
+  ModWeaponDamage: 0

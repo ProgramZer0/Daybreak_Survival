@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Theif
   m_EditorClassIdentifier: 
   lifestyleName: 'Thief '
-  id: 3
+  id: 14
   scriptName: BasicLifeStyle
   rarity: 0
-  lifestyleObj: {fileID: 0}
-  displaySpirte: {fileID: 21300000, guid: e2e78dfdf84ad834e8e0c88e77dbda08, type: 3}
+  prefab: {fileID: 5975672005115910116, guid: dd3753c6c3666a74cbf5b05ea5621078, type: 3}
+  displaySpirte: {fileID: 21300000, guid: a126ecb771d2bff429728e4b8ac80a27, type: 3}
   description: You're very sneaky and quite, which reduces noticing, but you're pickup
     range and interact range is decreased, and a bit slower walking and running but
     faster at sneaking.
@@ -25,8 +25,8 @@ MonoBehaviour:
   hasLimit: 0
   triggerLimit: 1
   eachTriggerTime: 0
-  ModNormSpeed: -0.2
-  ModSprintSpeed: -0.5
+  ModNormSpeed: -0.5
+  ModSprintSpeed: -0.75
   ModCrouchSpeed: 0.2
   ModDashCooldown: 0
   ModDashRange: 0
@@ -38,8 +38,13 @@ MonoBehaviour:
   ModPickupRange: -0.5
   ModHordeForgetTime: 0
   ModMaxHP: 0
+  ModDeathTimeAdd: 0
   ModSeeDistance: 0
   ModlightDistance: 0
   hasNightVison: 0
   ModEnemySeeRange: -3
-  ModLoudness: -2
+  ModLoudness: -4
+  ModMeleeAttackDamage: 0
+  ModMeleeAttackRange: 0
+  ModMaxAmmo: 0
+  ModWeaponDamage: 0

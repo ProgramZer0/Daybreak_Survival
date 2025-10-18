@@ -12,34 +12,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 093041cb943546348bdffcfc855cd123, type: 3}
   m_Name: OwlWatcher
   m_EditorClassIdentifier: 
-  lifestyleName: 'Thief '
-  id: 3
+  lifestyleName: Owl Watcher
+  id: 11
   scriptName: BasicLifeStyle
-  rarity: 0
-  lifestyleObj: {fileID: 0}
-  displaySpirte: {fileID: 21300000, guid: e2e78dfdf84ad834e8e0c88e77dbda08, type: 3}
-  description: You're very sneaky and quite, which reduces noticing, but you're pickup
-    range and interact range is decreased, and a bit slower walking and running but
-    faster at sneaking.
+  rarity: 3
+  prefab: {fileID: 6227529914085275805, guid: eafc5efc6f899e3418dd11702504a1a9, type: 3}
+  displaySpirte: {fileID: 21300000, guid: fc68c28d22ef9ba4f8b68c0b8859e781, type: 3}
+  description: 'As owl watching is mostly done at night your eyes are accustumed
+    to it, you can almost see in the dark but its still difficult to see, you can
+    also see a bit farther, but you don''t have as much expeiriance with althetisms. '
   lifestyleTriggeredEveryFrame: 0
   hasLimit: 0
   triggerLimit: 1
   eachTriggerTime: 0
-  ModNormSpeed: -0.2
-  ModSprintSpeed: -0.5
-  ModCrouchSpeed: 0.2
+  ModNormSpeed: 0
+  ModSprintSpeed: 0
+  ModCrouchSpeed: 0
   ModDashCooldown: 0
   ModDashRange: 0
   ModDashOffset: 0
   ModSprintTime: 0
   ModSprintCooldown: 0
   ModMaxSprintDebuffTime: 0
-  ModInteractRange: -0.5
-  ModPickupRange: -0.5
+  ModInteractRange: 0
+  ModPickupRange: 0
   ModHordeForgetTime: 0
   ModMaxHP: 0
-  ModSeeDistance: 0
+  ModDeathTimeAdd: 0
+  ModSeeDistance: 1
   ModlightDistance: 0
-  hasNightVison: 0
-  ModEnemySeeRange: -3
-  ModLoudness: -2
+  hasNightVison: 1
+  ModEnemySeeRange: 0
+  ModLoudness: 0
+  ModMeleeAttackDamage: 0
+  ModMeleeAttackRange: 0
+  ModMaxAmmo: 0
+  ModWeaponDamage: 0

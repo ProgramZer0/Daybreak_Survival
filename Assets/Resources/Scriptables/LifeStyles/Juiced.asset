@@ -12,34 +12,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 093041cb943546348bdffcfc855cd123, type: 3}
   m_Name: Juiced
   m_EditorClassIdentifier: 
-  lifestyleName: 'Thief '
-  id: 3
+  lifestyleName: Juiced
+  id: 6
   scriptName: BasicLifeStyle
-  rarity: 0
-  lifestyleObj: {fileID: 0}
-  displaySpirte: {fileID: 21300000, guid: e2e78dfdf84ad834e8e0c88e77dbda08, type: 3}
-  description: You're very sneaky and quite, which reduces noticing, but you're pickup
-    range and interact range is decreased, and a bit slower walking and running but
-    faster at sneaking.
+  rarity: 3
+  prefab: {fileID: 5116950890906779196, guid: d214b18339d3b6d459c46ebeda7f2d72, type: 3}
+  displaySpirte: {fileID: 21300000, guid: 5f46b6b0451533e43b5a2d7dd534c47d, type: 3}
+  description: By juicing yourself you can help your dashes but it does not help
+    your health,in fact it seems to make you less durable.
   lifestyleTriggeredEveryFrame: 0
   hasLimit: 0
   triggerLimit: 1
   eachTriggerTime: 0
-  ModNormSpeed: -0.2
-  ModSprintSpeed: -0.5
-  ModCrouchSpeed: 0.2
-  ModDashCooldown: 0
-  ModDashRange: 0
+  ModNormSpeed: 0.75
+  ModSprintSpeed: 1.5
+  ModCrouchSpeed: 0.5
+  ModDashCooldown: -2
+  ModDashRange: 1
   ModDashOffset: 0
-  ModSprintTime: 0
-  ModSprintCooldown: 0
-  ModMaxSprintDebuffTime: 0
-  ModInteractRange: -0.5
-  ModPickupRange: -0.5
+  ModSprintTime: 4
+  ModSprintCooldown: -2
+  ModMaxSprintDebuffTime: -1
+  ModInteractRange: 0
+  ModPickupRange: 0
   ModHordeForgetTime: 0
-  ModMaxHP: 0
+  ModMaxHP: -3
+  ModDeathTimeAdd: -1000
   ModSeeDistance: 0
   ModlightDistance: 0
   hasNightVison: 0
-  ModEnemySeeRange: -3
-  ModLoudness: -2
+  ModEnemySeeRange: 0
+  ModLoudness: 0
+  ModMeleeAttackDamage: 0
+  ModMeleeAttackRange: 0
+  ModMaxAmmo: 0
+  ModWeaponDamage: 0

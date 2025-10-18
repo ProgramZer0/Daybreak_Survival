@@ -89,6 +89,9 @@ public class GameManager : MonoBehaviour
             SetAmbiance();
             surface.BuildNavMesh();
             LSC.AddAllActive();
+            deathTime = deathTime + player.ModDeathTimeAdd;
+            if (player.hasNightVison)
+                nightDarkness = 0.005f;
             GUI.ShowNoGUI();
             GUI.ShowAllHUDs();
             GUI.SetHUDVals();

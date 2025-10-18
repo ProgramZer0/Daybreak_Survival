@@ -12,34 +12,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 093041cb943546348bdffcfc855cd123, type: 3}
   m_Name: Hunter
   m_EditorClassIdentifier: 
-  lifestyleName: 'Thief '
-  id: 3
+  lifestyleName: Hunter
+  id: 5
   scriptName: BasicLifeStyle
-  rarity: 0
-  lifestyleObj: {fileID: 0}
-  displaySpirte: {fileID: 21300000, guid: e2e78dfdf84ad834e8e0c88e77dbda08, type: 3}
-  description: You're very sneaky and quite, which reduces noticing, but you're pickup
-    range and interact range is decreased, and a bit slower walking and running but
-    faster at sneaking.
+  rarity: 1
+  prefab: {fileID: 7132353214648844267, guid: efa9de15312323d49be551d40c169044, type: 3}
+  displaySpirte: {fileID: 21300000, guid: 5398ffc30e0c01549886f34796912749, type: 3}
+  description: As a hunter you are able to see longer distances than normal.
   lifestyleTriggeredEveryFrame: 0
   hasLimit: 0
   triggerLimit: 1
   eachTriggerTime: 0
-  ModNormSpeed: -0.2
-  ModSprintSpeed: -0.5
-  ModCrouchSpeed: 0.2
+  ModNormSpeed: 0
+  ModSprintSpeed: 0
+  ModCrouchSpeed: 0
   ModDashCooldown: 0
   ModDashRange: 0
   ModDashOffset: 0
   ModSprintTime: 0
   ModSprintCooldown: 0
   ModMaxSprintDebuffTime: 0
-  ModInteractRange: -0.5
-  ModPickupRange: -0.5
+  ModInteractRange: 0
+  ModPickupRange: 0
   ModHordeForgetTime: 0
   ModMaxHP: 0
-  ModSeeDistance: 0
+  ModDeathTimeAdd: 0
+  ModSeeDistance: 3
   ModlightDistance: 0
   hasNightVison: 0
-  ModEnemySeeRange: -3
-  ModLoudness: -2
+  ModEnemySeeRange: 0
+  ModLoudness: 0
+  ModMeleeAttackDamage: 0
+  ModMeleeAttackRange: 0
+  ModMaxAmmo: 0
+  ModWeaponDamage: 0

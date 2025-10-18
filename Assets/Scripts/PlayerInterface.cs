@@ -111,6 +111,12 @@ public class PlayerInterface : MonoBehaviour
     public float ModInteractRange = 0f;
     public float ModPickupRange = 0f;
     public float ModHordeForgetTime = 0f;
+    public float ModMeleeAttackDamage = 0f;
+    public float ModMeleeAttackRange = 0f;
+    public float ModDeathTimeAdd = 0f;
+
+    public float ModMaxAmmo = 0f;
+    public float ModWeaponDamage = 0f;
 
     public float ModEnemySeeRange = 0f;
     public float ModLoudness = 0f;
@@ -143,6 +149,10 @@ public class PlayerInterface : MonoBehaviour
         hasNightVison = false;
         ModLoudness = 0f;
         ModEnemySeeRange = 0f;
+        ModMeleeAttackDamage = 0f;
+        ModMeleeAttackRange = 0f;
+        ModMaxAmmo = 0;
+        ModWeaponDamage = 0f;
     }
 
     public float GetMaxHP() { return(maxHP + ModMaxHP); }
@@ -416,7 +426,7 @@ public class PlayerInterface : MonoBehaviour
             Vector2 moveDirection = RandomMovement(baseDir, randomAngle).normalized;
 
             o.GetComponent<Projectile>().SetValues(currentWeapon.projectileFallOffMultiplier, currentWeapon.projectileTime, 
-                currentWeapon.splashRange, currentWeapon.splashDamage, currentWeapon.projectileDamage, 
+                currentWeapon.splashRange, currentWeapon.splashDamage, (currentWeapon.projectileDamage + (currentWeapon.projectileDamage * ModWeaponDamage)), 
                 currentWeapon.projectileFallOffMultiplierTime, currentWeapon.projectileHasAnimation, currentWeapon.appearTime, currentWeapon.fadeInTime);
             
             o.GetComponent<Rigidbody2D>().linearVelocity = moveDirection * currentWeapon.projectileSpeed;  
@@ -459,7 +469,9 @@ public class PlayerInterface : MonoBehaviour
         }
         Vector2 dir = (gunPoss[facingside].transform.position - transform.position).normalized;
 
-        float offset = currentWeapon.meleeRange * meleeAnimationRangeOffset; 
+        float weaponRange = currentWeapon.meleeRange + (ModMeleeAttackRange * currentWeapon.meleeRange);
+
+        float offset = weaponRange * meleeAnimationRangeOffset; 
         Vector3 spawnPos = transform.position + (Vector3)dir * offset;
 
         MeleeAnimation(facingside, spawnPos);
@@ -470,9 +482,9 @@ public class PlayerInterface : MonoBehaviour
             float damage;
 
             if (currentWeapon == null)
-                damage = 1f;
+                damage = 1f + (ModMeleeAttackDamage * 3);
             else
-                damage = currentWeapon.meleeDamage;
+                damage = currentWeapon.meleeDamage + (ModMeleeAttackDamage * currentWeapon.meleeDamage);
 
             en.TakeDamage(damage, currentWeapon);
         }
@@ -483,6 +495,8 @@ public class PlayerInterface : MonoBehaviour
 
     private void MeleeAnimation(int facingInt, Vector2 spawnPos)
     {
+        float weaponRange = currentWeapon.meleeRange + (ModMeleeAttackRange * currentWeapon.meleeRange);
+
         if (slashPrefab != null)
         {
             GameObject slash = Instantiate(
@@ -493,7 +507,7 @@ public class PlayerInterface : MonoBehaviour
             );
 
             float fovScale = currentWeapon.meleeFOV / baseAnimationFOV;
-            float scaleFactor = currentWeapon.meleeRange / baseAnimationRange;
+            float scaleFactor = weaponRange / baseAnimationRange;
 
             slash.transform.localScale = new Vector3(fovScale, scaleFactor, 1f);
 
@@ -503,9 +517,10 @@ public class PlayerInterface : MonoBehaviour
 
     private IEnemy FanCheck(Vector2 facingDir)
     {
+        float weaponRange = currentWeapon.meleeRange + (ModMeleeAttackRange * currentWeapon.meleeRange);
         Collider2D[] hits = Physics2D.OverlapCircleAll(
             transform.position,
-            currentWeapon.meleeRange,
+            weaponRange,
             EnemyLayer
         );
 
@@ -814,9 +829,9 @@ public class PlayerInterface : MonoBehaviour
 
         currentWeapon = weapon;
         weaponAmmo = ammo;
-        maxAmmo = weapon.maxAmmo;
+        maxAmmo = weapon.maxAmmo + (int)(weapon.maxAmmo * ModMaxAmmo);
         weaponHUD.SetCurrentWeapon(currentWeapon);
-        CC.maxScrollOut = weapon.weaponZoom;
+        CC.maxScrollOut = weapon.weaponZoom + ModSeeDistance;
         CC.minScrollOut = weapon.weaponMinZoom;
         SM.Play(currentWeapon.equipSoundName);
         return true;

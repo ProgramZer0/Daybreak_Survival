@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Forgetful
   m_EditorClassIdentifier: 
   lifestyleName: Forgetful
-  id: 4
+  id: 3
   scriptName: BasicLifeStyle
-  rarity: 0
-  lifestyleObj: {fileID: 0}
-  displaySpirte: {fileID: 21300000, guid: e2e78dfdf84ad834e8e0c88e77dbda08, type: 3}
+  rarity: 2
+  prefab: {fileID: 8660953661366572136, guid: 06790be78c5640941880b3e14ef5a811, type: 3}
+  displaySpirte: {fileID: 21300000, guid: adbe41c79f995a14b9afd13f1d73aea2, type: 3}
   description: you're presence is forgetful, and leave barely a trace
   lifestyleTriggeredEveryFrame: 0
   hasLimit: 0
@@ -36,8 +36,13 @@ MonoBehaviour:
   ModPickupRange: 0
   ModHordeForgetTime: -3
   ModMaxHP: 0
+  ModDeathTimeAdd: 0
   ModSeeDistance: 0
   ModlightDistance: 0
   hasNightVison: 0
   ModEnemySeeRange: 0
   ModLoudness: 0
+  ModMeleeAttackDamage: 0
+  ModMeleeAttackRange: 0
+  ModMaxAmmo: 0
+  ModWeaponDamage: 0

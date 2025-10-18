@@ -10508,6 +10508,11 @@ MonoBehaviour:
   ModInteractRange: 0
   ModPickupRange: 0
   ModHordeForgetTime: 0
+  ModMeleeAttackDamage: 0
+  ModMeleeAttackRange: 0
+  ModDeathTimeAdd: 0
+  ModMaxAmmo: 0
+  ModWeaponDamage: 0
   ModEnemySeeRange: 0
   ModLoudness: 0
   ModMaxHP: 0
@@ -15060,6 +15065,7 @@ GameObject:
   - component: {fileID: 1754269201}
   - component: {fileID: 1754269202}
   - component: {fileID: 1754269203}
+  - component: {fileID: 1754269204}
   m_Layer: 0
   m_Name: Enviroment
   m_TagString: Untagged
@@ -15102,6 +15108,7 @@ MonoBehaviour:
   player: {fileID: 868446138}
   playerRenderer: {fileID: 935512252}
   enemyController: {fileID: 1754269202}
+  OS: {fileID: 1754269204}
   SM: {fileID: 276416484}
   daylight: {fileID: 5045635640186557265}
   surface: {fileID: 883150803}
@@ -15149,8 +15156,8 @@ MonoBehaviour:
   - {fileID: 5394958092232953006, guid: 53c7ffdc9b740d647806c99cade168fb, type: 3}
   minSpawnRadius: 80
   spawnRadius: 200
-  minEnemyCount: 40
-  maxEnemyCount: 200
+  minEnemyCount: 120
+  maxEnemyCount: 300
   spawningEnabled: 0
 --- !u!114 &1754269203
 MonoBehaviour:
@@ -15165,15 +15172,49 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 868446138}
-  maxLifestyles: 10
+  maxLifestyles: 3
   toolTipPreFab: {fileID: 6287030776202556268, guid: 15df2d2663f2b3e4d91f4e90cf0988c7, type: 3}
   allLifestyles:
-  - {fileID: 11400000, guid: 2b3bf8963e3e9e04a8184b1a1af363f6, type: 2}
+  - {fileID: 11400000, guid: 8058c893f32506548932431271fd2623, type: 2}
+  - {fileID: 11400000, guid: 5c0ea0825a7ce3d48b24ec33493db971, type: 2}
   - {fileID: 11400000, guid: 6ea87abcae8c3074ca13bc919f53a7b8, type: 2}
-  - {fileID: 11400000, guid: b83efb01a987b7149be2f348e633beb4, type: 2}
+  - {fileID: 11400000, guid: 2b3bf8963e3e9e04a8184b1a1af363f6, type: 2}
+  - {fileID: 11400000, guid: c16a7dc150737494eabf51b89fed3cf0, type: 2}
+  - {fileID: 11400000, guid: 1f0d23733ae0c05488422ef74582b970, type: 2}
+  - {fileID: 11400000, guid: 342fb5ba60edf6b4cb45bae5d9f6c4d0, type: 2}
   - {fileID: 11400000, guid: 77ee5e587b138fd46a64192e48795974, type: 2}
+  - {fileID: 11400000, guid: 855d51f187561ee42be04122d63fbd50, type: 2}
+  - {fileID: 11400000, guid: 395eca43319f6e546b7acd7e31da1816, type: 2}
+  - {fileID: 11400000, guid: fcc03eeb88a589f41a1acb61e6e1ddb9, type: 2}
+  - {fileID: 11400000, guid: 958d581b16c578b4d8f0c590b3cb5907, type: 2}
+  - {fileID: 11400000, guid: 0c322120def3f2843b6d754bb0a9162d, type: 2}
   - {fileID: 11400000, guid: 88bb68312103c3741b7fcd902c43705f, type: 2}
+  - {fileID: 11400000, guid: b1b4b2bdb35c15f40aa92c68a43c31a9, type: 2}
+  - {fileID: 11400000, guid: 4e40a0849a193c1449c9a2c94e34b48b, type: 2}
   lifeStylesAvailable: []
+--- !u!114 &1754269204
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1754269197}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4a243f16926938418de0066adf79fc4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OtherSpawner
+  weapons:
+  - {fileID: 11400000, guid: c59158295e4030e429643e5dc7ff15c2, type: 2}
+  - {fileID: 11400000, guid: 9a2f54c0965595243b6b677a4fb077ec, type: 2}
+  - {fileID: 11400000, guid: f92ad103585ef0148a37fc48fdf46ee2, type: 2}
+  - {fileID: 11400000, guid: 449c55f27307588429823915f21caf6f, type: 2}
+  - {fileID: 11400000, guid: 76706417431b45f409695fd3bceefc44, type: 2}
+  - {fileID: 11400000, guid: c6fbc19f3f9a2bf4e8ab0905405fcdea, type: 2}
+  - {fileID: 11400000, guid: 9d1e70ce098d5f144a7bf6eaae900a47, type: 2}
+  - {fileID: 11400000, guid: 7bcda987a15f8e341991b361cb958358, type: 2}
+  LifeStyles: []
+  TB: {fileID: 4724984432564986264}
 --- !u!1 &1765203492
 GameObject:
   m_ObjectHideFlags: 0
