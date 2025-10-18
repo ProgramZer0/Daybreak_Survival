@@ -71,6 +71,9 @@ TagManager:
   - name: Furniture Block
     uniqueID: 3893717787
     locked: 0
+  - name: Building Minus
+    uniqueID: 1908923829
+    locked: 0
   - name: Furniture Plus
     uniqueID: 1341307341
     locked: 0

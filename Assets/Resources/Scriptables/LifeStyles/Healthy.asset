@@ -15,7 +15,7 @@ MonoBehaviour:
   lifestyleName: Healthy
   id: 4
   scriptName: BasicLifeStyle
-  rarity: 3
+  rarity: 2
   prefab: {fileID: 7800812400696906869, guid: e79f9dc3da8f5c144987d75425a6c281, type: 3}
   displaySpirte: {fileID: 21300000, guid: e00724eb6d908594f9a4589e61e43868, type: 3}
   description: An apple a way keeps you really healthy, you seem to be able to run
