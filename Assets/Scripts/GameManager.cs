@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private PlayerInterface player;
     [SerializeField] private SpriteRenderer playerRenderer;
     [SerializeField] private EnemyController enemyController;
+    [SerializeField] private OtherSpawner OS;
     [SerializeField] private SoundManager SM;
     [SerializeField] private Light2D daylight;
     [SerializeField] private NavMeshSurface surface;
@@ -83,6 +84,7 @@ public class GameManager : MonoBehaviour
         if (!TB.isRunning && startedGame)
         {
             enemyController.enableSpawning(true);
+            OS.SpawnAll();
             SetEnvMusic(10f);
             SetAmbiance();
             surface.BuildNavMesh();
@@ -169,6 +171,7 @@ public class GameManager : MonoBehaviour
     {
         ResetDNCycle();
         ResetPlayer();
+        OS.DespawnAll();
         enemyController.enableSpawning(false);
         enemyController.DespawnAllEnemies();
         TB.ClearTerrain();

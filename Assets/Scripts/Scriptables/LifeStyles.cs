@@ -2,14 +2,14 @@ using UnityEditor;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "LifeStyles", menuName = "LifeStyles")]
-public class LifeStyles : ScriptableObject
+public class LifeStyles : ScriptableObject, IRarityItem
 {
     [Header("Main Settings")]
     public string lifestyleName;
     public int id;
     public string scriptName;
     public Rarity rarity = Rarity.common;
-    public GameObject lifestyleObj;
+    public GameObject prefab;
     public Sprite displaySpirte;
     [TextArea]
     public string description;
@@ -39,4 +39,7 @@ public class LifeStyles : ScriptableObject
     public bool hasNightVison = false;
     public float ModEnemySeeRange = 0f;
     public float ModLoudness = 0f;
+
+    public Rarity Rarity => rarity; // exposes the field to the interface
+
 }

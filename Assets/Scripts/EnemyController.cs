@@ -11,10 +11,10 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private GameObject[] enemyPrefabs;
 
     [Header("Spawn Settings")]
-    [SerializeField] private float minSpawnRadius = 100f;
-    [SerializeField] private float spawnRadius = 200f;     
-    [SerializeField] private int minEnemyCount = 40;      
-    [SerializeField] private int maxEnemyCount = 200;     
+    [SerializeField] private float minSpawnRadius = 80f;
+    [SerializeField] private float spawnRadius = 300f;
+    [SerializeField] private int minEnemyCount = 40;
+    [SerializeField] private int maxEnemyCount = 200;
 
     private List<GameObject> enemies = new List<GameObject>();
     [SerializeField] private bool spawningEnabled = false;
@@ -29,11 +29,15 @@ public class EnemyController : MonoBehaviour
         enemies = enemies.Where(e => e != null).ToList();
 
         int nearbyCount = enemies.Count(e =>
-            Vector2.Distance(player.position, e.transform.position) <= spawnRadius);
+            Vector2.Distance(player.position, e.transform.position) <= minSpawnRadius);
 
         if (nearbyCount < minEnemyCount)
         {
             SpawnEnemyNearPlayer();
+        }
+        else if (enemies.Count > maxEnemyCount)
+        {
+            DespawnPastPlayer();
         }
 
         if (enemies.Count == 0) return;
@@ -82,5 +86,18 @@ public class EnemyController : MonoBehaviour
     {
         foreach (GameObject obj in enemies)
             Destroy(obj, 0.5f);
+    }
+
+    public void DespawnPastPlayer()
+    {
+        var tooFarEnemies = enemies
+            .Where(e => Vector2.Distance(player.position, e.transform.position) > spawnRadius)
+            .ToList();
+
+        foreach (GameObject obj in tooFarEnemies)
+        {
+            Destroy(obj, 0.5f);
+            enemies.Remove(obj);
+        }
     }
 }

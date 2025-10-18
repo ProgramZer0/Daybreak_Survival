@@ -9,7 +9,8 @@ public class Cube : MonoBehaviour
     public float Rarity;
     public GameObject cubePrefab;
     public SectionType cubeType;
-    public GameObject[] weaponSpawners;     
+    public GameObject[] lifeStyleSpawners;
+    public GameObject[] weaponSpawners;
     public GameObject[] enemySpawners;
     //[SerializeField] private LayerMask doorLayer;
 }

@@ -68,6 +68,12 @@ TagManager:
   - name: Particle
     uniqueID: 1538829915
     locked: 0
+  - name: Furniture Block
+    uniqueID: 3893717787
+    locked: 0
+  - name: Furniture Plus
+    uniqueID: 1341307341
+    locked: 0
   - name: Blocking
     uniqueID: 2372614983
     locked: 0

@@ -20,7 +20,7 @@ public enum Rarity
 }
 
 [CreateAssetMenu(fileName = "Weapon", menuName = "Weapon")]
-public class Weapon : ScriptableObject
+public class Weapon : ScriptableObject, IRarityItem
 {
     public string weaponName;
     public GameObject prefab; 
@@ -59,5 +59,8 @@ public class Weapon : ScriptableObject
     public Rarity rarity = Rarity.common;
     public GameObject projectilePrefab;
     public WeaponAmmoType weaponAmmoType;
+
+    public Rarity Rarity => rarity; // exposes the field to the interface
+
 }
 
