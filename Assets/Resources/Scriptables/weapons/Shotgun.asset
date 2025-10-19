@@ -46,6 +46,6 @@ MonoBehaviour:
   offsetSpawnProjectile: 0
   equipSoundName: DefaultweaponEquip
   projectileSoundName: gunshot
-  rarity: 0
+  rarity: 1
   projectilePrefab: {fileID: 8562623839093297936, guid: 3d7dd44c41900a849b9e30f51557a28f, type: 3}
   weaponAmmoType: 0

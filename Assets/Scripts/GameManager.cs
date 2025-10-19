@@ -51,6 +51,9 @@ public class GameManager : MonoBehaviour
     private bool inMenu = true;
     private bool startedGame = false;
     private bool hitMMButton = false;
+
+    public bool inBuilding = false;
+
     private void Start()
     {
         ResetDNCycle();
@@ -83,11 +86,11 @@ public class GameManager : MonoBehaviour
 
         if (!TB.isRunning && startedGame)
         {
-            enemyController.enableSpawning(true);
-            OS.SpawnAll();
             SetEnvMusic(10f);
             SetAmbiance();
             surface.BuildNavMesh();
+            OS.SpawnAll();
+            enemyController.enableSpawning(true);
             LSC.AddAllActive();
             deathTime = deathTime + player.ModDeathTimeAdd;
             if (player.hasNightVison)
@@ -149,6 +152,9 @@ public class GameManager : MonoBehaviour
                 isDay = true;
             }
         }
+
+        if (inBuilding)
+            isDay = false;
 
         if (isDay)
         {
@@ -295,6 +301,7 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator PlayLate(float time, float fade)
     {
+        Debug.Log($"wating for {time}");
         yield return new WaitForSeconds(time);
         PlayRandomEnvMusic(fade);
     }

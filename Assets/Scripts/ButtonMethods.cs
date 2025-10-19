@@ -21,13 +21,13 @@ public class ButtonMethods : MonoBehaviour
     {
         FindAnyObjectByType<SoundManager>().Play("buttonClick");
         LSGui.DeleteAllPages();
-        BackMainMenu_B();
+        BackMainMenuNotInGame_B();
     }
     public void OpenLifestyle_B()
     {
         FindAnyObjectByType<SoundManager>().Play("buttonClick");
         if (LSC.lifeStylesAvailable.Count == 0) return;
-        GUI.ShowNoGUI();
+        GUI.ShowNoMMButtons();
         GUI.OpenLifestyle();
         LSGui.LoadLifeStyles();
     }
@@ -47,6 +47,16 @@ public class ButtonMethods : MonoBehaviour
         GM.MainMenu();
     }
 
+    public void BackMainMenuNotInGame_B()
+    {
+        FindAnyObjectByType<SoundManager>().Play("buttonClick");
+        GM.SaveGameData();
+        GUI.ShowNoGUI();
+        GUI.ShowNoHUDs();
+        GUI.OpenMainMenu();
+        GM.MainMenu();
+    }
+
     public void SettingsFromPause_B()
     {
         FindAnyObjectByType<SoundManager>().Play("buttonClick");
@@ -56,7 +66,7 @@ public class ButtonMethods : MonoBehaviour
     public void SettingsFromMenu_B()
     {
         FindAnyObjectByType<SoundManager>().Play("buttonClick");
-        GUI.ShowNoMM();
+        GUI.ShowNoMMButtons();
         GUI.OpenSettingsMenuMM();
     }
 
@@ -77,7 +87,7 @@ public class ButtonMethods : MonoBehaviour
     {
         FindAnyObjectByType<SoundManager>().Play("buttonClick");
         GUI.ShowNoGUI();
-        GUI.ShowNoMM();
+        GUI.ShowNoMMAll();
         GUI.ShowLoading();
         GM.StartGame();
     }

@@ -18,6 +18,7 @@ public class MainGUIController : MonoBehaviour
     [SerializeField] private GameObject settingMenuMM;
     [SerializeField] private GameObject settingMenuPM;
     [SerializeField] private GameObject mainMenu;
+    [SerializeField] private GameObject mainMenuButtons;
     [SerializeField] private GameObject lifestyleGUI;
     [SerializeField] private GameObject loadingScreen;
     [SerializeField] private GameObject deathMenu;
@@ -28,6 +29,7 @@ public class MainGUIController : MonoBehaviour
 
     private bool inUI = true;
     private bool escapePressed = false;
+    private bool canUseEsc = false;
 
     private void Update()
     {
@@ -35,11 +37,13 @@ public class MainGUIController : MonoBehaviour
 
         if (escapePressed)
         {
-            if (inUI)
-                ShowNoGUI();
-            else
-                OpenPause();
-
+            if (canUseEsc)
+            {
+                if (inUI)
+                    ShowNoGUI();
+                else
+                    OpenPause();
+            }
             escapePressed = false;
         }
 
@@ -74,6 +78,7 @@ public class MainGUIController : MonoBehaviour
     }
     public void ShowAllHUDs()
     {
+        canUseEsc = true;
         foreach (GameObject obj in huds)
         {
             obj.SetActive(true);
@@ -86,11 +91,16 @@ public class MainGUIController : MonoBehaviour
         FindFirstObjectByType<HPBar>().SetHP(player.GetCurrentHP());
     }
 
-    public void ShowNoMM()
+    public void ShowNoMMAll()
     {
         inUI = false;
         player.LockMovement(false);
         mainMenu.SetActive(false);
+    }
+    public void ShowNoMMButtons()
+    {
+        player.LockMovement(false);
+        mainMenuButtons.SetActive(false);
     }
     public void ShowNoLifestyle()
     {
@@ -121,6 +131,7 @@ public class MainGUIController : MonoBehaviour
     public void ShowLoading()
     {
         SetInUI();
+        canUseEsc = false;
         loadingScreen.SetActive(true);
     }
 
@@ -175,7 +186,9 @@ public class MainGUIController : MonoBehaviour
     public void OpenMainMenu()
     {
         SetInUI();
+        canUseEsc = false;
         mainMenu.SetActive(true);
+        mainMenuButtons.SetActive(true);
         GM.MainMenu();
     }
 

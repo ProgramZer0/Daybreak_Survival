@@ -11,12 +11,12 @@ public class SoundManager : MonoBehaviour
     private float modSound = 0.6f;
     private float modMusicSound = 0.3f;
 
-    private Sound currentMusic;   
+    private Sound currentMusic = null;   
     private Coroutine musicFadeCoroutine;
 
     private void Update()
     {
-        if(currentMusic != null)
+        if (currentMusic != null && currentMusic.source != null)
             if (!currentMusic.source.isPlaying) GM.SetEnvMusic(1, false);
     }
 
@@ -224,22 +224,22 @@ public class SoundManager : MonoBehaviour
             timer += Time.deltaTime;
             float t = timer / fadeTime;
 
-            if (oldMusic != null)
+            if (oldMusic.source != null)
                 oldMusic.source.volume = Mathf.Lerp(oldMusic.volume * modMusicSound, 0f, t);
 
-            if (newMusic != null)
+            if (newMusic.source != null)
                 newMusic.source.volume = Mathf.Lerp(0f, newMusic.volume * modMusicSound, t);
 
             yield return null;
         }
 
-        if (oldMusic != null)
+        if (oldMusic.source != null)
         {
             oldMusic.source.Stop();
             oldMusic.source.volume = oldMusic.volume * modMusicSound; 
         }
 
-        if (newMusic != null)
+        if (newMusic.source != null)
             newMusic.source.volume = newMusic.volume * modMusicSound;
 
         musicFadeCoroutine = null;
@@ -297,7 +297,7 @@ public class SoundManager : MonoBehaviour
     {
         Debug.Log("setting music");
         modMusicSound = vol;
-        if(currentMusic != null)
+        if(currentMusic.source != null)
             currentMusic.source.volume = currentMusic.volume * modMusicSound;
     }
     public float getSoundMusicMod() { return modMusicSound; }

@@ -1826,7 +1826,7 @@ TilemapRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -1922352313
-  m_SortingLayer: 9
+  m_SortingLayer: 13
   m_SortingOrder: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
@@ -3572,7 +3572,7 @@ TilemapRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -1922352313
-  m_SortingLayer: 9
+  m_SortingLayer: 13
   m_SortingOrder: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
@@ -3748,8 +3748,10 @@ MonoBehaviour:
   Rarity: 0
   cubePrefab: {fileID: 8183168684075163520}
   cubeType: 6
+  lifeStyleSpawners: []
   weaponSpawners: []
   enemySpawners: []
+  ammoSpawners: []
 --- !u!1 &8287797300791830151
 GameObject:
   m_ObjectHideFlags: 0
@@ -10366,3 +10368,5 @@ MonoBehaviour:
   - {fileID: 5512522265425797337}
   maxSpawns: 100
   spawnDistance: 10
+  spawnChance: 1
+  lifeStyles: []

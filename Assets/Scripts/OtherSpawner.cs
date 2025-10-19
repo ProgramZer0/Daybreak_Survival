@@ -22,6 +22,8 @@ public class OtherSpawner : MonoBehaviour
             if (obj == null) continue;
 
             Weapon weaponInit = GetRandomByRarity(weapons);
+            if (weaponInit == null)
+                continue;
             GameObject spawn = obj.GetComponent<Spawner>().Spawn(weaponInit.prefab);
             if (spawn != null)
             {
@@ -34,6 +36,8 @@ public class OtherSpawner : MonoBehaviour
             if (obj == null) continue;
 
             Ammo ammoInit = ammos[Random.Range(0, ammos.Length)];
+            if (ammoInit == null)
+                continue;
             GameObject spawn = obj.GetComponent<Spawner>().Spawn(ammoInit.prefab);
 
             if (spawn != null)

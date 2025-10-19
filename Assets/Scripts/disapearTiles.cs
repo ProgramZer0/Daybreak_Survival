@@ -4,6 +4,13 @@ using UnityEngine.Tilemaps;
 public class disapearTiles : MonoBehaviour
 {
     [SerializeField] private LayerMask layersImpacted;
+    private GameManager GM;
+
+    private void Awake()
+    {
+        GM = FindFirstObjectByType<GameManager>();
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (IsInLayerMask(collision.gameObject))
@@ -11,7 +18,16 @@ public class disapearTiles : MonoBehaviour
             Color temp = GetComponent<Tilemap>().color;
             temp.a = .1f;
             GetComponent<Tilemap>().color = temp;
+            GM.inBuilding = true;
         }   
+    }
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (IsInLayerMask(collision.gameObject))
+        {
+            if(!GM.inBuilding)
+                GM.inBuilding = true;
+        }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -21,6 +37,7 @@ public class disapearTiles : MonoBehaviour
             Color temp = GetComponent<Tilemap>().color;
             temp.a = 1f;
             GetComponent<Tilemap>().color = temp;
+            GM.inBuilding = false;
         }   
     }
 

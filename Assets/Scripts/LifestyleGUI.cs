@@ -73,6 +73,7 @@ public class LifestyleGUI : MonoBehaviour
 
     public void DeleteAllPages()
     {
+        if (pages == null) return;
         foreach (GameObject obj in pages)
             Destroy(obj);
     }
