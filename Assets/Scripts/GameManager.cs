@@ -51,6 +51,7 @@ public class GameManager : MonoBehaviour
     private bool inMenu = true;
     private bool startedGame = false;
     private bool hitMMButton = false;
+    private bool isPlayingLate = false;
 
     public bool inBuilding = false;
 
@@ -301,9 +302,14 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator PlayLate(float time, float fade)
     {
-        Debug.Log($"wating for {time}");
-        yield return new WaitForSeconds(time);
-        PlayRandomEnvMusic(fade);
+        if (!isPlayingLate)
+        {
+            isPlayingLate = true;
+            Debug.Log($"wating for {time}");
+            yield return new WaitForSeconds(time);
+            PlayRandomEnvMusic(fade);
+            isPlayingLate = false;
+        }
     }
 
     private void PlayRandomEnvMusic(float fade)
