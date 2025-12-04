@@ -70,6 +70,11 @@ public class PlayerInterface : MonoBehaviour
     [SerializeField] private float baseAnimationFOV = 70f;
     [SerializeField] private float meleeAnimationRangeOffset = 0.3f;
     
+    [SerializeField] private float visionRange = 20f;
+    [SerializeField] private float visionFOV = 90f;
+    [SerializeField] private int visionRayCount = 15;
+    [SerializeField] private LayerMask wallMask;     
+    
     private Rigidbody2D body;
     private Direction facing = Direction.S;
     private bool attacking = false;
@@ -98,7 +103,10 @@ public class PlayerInterface : MonoBehaviour
     private float chaseTimer = 0;
     private float sprintTimer = 0;
     private pickup currentPick;
-
+    
+    private int visionFrameSkip = 3;
+    private int visionCounter = 0;
+    
     public float ModNormSpeed = 0f;
     public float ModSprintSpeed = 0f;
     public float ModCrouchSpeed = 0f;
@@ -199,6 +207,13 @@ public class PlayerInterface : MonoBehaviour
 
     private void Update()
     {
+
+        if (++visionCounter >= visionFrameSkip)
+        {
+            VisionCheckForZombies();
+            visionCounter = 0;
+        }
+    
         if (cannotMove)
             return;
 
@@ -292,6 +307,35 @@ public class PlayerInterface : MonoBehaviour
         return currentWeapon;
     }
     public bool GetSprinting() { return sprinting; }
+
+public void VisionCheckForZombies()
+{
+    float startAngle = -visionFOV * 0.5f;
+    float step = visionFOV / (visionRayCount - 1);
+
+    Vector2 facingDir = ((Vector2)gunPoss[(int)facing].transform.position - (Vector2)transform.position).normalized;
+
+    for (int i = 0; i < visionRayCount; i++)
+    {
+        float angle = startAngle + step * i;
+        Vector2 rayDir = Quaternion.Euler(0, 0, angle) * facingDir;
+
+        RaycastHit2D wallHit = Physics2D.Raycast(transform.position, rayDir, visionRange, wallMask);
+
+        float maxDist = wallHit ? wallHit.distance : visionRange;
+
+        RaycastHit2D[] zombieHits = Physics2D.RaycastAll(transform.position, rayDir, maxDist, zombieMask);
+
+        foreach (var hit in zombieHits)
+        {
+            if (hit.transform.TryGetComponent<RegularZombie>(out RegularZombie z))
+            {
+                z.ShowZombie();
+            }
+        }
+    }
+}
+
 
     private void FixedUpdate()
     {
