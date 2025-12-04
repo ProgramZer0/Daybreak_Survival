@@ -92,6 +92,8 @@ public class RegularZombie : EnemyBase
     private float stunTimer = 0f;
     private float soundTimer = 0f;
     private float Timer = 0f;
+    private float seenTimer = 0f;
+    private float seenResetTime = 5f;
     private bool lostLOS = false;
     private bool inHorde = false;
     private bool isSeen = false;
@@ -114,9 +116,13 @@ public class RegularZombie : EnemyBase
         distanceFromPlayer = Vector2.Distance(player.position, transform.position);
         if (distanceFromPlayer > activeRange) return;
 
-
-        if (hordeAssistTimer > 0f)
+         if (hordeAssistTimer > 0f)
             hordeAssistTimer -= Time.deltaTime * detectionIntervalFrames;
+
+        if (seenTimer > 0f)
+            seenTimer -= Time.deltaTime * detectionIntervalFrames;
+
+        if(seenTimer <= 0f) isSeen=false;
 
         if(nextSound == 0)
             nextSound = Random.Range(1, randomSoundInterval);
@@ -247,9 +253,11 @@ public class RegularZombie : EnemyBase
     
     public void ShowZombie()
     {
-        if(CheckIsVisiable())
-            return;
-            
+        isSeen=true;
+        seenTimer = seenResetTime;
+        
+        if(CheckIsVisiable()) return;
+
         Color spriteColor = spriteRenderer.color;
         spriteColor.a = 1f;
         spriteRenderer.color = spriteColor;

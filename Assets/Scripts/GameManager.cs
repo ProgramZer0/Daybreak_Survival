@@ -8,9 +8,6 @@ using NavMeshPlus.Components;
 
 public class GameManager : MonoBehaviour
 {
-    //[Header("Save Settings")]
-
-
     [Header("Used Game objects")]
     [SerializeField] private MainGUIController GUI;
     [SerializeField] private LifeStyleController LSC;
@@ -45,6 +42,8 @@ public class GameManager : MonoBehaviour
 
     private static string SavePath => Path.Combine(Application.persistentDataPath, "playerSave.json");
 
+    private Coroutine buildingFade = null;
+
     private float cycleTimer = 0;
     private float deathTimer = 0f;
     private bool isDay = true;
@@ -54,6 +53,8 @@ public class GameManager : MonoBehaviour
     private bool isPlayingLate = false;
 
     public bool inBuilding = false;
+    public bool enteringBuilding=false;
+    public bool exitingBuilding=false;
 
     private void Start()
     {
@@ -121,6 +122,7 @@ public class GameManager : MonoBehaviour
         {
             EndGameFail();
         }
+
         float deathProgress = Mathf.Clamp01(deathTimer / deathTime); 
         if (deathProgress > colorStart)
         {
@@ -154,9 +156,8 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        if (inBuilding)
-            isDay = false;
-
+        if (inBuilding) { return; }
+        
         if (isDay)
         {
             float lightVal = Mathf.Lerp(nightDarkness, daylightMax, Mathf.Sin(progress * Mathf.PI));
@@ -166,6 +167,54 @@ public class GameManager : MonoBehaviour
         {
             daylight.intensity = nightDarkness;
         }
+    }
+
+
+    public void EnteringBuilding()
+    {
+        inBuilding = true;
+        StartLightingFade(nightDarkness, 0.35f, true);
+    }
+
+    public void ExitingBuilding()
+    {
+        float outdoorLight = GetCurrentOutdoorIntensity();
+        StartLightingFade(outdoorLight, 0.35f, false);
+    }
+
+    private float GetCurrentOutdoorIntensity()
+    {
+        if (!isDay)
+            return nightDarkness;
+
+        float cycleDuration = daylightTimeSec;
+        float progress = cycleTimer / cycleDuration;   // between 0–1
+        float val = Mathf.Lerp(nightDarkness, daylightMax, Mathf.Sin(progress * Mathf.PI));
+
+        return val;
+    }
+    private void StartLightingFade(float targetIntensity, float duration, bool goingIn)
+    {
+        if (buildingFade != null)
+            StopCoroutine(buildingFade);
+
+        buildingFade = StartCoroutine(FadeLight(targetIntensity, duration, goingIn));
+    }
+
+    private IEnumerator FadeLight(float target, float duration, bool _isBuilding)
+    {
+        float start = daylight.intensity;
+        float t = 0f;
+
+        while (t < duration)
+        {
+            daylight.intensity = Mathf.Lerp(start, target, t / duration);
+            t += Time.deltaTime;
+            yield return null;
+        }
+
+        daylight.intensity = target;
+        isBuilding = _isBuilding;
     }
 
     public void MainMenu()

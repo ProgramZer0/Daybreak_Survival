@@ -1,17 +1,21 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class disapearTiles : MonoBehaviour
+public class BuildingLight : MonoBehaviour
 {
     [SerializeField] private LayerMask layersImpacted;
+    private GameManager GM;
+
+    private void Awake()
+    {
+        GM = FindFirstObjectByType<GameManager>();
+    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (IsInLayerMask(collision.gameObject))
         {
-            Color temp = GetComponent<Tilemap>().color;
-            temp.a = .1f;
-            GetComponent<Tilemap>().color = temp;
+            GM.EnteringBuilding();
         }   
     }
 
@@ -19,9 +23,7 @@ public class disapearTiles : MonoBehaviour
     {
         if (IsInLayerMask(collision.gameObject))
         {
-            Color temp = GetComponent<Tilemap>().color;
-            temp.a = 1f;
-            GetComponent<Tilemap>().color = temp;
+            GM.ExitingBuilding();
         }   
     }
 
