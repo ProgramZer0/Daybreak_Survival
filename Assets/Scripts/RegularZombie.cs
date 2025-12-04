@@ -94,7 +94,8 @@ public class RegularZombie : EnemyBase
     private float Timer = 0f;
     private bool lostLOS = false;
     private bool inHorde = false;
-
+    private bool isSeen = false;
+    
     private void Awake()
     {
         frameOffset = Random.Range(0, detectionIntervalFrames);
@@ -134,6 +135,9 @@ public class RegularZombie : EnemyBase
             playerModLoudness = playerInterface.ModLoudness;
             playerModSeeRange = playerInterface.ModEnemySeeRange;
 
+            if(!isSeenm && CheckIsVisiable())
+                HideZombie();
+            
             Timer = 0;
             if (CountnearbyZombies(smallestHorde))
                 inHorde = true;
@@ -233,6 +237,26 @@ public class RegularZombie : EnemyBase
             UpdateAnimations(Vector2.zero);
         }
     }
+    
+    private void HideZombie()
+    {
+        Color spriteColor = spriteRenderer.color;
+        spriteColor.a = 0f;
+        spriteRenderer.color = spriteColor;
+    }
+    
+    public void ShowZombie()
+    {
+        if(CheckIsVisiable())
+            return;
+            
+        Color spriteColor = spriteRenderer.color;
+        spriteColor.a = 1f;
+        spriteRenderer.color = spriteColor;
+    }
+
+    private bool CheckIsVisiable() { return spriteRenderer.color.a >= 1f; }
+        
     public override void TakeDamage(float damage, bool _isStunned = false)
     {
         health -= damage;
