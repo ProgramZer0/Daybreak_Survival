@@ -214,7 +214,7 @@ public class GameManager : MonoBehaviour
         }
 
         daylight.intensity = target;
-        isBuilding = _isBuilding;
+        inBuilding = _isBuilding;
     }
 
     public void MainMenu()
