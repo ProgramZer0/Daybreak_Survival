@@ -4334,7 +4334,6 @@ Transform:
   - {fileID: 8863347278689936289}
   - {fileID: 6797779326499580266}
   - {fileID: 5328324544535136001}
-  - {fileID: 8554675379412615147}
   - {fileID: 3232401835969150641}
   - {fileID: 5228520124621559248}
   - {fileID: 705667164094971245}
@@ -15712,76 +15711,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5517323624125557579, guid: 03861c5f0ce67534ca22ff262fe2c29a, type: 3}
   m_PrefabInstance: {fileID: 125237535288078999}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &164545067484738745
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 562777708739963651}
-    m_Modifications:
-    - target: {fileID: 3060035025305526953, guid: 9d463be8538d51d43807ccc627cb6987, type: 3}
-      propertyPath: m_Name
-      value: Furniture2_12
-      objectReference: {fileID: 0}
-    - target: {fileID: 8426475915677223762, guid: 9d463be8538d51d43807ccc627cb6987, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 8426475915677223762, guid: 9d463be8538d51d43807ccc627cb6987, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 8426475915677223762, guid: 9d463be8538d51d43807ccc627cb6987, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -7.028
-      objectReference: {fileID: 0}
-    - target: {fileID: 8426475915677223762, guid: 9d463be8538d51d43807ccc627cb6987, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 8.567
-      objectReference: {fileID: 0}
-    - target: {fileID: 8426475915677223762, guid: 9d463be8538d51d43807ccc627cb6987, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8426475915677223762, guid: 9d463be8538d51d43807ccc627cb6987, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8426475915677223762, guid: 9d463be8538d51d43807ccc627cb6987, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8426475915677223762, guid: 9d463be8538d51d43807ccc627cb6987, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8426475915677223762, guid: 9d463be8538d51d43807ccc627cb6987, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8426475915677223762, guid: 9d463be8538d51d43807ccc627cb6987, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8426475915677223762, guid: 9d463be8538d51d43807ccc627cb6987, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8426475915677223762, guid: 9d463be8538d51d43807ccc627cb6987, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 9d463be8538d51d43807ccc627cb6987, type: 3}
---- !u!4 &8554675379412615147 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 8426475915677223762, guid: 9d463be8538d51d43807ccc627cb6987, type: 3}
-  m_PrefabInstance: {fileID: 164545067484738745}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &219658487296848887
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16692,7 +16621,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4862909382447907151, guid: d45f0d5178a1e004b9a14f93c24f20c5, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.90999997
+      value: 0.29000002
       objectReference: {fileID: 0}
     - target: {fileID: 4862909382447907151, guid: d45f0d5178a1e004b9a14f93c24f20c5, type: 3}
       propertyPath: m_LocalPosition.z
@@ -18334,13 +18263,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 562777708739963651}
     m_Modifications:
+    - target: {fileID: 1295438185101800710, guid: 5e44762b8d1cee0498f569bcb0384846, type: 3}
+      propertyPath: m_Size.y
+      value: 1.5867254
+      objectReference: {fileID: 0}
+    - target: {fileID: 1295438185101800710, guid: 5e44762b8d1cee0498f569bcb0384846, type: 3}
+      propertyPath: m_Offset.y
+      value: -0.11388773
+      objectReference: {fileID: 0}
     - target: {fileID: 1957231408573850886, guid: 5e44762b8d1cee0498f569bcb0384846, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 6.671
+      value: 6.6
       objectReference: {fileID: 0}
     - target: {fileID: 1957231408573850886, guid: 5e44762b8d1cee0498f569bcb0384846, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -10.348
+      value: -10.49
       objectReference: {fileID: 0}
     - target: {fileID: 1957231408573850886, guid: 5e44762b8d1cee0498f569bcb0384846, type: 3}
       propertyPath: m_LocalPosition.z
@@ -18378,6 +18315,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Furniture2_49 (14)
       objectReference: {fileID: 0}
+    - target: {fileID: 7677207206086775858, guid: 5e44762b8d1cee0498f569bcb0384846, type: 3}
+      propertyPath: m_SortingLayer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7677207206086775858, guid: 5e44762b8d1cee0498f569bcb0384846, type: 3}
+      propertyPath: m_SortingLayerID
+      value: -401249509
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -18402,7 +18347,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4862909382447907151, guid: d45f0d5178a1e004b9a14f93c24f20c5, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.22000003
+      value: -0.84
       objectReference: {fileID: 0}
     - target: {fileID: 4862909382447907151, guid: d45f0d5178a1e004b9a14f93c24f20c5, type: 3}
       propertyPath: m_LocalPosition.z
