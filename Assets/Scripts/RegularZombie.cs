@@ -70,7 +70,7 @@ public class RegularZombie : EnemyBase
     [SerializeField] private Sound[] zombieSounds;
     [SerializeField] private Sound[] hurtSounds;
     [SerializeField] private Sound[] foundSounds;
-    [SerializeField] private GameObject walkingSound;
+    //[SerializeField] private GameObject walkingSound;
 
     private int frameOffset;
     private float idleTimer;
@@ -131,7 +131,7 @@ public class RegularZombie : EnemyBase
         if (soundTimer >= nextSound)
         {
             nextSound = 0;
-            PlaySound(zombieSounds[Random.Range(0, zombieSounds.Length)], Random.Range(0, 0.3f));
+            //PlaySound(zombieSounds[Random.Range(0, zombieSounds.Length)], Random.Range(0, 0.3f));
         }
 
         if (Timer >= 0)
@@ -327,10 +327,13 @@ public class RegularZombie : EnemyBase
             {
                 
             }
+
+            /*
             if (inHorde)
                 walkingSound.SetActive(true);
             else
                 walkingSound.SetActive(false);
+            */
 
             facingDir = moveDir.normalized;
         }
@@ -342,7 +345,7 @@ public class RegularZombie : EnemyBase
                 activeDirectionObj = null;
             }
 
-            walkingSound.SetActive(false);
+            //walkingSound.SetActive(false);
             mainSprite.SetActive(true);
 
             if (Mathf.Abs(facingDir.x) > Mathf.Abs(facingDir.y))
@@ -360,7 +363,7 @@ public class RegularZombie : EnemyBase
     {
         int count = 0;
         count = Physics2D.OverlapCircleAll(transform.position, hordeWalkingDistance, LayerMask.GetMask("Enemies")).Length;
-        Debug.Log("zombie Count is " + count);
+        //Debug.Log("zombie Count is " + count);
         return count >= smallestHorde;
     }
 
