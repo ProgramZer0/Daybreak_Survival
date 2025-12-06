@@ -43,7 +43,7 @@ public class WeatherManager : MonoBehaviour
         StartCoroutine(WeatherCycleRoutine());
     }
 
-    private void StartWeather()
+    private void StopWeather()
     {
         StopCoroutine(WeatherCycleRoutine());
     }
@@ -134,7 +134,7 @@ public class WeatherManager : MonoBehaviour
 
             // Play sound slightly delayed
             yield return new WaitForSeconds(Random.Range(0.2f, 1f));
-            thunderSound.Play();
+            SM.Play("thunder");
         }
     }
 }

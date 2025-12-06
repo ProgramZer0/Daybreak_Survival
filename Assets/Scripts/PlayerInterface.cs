@@ -324,7 +324,7 @@ public void VisionCheckForZombies()
 
         float maxDist = wallHit ? wallHit.distance : visionRange;
 
-        RaycastHit2D[] zombieHits = Physics2D.RaycastAll(transform.position, rayDir, maxDist, zombieMask);
+        RaycastHit2D[] zombieHits = Physics2D.RaycastAll(transform.position, rayDir, maxDist, EnemyLayer);
 
         foreach (var hit in zombieHits)
         {

@@ -141,7 +141,7 @@ public class RegularZombie : EnemyBase
             playerModLoudness = playerInterface.ModLoudness;
             playerModSeeRange = playerInterface.ModEnemySeeRange;
 
-            if(!isSeenm && CheckIsVisiable())
+            if(!isSeen && CheckIsVisiable())
                 HideZombie();
             
             Timer = 0;
