@@ -4,6 +4,9 @@ using UnityEngine.Tilemaps;
 public class BuildingLight : MonoBehaviour
 {
     [SerializeField] private LayerMask layersImpacted;
+    [SerializeField] private SpriteMask mask;
+    [SerializeField] private IndoorBlackoutFader blackout;
+
     private GameManager GM;
 
     private void Awake()
@@ -16,6 +19,8 @@ public class BuildingLight : MonoBehaviour
         if (IsInLayerMask(collision.gameObject))
         {
             GM.EnteringBuilding();
+            mask.enabled = true;
+            blackout.FadeIn();
         }   
     }
 
@@ -24,6 +29,8 @@ public class BuildingLight : MonoBehaviour
         if (IsInLayerMask(collision.gameObject))
         {
             GM.ExitingBuilding();
+            mask.enabled = false;
+            blackout.FadeOut();
         }   
     }
 
