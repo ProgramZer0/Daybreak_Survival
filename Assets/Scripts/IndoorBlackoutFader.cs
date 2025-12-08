@@ -15,7 +15,6 @@ public class IndoorBlackoutFader : MonoBehaviour
     private void Awake()
     {
         sr = GetComponent<SpriteRenderer>();
-        sr.color = new Color(0, 0, 0, 0);
     }
 
     public void FadeIn()
