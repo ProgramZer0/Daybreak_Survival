@@ -15,6 +15,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private PlayerInterface player;
     [SerializeField] private SpriteRenderer playerRenderer;
     [SerializeField] private EnemyController enemyController;
+
+    [SerializeField] private WeatherManager WM;
     [SerializeField] private OtherSpawner OS;
     [SerializeField] private SoundManager SM;
     [SerializeField] private Light2D daylight;

@@ -1,7 +1,5 @@
 using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
-
 
 public enum WeatherType
 {
@@ -29,77 +27,183 @@ public class WeatherManager : MonoBehaviour
     public float minWeatherDuration = 60f;
     public float maxWeatherDuration = 240f;
 
+    [Header("Audio Settings")]
+    [Range(0f, 1f)] public float indoorVolumeMultiplier = 0.2f;
+    [Range(0f, 1f)] public float outdoorVolumeMultiplier = 1f;
+
     public WeatherType currentWeather = WeatherType.Clear;
 
     private Coroutine thunderRoutine;
+    private Coroutine weatherDurationRoutine;
+
+    private Coroutine audioFadeRoutine = null;
+    private float currentVolumeMultiplier = 1f;
 
     private void Awake()
     {
         instance = this;
     }
 
-    private void StartWeather()
+    // ----------------------------
+    // PUBLIC API
+    // ----------------------------
+
+    // Start completely random weather, random duration
+    public void StartWeather()
     {
-        StartCoroutine(WeatherCycleRoutine());
+        StartWeatherInternal(null, null);
     }
 
-    private void StopWeather()
+    // Start specific weather, random duration
+    public void StartWeather(WeatherType type)
     {
-        StopCoroutine(WeatherCycleRoutine());
+        StartWeatherInternal(type, null);
     }
 
-    private IEnumerator WeatherCycleRoutine()
+    public void StartWeather(float duration)
     {
-        while (true)
+        StartWeatherInternal(null, duration);
+    }
+
+    // Start specific weather, defined duration
+    public void StartWeather(WeatherType type, float duration)
+    {
+        StartWeatherInternal(type, duration);
+    }
+
+    // Stop current weather
+    public void StopWeather()
+    {
+        if (weatherDurationRoutine != null)
         {
-            // Wait random time between weather changes
-            float t = Random.Range(minWeatherDuration, maxWeatherDuration);
-            yield return new WaitForSeconds(t);
-
-            ChooseRandomWeather();
+            StopCoroutine(weatherDurationRoutine);
+            weatherDurationRoutine = null;
         }
+
+        SetWeather(WeatherType.Clear);
     }
 
-    private void ChooseRandomWeather()
+    // Toggle particle visibility (for indoor/outdoor)
+    public void UpdateVisibility(bool inside)
     {
-        // Weighted random weather
+        bool showParticles = !inside;
+
+        var e1 = lightRainFX.emission;
+        var e2 = heavyRainFX.emission;
+        var e3 = snowFX.emission;
+
+        e1.enabled = showParticles;
+        e2.enabled = showParticles;
+        e3.enabled = showParticles;
+    }
+
+    // Update sound volume based on indoor/outdoor
+    public void FadeAudio(float targetMultiplier, float duration = 0.5f)
+    {
+        // Stop any currently running fade to avoid overlapping
+        if (audioFadeRoutine != null)
+        {
+            StopCoroutine(audioFadeRoutine);
+            audioFadeRoutine = null;
+        }
+
+        audioFadeRoutine = StartCoroutine(FadeAudioRoutine(targetMultiplier, duration));
+    }
+
+
+
+    // Optional: smooth fade of audio
+    public void FadeAudio(float targetMultiplier, float duration = 0.5f)
+    {
+        StartCoroutine(FadeAudioRoutine(targetMultiplier, duration));
+    }
+
+    private IEnumerator FadeAudioRoutine(float targetMultiplier, float duration)
+    {
+        float startMultiplier = currentVolumeMultiplier;
+        float t = 0f;
+
+        while (t < duration)
+        {
+            t += Time.deltaTime;
+            currentVolumeMultiplier = Mathf.Lerp(startMultiplier, targetMultiplier, t / duration);
+
+            SM.SetSoundVolume("thunder", currentVolumeMultiplier);
+            SM.SetSoundVolume("rainLoop", currentVolumeMultiplier);
+            SM.SetSoundVolume("snowLoop", currentVolumeMultiplier);
+
+            yield return null;
+        }
+
+        currentVolumeMultiplier = targetMultiplier;
+
+        SM.SetSoundVolume("thunder", currentVolumeMultiplier);
+        SM.SetSoundVolume("rainLoop", currentVolumeMultiplier);
+        SM.SetSoundVolume("snowLoop", currentVolumeMultiplier);
+
+        audioFadeRoutine = null;
+    }
+
+    // ----------------------------
+    // INTERNAL
+    // ----------------------------
+
+    private void StartWeatherInternal(WeatherType? specificType, float? specificDuration)
+    {
+        if (weatherDurationRoutine != null)
+        {
+            StopCoroutine(weatherDurationRoutine);
+            weatherDurationRoutine = null;
+        }
+
+        WeatherType chosen = specificType.HasValue ? specificType.Value : ChooseRandomWeather();
+        SetWeather(chosen);
+
+        float duration = specificDuration.HasValue ? specificDuration.Value : Random.Range(minWeatherDuration, maxWeatherDuration);
+        weatherDurationRoutine = StartCoroutine(WeatherDurationRoutine(duration));
+    }
+
+    private IEnumerator WeatherDurationRoutine(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+
+        SetWeather(WeatherType.Clear);
+
+        weatherDurationRoutine = null;
+    }
+
+    private WeatherType ChooseRandomWeather()
+    {
         int roll = Random.Range(0, 100);
 
-        WeatherType newWeather;
-
-        if (roll < 60) newWeather = WeatherType.Clear;               // 60%
-        else if (roll < 75) newWeather = WeatherType.LightRain;      // +15%
-        else if (roll < 87) newWeather = WeatherType.HeavyRain;      // +12%
-        else if (roll < 95) newWeather = WeatherType.Snow;           // +8%
-        else newWeather = WeatherType.Thunderstorm;                  // +5%
-
-        SetWeather(newWeather);
+        if (roll < 60) return WeatherType.Clear;
+        if (roll < 75) return WeatherType.LightRain;
+        if (roll < 87) return WeatherType.HeavyRain;
+        if (roll < 95) return WeatherType.Snow;
+        return WeatherType.Thunderstorm;
     }
 
     public void SetWeather(WeatherType weather)
     {
+
         if (currentWeather == weather) return;
 
         currentWeather = weather;
 
-        // Stop everything
-        lightRainFX.Stop();
-        heavyRainFX.Stop();
-        snowFX.Stop();
+        lightRainFX.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+        heavyRainFX.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+        snowFX.Stop(true, ParticleSystemStopBehavior.StopEmitting);
 
         if (thunderRoutine != null)
         {
             StopCoroutine(thunderRoutine);
             thunderRoutine = null;
         }
+
         thunderLight.gameObject.SetActive(false);
 
-        // Enable new effect
         switch (weather)
         {
-            case WeatherType.Clear:
-                break;
-
             case WeatherType.LightRain:
                 lightRainFX.Play();
                 break;
@@ -125,16 +229,13 @@ public class WeatherManager : MonoBehaviour
         {
             yield return new WaitForSeconds(Random.Range(4f, 12f));
 
-            // Flash light
             thunderLight.gameObject.SetActive(true);
             thunderLight.intensity = Random.Range(2f, 5f);
-
             yield return new WaitForSeconds(0.1f);
             thunderLight.gameObject.SetActive(false);
 
-            // Play sound slightly delayed
             yield return new WaitForSeconds(Random.Range(0.2f, 1f));
-            SM.Play("thunder");
+            SM.Play("thunder", currentVolumeMultiplier);
         }
     }
 }

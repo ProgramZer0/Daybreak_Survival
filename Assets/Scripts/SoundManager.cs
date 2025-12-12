@@ -295,6 +295,16 @@ public class SoundManager : MonoBehaviour
                 s.source.volume = s.volume * modSound;
         }
     }
+
+    public void SetSoundVolume(string name, float multiplier)
+    {
+        Sound s = Array.Find(sounds, sound => sound.name.Equals(name, StringComparison.OrdinalIgnoreCase));
+        if (s == null) return;
+    
+        float finalVolume = s.volume * (s.isMusic ? modMusicSound : modSound) * multiplier;
+        s.source.volume = finalVolume;
+    }
+
     public void SetSoundMusicMod(float vol)
     {
         Debug.Log("setting music");
