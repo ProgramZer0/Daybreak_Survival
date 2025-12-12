@@ -101,7 +101,7 @@ public class RegularZombie : EnemyBase
     private void Awake()
     {
         frameOffset = Random.Range(0, detectionIntervalFrames);
-        //walkingSound.GetComponent<AudioSource>().volume = walkingSound.GetComponent<AudioSource>().volume * SM.GetSoundMod();
+        walkingSound.GetComponent<AudioSource>().volume = walkingSound.GetComponent<AudioSource>().volume * SM.GetSoundMod();
     }
     private bool ShouldDetectThisFrame()
     {
@@ -131,7 +131,7 @@ public class RegularZombie : EnemyBase
         if (soundTimer >= nextSound)
         {
             nextSound = 0;
-            //PlaySound(zombieSounds[Random.Range(0, zombieSounds.Length)], Random.Range(0, 0.3f));
+            PlaySound(zombieSounds[Random.Range(0, zombieSounds.Length)], Random.Range(0, 0.3f));
         }
 
         if (Timer >= 0)
@@ -323,17 +323,9 @@ public class RegularZombie : EnemyBase
                 newActive.SetActive(true);
                 activeDirectionObj = newActive;
             }
-            if(!inHorde)
-            {
-                
-            }
 
-            /*
-            if (inHorde)
-                walkingSound.SetActive(true);
-            else
-                walkingSound.SetActive(false);
-            */
+            bool isMoving = (moveDir.sqrMagnitude > moveThreshold) && (distanceFromPlayer < hearingActiveDistance);
+            walkingSound.SetActive(isMoving);
 
             facingDir = moveDir.normalized;
         }
@@ -345,7 +337,7 @@ public class RegularZombie : EnemyBase
                 activeDirectionObj = null;
             }
 
-            //walkingSound.SetActive(false);
+            walkingSound.SetActive(false); 
             mainSprite.SetActive(true);
 
             if (Mathf.Abs(facingDir.x) > Mathf.Abs(facingDir.y))

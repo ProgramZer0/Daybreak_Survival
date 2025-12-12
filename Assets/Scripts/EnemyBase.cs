@@ -14,6 +14,7 @@ public abstract class EnemyBase : MonoBehaviour, IEnemy
     public float health = 5f;
     public float damage = 1;
     public float damageTime = 3f;
+    protected float hearingActiveDistance = 30f;
     public bool isDay = true;
     public AudioSource AD;
     public Sound deathSound;
@@ -85,6 +86,8 @@ public abstract class EnemyBase : MonoBehaviour, IEnemy
     }
     private IEnumerator PlaySoundWait(Sound s, float TIME)
     {
+        if (Vector2.Distance(player.position, transform.position) > hearingActiveDistance)
+            yield break; 
         yield return new WaitForSeconds(TIME);
         s.source = AD;
         s.source.clip = s.clip;
