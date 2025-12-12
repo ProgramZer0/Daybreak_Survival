@@ -21,7 +21,7 @@ TagManager:
   - IgnoreNavMesh
   - HitBox
   - IgnoreVision
-  - 
+  - lightmask
   - 
   - 
   - 
@@ -68,6 +68,12 @@ TagManager:
   - name: Particle
     uniqueID: 1538829915
     locked: 0
+  - name: outsidelamps
+    uniqueID: 1466252559
+    locked: 0
+  - name: walls
+    uniqueID: 3563940173
+    locked: 0
   - name: Furniture Block
     uniqueID: 3893717787
     locked: 0
@@ -79,6 +85,9 @@ TagManager:
     locked: 0
   - name: Blocking
     uniqueID: 2372614983
+    locked: 0
+  - name: blackout
+    uniqueID: 900102977
     locked: 0
   m_RenderingLayers:
   - Default

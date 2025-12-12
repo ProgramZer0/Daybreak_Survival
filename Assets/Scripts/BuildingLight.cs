@@ -5,13 +5,14 @@ public class BuildingLight : MonoBehaviour
 {
     [SerializeField] private LayerMask layersImpacted;
     [SerializeField] private SpriteMask mask;
-    [SerializeField] private IndoorBlackoutFader blackout;
 
     private GameManager GM;
+    private IndoorBlackoutFader blackout;
 
     private void Awake()
     {
         GM = FindFirstObjectByType<GameManager>();
+        blackout = FindFirstObjectByType<IndoorBlackoutFader>();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

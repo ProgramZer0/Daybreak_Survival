@@ -169,6 +169,7 @@ public class MainGUIController : MonoBehaviour
     {
         SetInUI();
         pauseMenu.SetActive(true);
+        pauseMenu.GetComponent<UIFader>().FadeIn();
         Time.timeScale = 0f;
     }
     public void OpenSettingsMenuPM()
