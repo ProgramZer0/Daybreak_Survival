@@ -70,7 +70,7 @@ public class RegularZombie : EnemyBase
     [SerializeField] private Sound[] zombieSounds;
     [SerializeField] private Sound[] hurtSounds;
     [SerializeField] private Sound[] foundSounds;
-    //[SerializeField] private GameObject walkingSound;
+    [SerializeField] private GameObject walkingSound;
 
     private int frameOffset;
     private float idleTimer;

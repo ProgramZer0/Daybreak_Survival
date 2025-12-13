@@ -109,15 +109,6 @@ public class WeatherManager : MonoBehaviour
 
         audioFadeRoutine = StartCoroutine(FadeAudioRoutine(targetMultiplier, duration));
     }
-
-
-
-    // Optional: smooth fade of audio
-    public void FadeAudio(float targetMultiplier, float duration = 0.5f)
-    {
-        StartCoroutine(FadeAudioRoutine(targetMultiplier, duration));
-    }
-
     private IEnumerator FadeAudioRoutine(float targetMultiplier, float duration)
     {
         float startMultiplier = currentVolumeMultiplier;
@@ -235,7 +226,7 @@ public class WeatherManager : MonoBehaviour
             thunderLight.gameObject.SetActive(false);
 
             yield return new WaitForSeconds(Random.Range(0.2f, 1f));
-            SM.Play("thunder", currentVolumeMultiplier);
+            SM.Play("thunder");
         }
     }
 }

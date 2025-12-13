@@ -15324,6 +15324,7 @@ GameObject:
   - component: {fileID: 1754269202}
   - component: {fileID: 1754269203}
   - component: {fileID: 1754269204}
+  - component: {fileID: 1754269205}
   m_Layer: 0
   m_Name: Enviroment
   m_TagString: Untagged
@@ -15366,6 +15367,7 @@ MonoBehaviour:
   player: {fileID: 868446138}
   playerRenderer: {fileID: 935512252}
   enemyController: {fileID: 1754269202}
+  WM: {fileID: 1754269205}
   OS: {fileID: 1754269204}
   SM: {fileID: 276416484}
   daylight: {fileID: 5045635640186557265}
@@ -15484,6 +15486,28 @@ MonoBehaviour:
   - {fileID: 11400000, guid: da486f1af6ab0ac41b74d0df57af3ba4, type: 2}
   - {fileID: 11400000, guid: a7a81411cf397c14baa90a5ec22b338b, type: 2}
   TB: {fileID: 4724984432564986264}
+--- !u!114 &1754269205
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1754269197}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2023493111964a443a703e8c810abeab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeatherManager
+  lightRainFX: {fileID: 0}
+  heavyRainFX: {fileID: 0}
+  snowFX: {fileID: 0}
+  thunderLight: {fileID: 0}
+  SM: {fileID: 276416484}
+  minWeatherDuration: 60
+  maxWeatherDuration: 240
+  indoorVolumeMultiplier: 0.2
+  outdoorVolumeMultiplier: 1
+  currentWeather: 0
 --- !u!1 &1765203492
 GameObject:
   m_ObjectHideFlags: 0
