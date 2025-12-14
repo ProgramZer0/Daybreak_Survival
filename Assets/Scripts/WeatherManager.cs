@@ -20,7 +20,7 @@ public class WeatherManager : MonoBehaviour
     public ParticleSystem snowFX;
 
     [Header("Thunderstorm")]
-    public Light thunderLight;
+    public GameObject thunderLight;
     public SoundManager SM;
 
     [Header("Timing")]
@@ -221,7 +221,6 @@ public class WeatherManager : MonoBehaviour
             yield return new WaitForSeconds(Random.Range(4f, 12f));
 
             thunderLight.gameObject.SetActive(true);
-            thunderLight.intensity = Random.Range(2f, 5f);
             yield return new WaitForSeconds(0.1f);
             thunderLight.gameObject.SetActive(false);
 
