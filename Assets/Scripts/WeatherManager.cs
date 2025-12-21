@@ -148,6 +148,7 @@ public class WeatherManager : MonoBehaviour
         }
 
         WeatherType chosen = specificType.HasValue ? specificType.Value : ChooseRandomWeather();
+        Debug.Log("setting weather as " + chosen);
         SetWeather(chosen);
 
         float duration = specificDuration.HasValue ? specificDuration.Value : Random.Range(minWeatherDuration, maxWeatherDuration);
@@ -167,11 +168,11 @@ public class WeatherManager : MonoBehaviour
     {
         int roll = Random.Range(0, 100);
 
-        if (roll < 60) return WeatherType.Clear;
-        if (roll < 75) return WeatherType.LightRain;
-        if (roll < 87) return WeatherType.HeavyRain;
-        if (roll < 95) return WeatherType.Snow;
-        return WeatherType.Thunderstorm;
+        if (roll < 60) return WeatherType.Clear; //60%
+        if (roll < 75) return WeatherType.LightRain; //15%
+        if (roll < 87) return WeatherType.HeavyRain; //12%
+        if (roll < 95) return WeatherType.Snow; //8%
+        return WeatherType.Thunderstorm; //5%
     }
 
     public void SetWeather(WeatherType weather)

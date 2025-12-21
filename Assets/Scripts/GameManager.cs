@@ -219,6 +219,36 @@ public class GameManager : MonoBehaviour
         inBuilding = _isBuilding;
     }
 
+    [ContextMenu("Clear Weather")]
+    public void ClearWeather()
+    {
+        WM.StartWeather(WeatherType.Clear, 60);
+    }
+
+    [ContextMenu("light rain Weather")]
+    public void StartLightRain()
+    {
+        WM.StartWeather(WeatherType.LightRain, 60);
+    }
+
+    [ContextMenu("Heavy rain Weather")]
+    public void StartHeavyRain()
+    {
+        WM.StartWeather(WeatherType.HeavyRain, 60);
+    }
+
+    [ContextMenu("Snow Weather")]
+    public void StartSnow()
+    {
+        WM.StartWeather(WeatherType.Snow, 60);
+    }
+
+    [ContextMenu("Thunderstorm Weather")]
+    public void StartThunderstorm()
+    {
+        WM.StartWeather(WeatherType.Thunderstorm, 60);
+    }
+
     public void MainMenu()
     {
         if (inMenu) return;
