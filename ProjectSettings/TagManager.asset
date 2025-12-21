@@ -86,6 +86,9 @@ TagManager:
   - name: Blocking
     uniqueID: 2372614983
     locked: 0
+  - name: Weather
+    uniqueID: 2398887481
+    locked: 0
   - name: blackout
     uniqueID: 900102977
     locked: 0

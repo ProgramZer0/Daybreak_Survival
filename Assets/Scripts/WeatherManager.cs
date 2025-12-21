@@ -219,13 +219,14 @@ public class WeatherManager : MonoBehaviour
     {
         while (true)
         {
-            yield return new WaitForSeconds(Random.Range(4f, 12f));
+            yield return new WaitForSeconds(Random.Range(6f, 30f));
+            
 
             thunderLight.gameObject.SetActive(true);
             yield return new WaitForSeconds(0.1f);
             thunderLight.gameObject.SetActive(false);
 
-            yield return new WaitForSeconds(Random.Range(0.2f, 1f));
+            yield return new WaitForSeconds(Random.Range(0.1f, 1f));
             SM.Play("thunder");
         }
     }

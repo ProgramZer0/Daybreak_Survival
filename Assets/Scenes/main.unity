@@ -7111,7 +7111,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &219312960
 Transform:
   m_ObjectHideFlags: 0
@@ -7172,8 +7172,8 @@ ParticleSystemRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -1896079815
+  m_SortingLayer: 16
   m_SortingOrder: 0
   m_RenderMode: 0
   m_MeshDistribution: 0
@@ -7224,7 +7224,7 @@ ParticleSystem:
   emitterVelocityMode: 1
   looping: 1
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
   startDelay:
@@ -7397,7 +7397,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 0.7117337, g: 0.78397757, b: 0.98490566, a: 0.43137255}
+      maxColor: {r: 0.48867923, g: 0.6274663, b: 1, a: 0.5803922}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -7778,7 +7778,7 @@ ParticleSystem:
         m_RotationOrder: 4
     randomizeRotationDirection: 0
     gravitySource: 1
-    maxNumParticles: 1000
+    maxNumParticles: 10000
     customEmitterVelocity: {x: 0, y: 0, z: 0}
     size3D: 0
     rotation3D: 0
@@ -11945,6 +11945,7 @@ MonoBehaviour:
   targetCamera: {fileID: 278462050}
   widthMultiplier: 2
   heightMultiplier: 2
+  density: 1.5
 --- !u!1 &241160422
 GameObject:
   m_ObjectHideFlags: 0
@@ -11997,7 +11998,7 @@ MonoBehaviour:
   m_Intensity: 0.06
   m_LightVolumeIntensity: 1
   m_LightVolumeEnabled: 0
-  m_ApplyToSortingLayers: 00000000a98429d7ff0de292bb474d99473b6b8dafaffb9e3f08c8e55baeb85b9b930978ef75a3254da470021b6b15e8cdb9f24fb5ddc771417ba6354d696dd40f3d6557
+  m_ApplyToSortingLayers: 00000000a98429d7ff0de292bb474d99473b6b8dafaffb9e3f08c8e55baeb85b9b930978ef75a3254da470021b6b15e8cdb9f24fb5ddc771417ba6354d696dd40f3d6557391efc8e
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0
@@ -13558,7 +13559,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &582802522
 Transform:
   m_ObjectHideFlags: 0
@@ -13619,8 +13620,8 @@ ParticleSystemRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -1896079815
+  m_SortingLayer: 16
   m_SortingOrder: 0
   m_RenderMode: 0
   m_MeshDistribution: 0
@@ -13671,7 +13672,7 @@ ParticleSystem:
   emitterVelocityMode: 1
   looping: 1
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
   startDelay:
@@ -13844,7 +13845,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 0.7117337, g: 0.78397757, b: 0.98490566, a: 0.43137255}
+      maxColor: {r: 0.7117337, g: 0.78397757, b: 0.98490566, a: 0.57254905}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -14225,7 +14226,7 @@ ParticleSystem:
         m_RotationOrder: 4
     randomizeRotationDirection: 0
     gravitySource: 1
-    maxNumParticles: 10000
+    maxNumParticles: 100000
     customEmitterVelocity: {x: 0, y: 0, z: 0}
     size3D: 0
     rotation3D: 0
@@ -18392,6 +18393,7 @@ MonoBehaviour:
   targetCamera: {fileID: 278462050}
   widthMultiplier: 2
   heightMultiplier: 2
+  density: 3
 --- !u!1 &604213637
 GameObject:
   m_ObjectHideFlags: 0
@@ -21325,7 +21327,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 900102977
-  m_SortingLayer: 16
+  m_SortingLayer: 17
   m_SortingOrder: 0
   m_Sprite: {fileID: 1880245747, guid: 4e24efec5f65ca84f96735c04daed8f3, type: 3}
   m_Color: {r: 0.12452829, g: 0.12452829, b: 0.12452829, a: 0}
@@ -21497,7 +21499,7 @@ MonoBehaviour:
   m_Intensity: 0.06
   m_LightVolumeIntensity: 1
   m_LightVolumeEnabled: 0
-  m_ApplyToSortingLayers: 00000000a98429d7ff0de2923f08c8e5afaffb9ebb474d995baeb85b473b6b8d9b930978ef75a3254da470021b6b15e8cdb9f24fb5ddc771417ba6354d696dd40f3d6557
+  m_ApplyToSortingLayers: 00000000a98429d7ff0de2923f08c8e5afaffb9ebb474d995baeb85b473b6b8d9b930978ef75a3254da470021b6b15e8cdb9f24fb5ddc771417ba6354d696dd40f3d6557391efc8e
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0
@@ -22104,7 +22106,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1160469096
 Transform:
   m_ObjectHideFlags: 0
@@ -22165,8 +22167,8 @@ ParticleSystemRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -1896079815
+  m_SortingLayer: 16
   m_SortingOrder: 0
   m_RenderMode: 0
   m_MeshDistribution: 0
@@ -22217,7 +22219,7 @@ ParticleSystem:
   emitterVelocityMode: 1
   looping: 1
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
   startDelay:
@@ -22771,7 +22773,7 @@ ParticleSystem:
         m_RotationOrder: 4
     randomizeRotationDirection: 0
     gravitySource: 1
-    maxNumParticles: 10000
+    maxNumParticles: 100000
     customEmitterVelocity: {x: 0, y: 0, z: 0}
     size3D: 0
     rotation3D: 0
@@ -26938,6 +26940,7 @@ MonoBehaviour:
   targetCamera: {fileID: 278462050}
   widthMultiplier: 2
   heightMultiplier: 2
+  density: 1.5
 --- !u!1 &1165260239
 GameObject:
   m_ObjectHideFlags: 0
@@ -33155,7 +33158,7 @@ MonoBehaviour:
   m_Intensity: 0.75
   m_LightVolumeIntensity: 1
   m_LightVolumeEnabled: 0
-  m_ApplyToSortingLayers: 00000000a98429d7ff0de292bb474d99473b6b8dafaffb9e3f08c8e55baeb85b9b930978ef75a3254da470021b6b15e8cdb9f24fb5ddc771417ba6354d696dd40f3d6557
+  m_ApplyToSortingLayers: 00000000a98429d7ff0de292bb474d99473b6b8dafaffb9e3f08c8e55baeb85b9b930978ef75a3254da470021b6b15e8cdb9f24fb5ddc771417ba6354d696dd40f3d6557391efc8e
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0
