@@ -120,8 +120,8 @@ public class WeatherManager : MonoBehaviour
             currentVolumeMultiplier = Mathf.Lerp(startMultiplier, targetMultiplier, t / duration);
 
             SM.SetSoundVolume("thunder", currentVolumeMultiplier);
-            SM.SetSoundVolume("rainLoop", currentVolumeMultiplier);
-            SM.SetSoundVolume("snowLoop", currentVolumeMultiplier);
+            SM.SetSoundVolume("lightrain", currentVolumeMultiplier);
+            SM.SetSoundVolume("heavyrain", currentVolumeMultiplier);
 
             yield return null;
         }
@@ -129,8 +129,8 @@ public class WeatherManager : MonoBehaviour
         currentVolumeMultiplier = targetMultiplier;
 
         SM.SetSoundVolume("thunder", currentVolumeMultiplier);
-        SM.SetSoundVolume("rainLoop", currentVolumeMultiplier);
-        SM.SetSoundVolume("snowLoop", currentVolumeMultiplier);
+        SM.SetSoundVolume("lightrain", currentVolumeMultiplier);
+        SM.SetSoundVolume("heavyrain", currentVolumeMultiplier);
 
         audioFadeRoutine = null;
     }
@@ -198,19 +198,31 @@ public class WeatherManager : MonoBehaviour
         {
             case WeatherType.LightRain:
                 lightRainFX.Play();
+                SM.FadeInSound("lightrain");
+                SM.FadeOutSound("heavyrain");
                 break;
 
             case WeatherType.HeavyRain:
                 heavyRainFX.Play();
+                SM.FadeOutSound("lightrain");
+                SM.FadeInSound("heavyrain");
                 break;
 
             case WeatherType.Snow:
                 snowFX.Play();
+                SM.FadeOutSound("lightrain");
+                SM.FadeOutSound("heavyrain");
                 break;
 
             case WeatherType.Thunderstorm:
                 heavyRainFX.Play();
+                SM.FadeOutSound("lightrain");
+                SM.FadeInSound("heavyrain");
                 thunderRoutine = StartCoroutine(ThunderRoutine());
+                break;
+            case WeatherType.Clear:
+                SM.FadeOutSound("lightrain");
+                SM.FadeOutSound("heavyrain");
                 break;
         }
     }
@@ -219,7 +231,7 @@ public class WeatherManager : MonoBehaviour
     {
         while (true)
         {
-            yield return new WaitForSeconds(Random.Range(6f, 30f));
+            yield return new WaitForSeconds(Random.Range(6f, 20f));
             
 
             thunderLight.gameObject.SetActive(true);

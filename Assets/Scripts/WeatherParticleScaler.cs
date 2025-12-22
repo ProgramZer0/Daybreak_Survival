@@ -10,7 +10,6 @@ public class WeatherParticleScaler : MonoBehaviour
     public float heightMultiplier = 1.2f;
 
     [Header("Density")]
-    [Tooltip("Particles per world unit squared per second")]
     public float density = 2.5f;
 
     private ParticleSystem ps;
@@ -35,18 +34,14 @@ public class WeatherParticleScaler : MonoBehaviour
         float width = camWidth * widthMultiplier;
         float height = camHeight * heightMultiplier;
 
-        // Resize emitter
+        // Resize the emission box
         shape.scale = new Vector3(width, height, 1f);
 
-        // Keep centered on camera
-        transform.position = new Vector3(
-            targetCamera.transform.position.x,
-            targetCamera.transform.position.y,
-            transform.position.z
-        );
+        // Offset the emission box so its center is at the top-left of the screen
+        //shape.position = new Vector3( -camWidth * 0.5f, camHeight * 0.5f, 0f );
 
-        // Scale emission by area
+        // Maintain constant density
         float area = width * height;
-        emission.rateOverTime = Mathf.Min(area * density, 20000f);
+        emission.rateOverTime = area * density;
     }
 }

@@ -9,7 +9,7 @@ public class SoundDebugger : MonoBehaviour
     {
 
         //Get every single audio sources in the scene.
-        sources = GameObject.FindSceneObjectsOfType(typeof(AudioSource)) as AudioSource[];
+        sources = FindObjectsByType<AudioSource>(FindObjectsSortMode.None);
 
     }
 
