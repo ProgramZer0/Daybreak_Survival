@@ -91,7 +91,7 @@ public class GameManager : MonoBehaviour
         if (!TB.isRunning && startedGame)
         {
             SetEnvMusic(10f);
-            SetAmbiance();
+            SetAmbAndMusic();
             surface.BuildNavMesh();
             OS.SpawnAll();
             enemyController.enableSpawning(true);
@@ -174,18 +174,34 @@ public class GameManager : MonoBehaviour
     }
 
 
+    public void FadeOutAmb()
+    {
+        SM.FadeOutSound("dayAmbiance");
+        SM.FadeOutSound("nightAmbiance");
+    }
+
+    public void SetAmb()
+    {
+        if (isDay)
+            SetDay();
+        else
+            SetNight();
+    }
+
     public void EnteringBuilding()
     {
         inBuilding = true;
-        SM.FadeOutSound("dayAmbiance");
-        SM.FadeOutSound("nightAmbiance");
+        FadeOutAmb();
+        WM.UpdateVisibility(true);
         StartLightingFade(nightDarkness, 0.35f, true);
     }
 
     public void ExitingBuilding()
     {
         float outdoorLight = GetCurrentOutdoorIntensity();
+        WM.UpdateVisibility(false);
         StartLightingFade(outdoorLight, 0.35f, false);
+        SetAmb();
     }
 
     private float GetCurrentOutdoorIntensity()
@@ -372,12 +388,9 @@ public class GameManager : MonoBehaviour
         SetEnvMusic(1, false);
     }
 
-    private void SetAmbiance()
+    private void SetAmbAndMusic()
     {
-        if (isDay)
-            SetDay();
-        else
-            SetNight();
+        SetAmb();
 
         SetMusic();
     }

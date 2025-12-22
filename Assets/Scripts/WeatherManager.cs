@@ -18,10 +18,13 @@ public class WeatherManager : MonoBehaviour
     public ParticleSystem lightRainFX;
     public ParticleSystem heavyRainFX;
     public ParticleSystem snowFX;
+    public ParticleSystem lightRainSplashFX;
+    public ParticleSystem heavyRainSplashFX;
 
-    [Header("Thunderstorm")]
+    [Header("Links")]
     public GameObject thunderLight;
     public SoundManager SM;
+    public GameManager GM;
 
     [Header("Timing")]
     public float minWeatherDuration = 60f;
@@ -80,6 +83,7 @@ public class WeatherManager : MonoBehaviour
             weatherDurationRoutine = null;
         }
 
+        GM.SetAmb();
         SetWeather(WeatherType.Clear);
     }
 
@@ -91,10 +95,18 @@ public class WeatherManager : MonoBehaviour
         var e1 = lightRainFX.emission;
         var e2 = heavyRainFX.emission;
         var e3 = snowFX.emission;
+        var e4 = heavyRainSplashFX.emission;
+        var e5 = lightRainSplashFX.emission;
 
         e1.enabled = showParticles;
         e2.enabled = showParticles;
         e3.enabled = showParticles;
+        e4.enabled = showParticles;
+        e5.enabled = showParticles;
+
+
+        float targetMult = showParticles ? outdoorVolumeMultiplier : indoorVolumeMultiplier;
+        FadeAudio(targetMult);
     }
 
     // Update sound volume based on indoor/outdoor
@@ -151,6 +163,8 @@ public class WeatherManager : MonoBehaviour
         Debug.Log("setting weather as " + chosen);
         SetWeather(chosen);
 
+        GM.FadeOutAmb();
+
         float duration = specificDuration.HasValue ? specificDuration.Value : Random.Range(minWeatherDuration, maxWeatherDuration);
         weatherDurationRoutine = StartCoroutine(WeatherDurationRoutine(duration));
     }
@@ -159,20 +173,17 @@ public class WeatherManager : MonoBehaviour
     {
         yield return new WaitForSeconds(duration);
 
-        SetWeather(WeatherType.Clear);
-
-        weatherDurationRoutine = null;
+        StopWeather();
     }
 
     private WeatherType ChooseRandomWeather()
     {
         int roll = Random.Range(0, 100);
 
-        if (roll < 60) return WeatherType.Clear; //60%
-        if (roll < 75) return WeatherType.LightRain; //15%
-        if (roll < 87) return WeatherType.HeavyRain; //12%
-        if (roll < 95) return WeatherType.Snow; //8%
-        return WeatherType.Thunderstorm; //5%
+        if (roll < 45) return WeatherType.LightRain; //45%
+        if (roll < 70) return WeatherType.HeavyRain; //25%
+        if (roll < 90) return WeatherType.Thunderstorm; //20%
+        return WeatherType.Snow; //10%
     }
 
     public void SetWeather(WeatherType weather)

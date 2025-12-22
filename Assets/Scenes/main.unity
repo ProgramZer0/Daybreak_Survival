@@ -39996,8 +39996,11 @@ MonoBehaviour:
   lightRainFX: {fileID: 219312962}
   heavyRainFX: {fileID: 582802524}
   snowFX: {fileID: 1160469098}
+  lightRainSplashFX: {fileID: 1683421344}
+  heavyRainSplashFX: {fileID: 1072012798}
   thunderLight: {fileID: 702158097}
   SM: {fileID: 276416484}
+  GM: {fileID: 1754269201}
   minWeatherDuration: 60
   maxWeatherDuration: 240
   indoorVolumeMultiplier: 0.2
