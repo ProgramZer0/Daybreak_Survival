@@ -124,26 +124,11 @@ public class WeatherManager : MonoBehaviour
     }
     private IEnumerator FadeAudioRoutine(float targetMultiplier, float duration)
     {
-        float startMultiplier = currentVolumeMultiplier;
-        float t = 0f;
-
-        while (t < duration)
-        {
-            t += Time.deltaTime;
-            currentVolumeMultiplier = Mathf.Lerp(startMultiplier, targetMultiplier, t / duration);
-
-            SM.SetSoundVolume("thunder", currentVolumeMultiplier);
-            SM.SetSoundVolume("lightrain", currentVolumeMultiplier);
-            SM.SetSoundVolume("heavyrain", currentVolumeMultiplier);
-
-            yield return null;
-        }
-
         currentVolumeMultiplier = targetMultiplier;
 
         SM.SetSoundVolume("thunder", currentVolumeMultiplier);
         SM.SetSoundVolume("lightrain", currentVolumeMultiplier);
-        SM.SetSoundVolume("heavyrain", currentVolumeMultiplier);
+        SM.SetSoundVolume("heavyrain", currentVolumeMultiplier, true);
 
         audioFadeRoutine = null;
     }

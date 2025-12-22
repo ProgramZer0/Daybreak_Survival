@@ -17,6 +17,7 @@ public class Sound
 
     [Range(0, 250)]
     public int priority = 128;
+    public bool useIndoorDampen = false;
 
     [HideInInspector]
     public AudioSource source;

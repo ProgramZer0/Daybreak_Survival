@@ -297,13 +297,26 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-    public void SetSoundVolume(string name, float multiplier)
+    public void SetSoundVolume(string name, float _vol, bool refreshSound = false)
     {
         Sound s = Array.Find(sounds, sound => sound.name.Equals(name, StringComparison.OrdinalIgnoreCase));
         if (s == null) return;
     
-        float finalVolume = s.volume * (s.isMusic ? modMusicSound : modSound) * multiplier;
-        s.source.volume = finalVolume;
+        s.volume = _vol; 
+        if(refreshSound)
+            SetSoundMod(modSound);
+    }
+
+    public void RefreshSingleMod(string name)
+    {
+        Sound s = Array.Find(sounds, sound => sound.name.Equals(name, StringComparison.OrdinalIgnoreCase));
+        if (s != currentMusic)
+            s.source.volume = s.volume * modSound;
+        else
+        {
+            if(currentMusic != null && currentMusic.source != null)
+                currentMusic.source.volume = currentMusic.volume * modMusicSound;
+        }
     }
 
     public void SetSoundMusicMod(float vol)
@@ -313,6 +326,13 @@ public class SoundManager : MonoBehaviour
         if(currentMusic != null && currentMusic.source != null)
             currentMusic.source.volume = currentMusic.volume * modMusicSound;
     }
+
+    public void RefreshSoundMods()
+    {
+        SetSoundMod(modSound);
+        SetSoundMusicMod(modMusicSound);
+    }
+
     public float getSoundMusicMod() { return modMusicSound; }
 
 }
