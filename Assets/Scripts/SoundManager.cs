@@ -30,6 +30,7 @@ public class SoundManager : MonoBehaviour
 
             s.source.volume = s.volume;
             s.source.pitch = s.pitch;
+            s.source.priority = s.priority;
         }
         //Debug.Log("finished SM init");
     }
@@ -178,7 +179,7 @@ public class SoundManager : MonoBehaviour
             yield return null;
         }
 
-        s.source.volume = targetVolume; 
+        s.source.volume = targetVolume;
     }
     public void PlayMusic(string name, float fadeTime = 1f)
     {

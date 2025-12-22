@@ -101,7 +101,7 @@ public class RegularZombie : EnemyBase
     private void Awake()
     {
         frameOffset = Random.Range(0, detectionIntervalFrames);
-        walkingSound.GetComponent<AudioSource>().volume = walkingSound.GetComponent<AudioSource>().volume * SM.GetSoundMod();
+        //walkingSound.GetComponent<AudioSource>().volume = walkingSound.GetComponent<AudioSource>().volume * SM.GetSoundMod();
     }
     private bool ShouldDetectThisFrame()
     {
@@ -114,7 +114,12 @@ public class RegularZombie : EnemyBase
             return;
 
         distanceFromPlayer = Vector2.Distance(player.position, transform.position);
-        if (distanceFromPlayer > activeRange) return;
+        if (distanceFromPlayer > activeRange)
+        {
+            walkingSound.SetActive(false);
+            return;
+        }
+
 
          if (hordeAssistTimer > 0f)
             hordeAssistTimer -= Time.deltaTime * detectionIntervalFrames;

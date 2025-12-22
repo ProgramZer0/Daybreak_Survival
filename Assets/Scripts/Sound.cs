@@ -15,6 +15,9 @@ public class Sound
     [Range(0f, 3f)]
     public float pitch = 1;
 
+    [Range(0, 250)]
+    public int priority = 128;
+
     [HideInInspector]
     public AudioSource source;
 }

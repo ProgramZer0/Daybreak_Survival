@@ -25,7 +25,7 @@ public class GameManager : MonoBehaviour
     [Header("night/day cycle")]
     [SerializeField] private float daylightTimeSec = 800f;
     [SerializeField] private float nightTimeSec = 500f;
-    [SerializeField] private float debugTimeMult = 10;
+    [SerializeField] private float debugTimeMult = 1;
     [SerializeField] private float daylightMax = 0.75f;
     [SerializeField] private float nightDarkness = 0f;
     [SerializeField] private bool cycleEnabled = false;
@@ -91,7 +91,7 @@ public class GameManager : MonoBehaviour
         if (!TB.isRunning && startedGame)
         {
             SetEnvMusic(10f);
-            SetAmbiance();
+            SetAmbAndMusic();
             surface.BuildNavMesh();
             OS.SpawnAll();
             enemyController.enableSpawning(true);
@@ -149,11 +149,13 @@ public class GameManager : MonoBehaviour
             if (isDay)
             {
                 SetNight();
+                SetMusic();
                 isDay = false;
             }
             else
             {
                 SetDay();
+                SetMusic();
                 isDay = true;
             }
         }
@@ -172,16 +174,34 @@ public class GameManager : MonoBehaviour
     }
 
 
+    public void FadeOutAmb()
+    {
+        SM.FadeOutSound("dayAmbiance");
+        SM.FadeOutSound("nightAmbiance");
+    }
+
+    public void SetAmb()
+    {
+        if (isDay)
+            SetDay();
+        else
+            SetNight();
+    }
+
     public void EnteringBuilding()
     {
         inBuilding = true;
+        FadeOutAmb();
+        WM.UpdateVisibility(true);
         StartLightingFade(nightDarkness, 0.35f, true);
     }
 
     public void ExitingBuilding()
     {
         float outdoorLight = GetCurrentOutdoorIntensity();
+        WM.UpdateVisibility(false);
         StartLightingFade(outdoorLight, 0.35f, false);
+        SetAmb();
     }
 
     private float GetCurrentOutdoorIntensity()
@@ -217,6 +237,36 @@ public class GameManager : MonoBehaviour
 
         daylight.intensity = target;
         inBuilding = _isBuilding;
+    }
+
+    [ContextMenu("Clear Weather")]
+    public void ClearWeather()
+    {
+        WM.StartWeather(WeatherType.Clear, 60);
+    }
+
+    [ContextMenu("light rain Weather")]
+    public void StartLightRain()
+    {
+        WM.StartWeather(WeatherType.LightRain, 60);
+    }
+
+    [ContextMenu("Heavy rain Weather")]
+    public void StartHeavyRain()
+    {
+        WM.StartWeather(WeatherType.HeavyRain, 60);
+    }
+
+    [ContextMenu("Snow Weather")]
+    public void StartSnow()
+    {
+        WM.StartWeather(WeatherType.Snow, 60);
+    }
+
+    [ContextMenu("Thunderstorm Weather")]
+    public void StartThunderstorm()
+    {
+        WM.StartWeather(WeatherType.Thunderstorm, 60);
     }
 
     public void MainMenu()
@@ -323,8 +373,6 @@ public class GameManager : MonoBehaviour
         enemyController.SetIsDay(true);
         SM.FadeOutSound("nightAmbiance");
         SM.FadeInSound("dayAmbiance");
-        SM.FadeOutCurrentMusic();
-        SetEnvMusic(1, false);
     }
 
     private void SetNight()
@@ -332,16 +380,19 @@ public class GameManager : MonoBehaviour
         enemyController.SetIsDay(false);
         SM.FadeOutSound("dayAmbiance");
         SM.FadeInSound("nightAmbiance");
+    }
+
+    private void SetMusic()
+    {
         SM.FadeOutCurrentMusic();
         SetEnvMusic(1, false);
     }
 
-    private void SetAmbiance()
+    private void SetAmbAndMusic()
     {
-        if (isDay)
-            SetDay();
-        else
-            SetNight();
+        SetAmb();
+
+        SetMusic();
     }
     public void SetEnvMusic(float fade, bool startNow = true)
     {
