@@ -99,6 +99,25 @@ public class Spawner : MonoBehaviour
 
     }
 
+    public GameObject Spawn(GameObject prefab, Transform player, bool isDay, SoundManager SM, WeatherType weatherType)
+    {
+        if (Random.value > spawnChance) return null;
+        if (spawns.Count >= maxSpawns) return null;
+
+        Vector2 spawnPos = (Vector2)transform.position + (Random.insideUnitCircle * spawnDistance);
+        GameObject o = Instantiate(prefab, spawnPos, prefab.transform.rotation);
+        spawns.Add(o);
+
+        IEnemy enemy = o.GetComponent<IEnemy>();
+        if (enemy != null)
+        {
+            enemy.Initialize(player.gameObject, isDay, SM, weatherType);
+        }
+
+        return o;
+
+    }
+
     private T GetRandomByRarity<T>(T[] items) where T : ScriptableObject, IRarityItem
     {
         float totalWeight = 0f;

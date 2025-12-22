@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Security.Principal;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -22,6 +23,12 @@ public class RegularZombie : EnemyBase
     [SerializeField] private float playerModLoudness = 0f;
     [SerializeField] private float hearingThreshhold = 0.4f;
     [SerializeField] private float dummmyLOSTime = 2f;
+
+    [Header("Weather Settings")]
+    [SerializeField] private float HeavyRainDampenerPercentHeard = 0.3f;
+    [SerializeField] private float LightRainDampenerPercentHeard = 0.7f;
+    [SerializeField] private float HeavyRainDampenerPercentSeen = 0.6f;
+    [SerializeField] private float LightRainDampenerPercentSeen = 0.9f;
 
     [Header("Horde Settings")]
     [SerializeField] private float hordeAccuracy = 5f;
@@ -71,6 +78,8 @@ public class RegularZombie : EnemyBase
     [SerializeField] private Sound[] hurtSounds;
     [SerializeField] private Sound[] foundSounds;
     [SerializeField] private GameObject walkingSound;
+
+
 
     private int frameOffset;
     private float idleTimer;
@@ -176,6 +185,20 @@ public class RegularZombie : EnemyBase
                 range = seeingRangeThreshhold;
             fov = fovNight;
             hearRange = hearNight + playerModLoudness;
+        }
+
+        if(WType == WeatherType.LightRain)
+        {
+            range *= LightRainDampenerPercentSeen;
+            fov *= LightRainDampenerPercentSeen;
+            hearRange *= LightRainDampenerPercentHeard; 
+        }
+
+        if(WType == WeatherType.HeavyRain || WType == WeatherType.Thunderstorm)
+        {
+            range *= HeavyRainDampenerPercentSeen;
+            fov *= HeavyRainDampenerPercentSeen;
+            hearRange *= HeavyRainDampenerPercentHeard; 
         }
 
         if (didSee || isSearching)

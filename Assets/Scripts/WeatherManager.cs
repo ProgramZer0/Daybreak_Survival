@@ -25,6 +25,7 @@ public class WeatherManager : MonoBehaviour
     public GameObject thunderLight;
     public SoundManager SM;
     public GameManager GM;
+    public EnemyController EM;
 
     [Header("Timing")]
     public float minWeatherDuration = 60f;
@@ -188,7 +189,7 @@ public class WeatherManager : MonoBehaviour
 
     public void SetWeather(WeatherType weather)
     {
-
+        EM.SetWeather(weather);
         if (currentWeather == weather) return;
 
         currentWeather = weather;

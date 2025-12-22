@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float debugTimeMult = 1;
     [SerializeField] private float daylightMax = 0.75f;
     [SerializeField] private float nightDarkness = 0f;
+    [SerializeField] private float nightVisonDarkness = 0.05f;
     [SerializeField] private bool cycleEnabled = false;
 
     [Header("Main Game Settings")]
@@ -98,7 +99,7 @@ public class GameManager : MonoBehaviour
             LSC.AddAllActive();
             deathTime = deathTime + player.ModDeathTimeAdd;
             if (player.hasNightVison)
-                nightDarkness = 0.005f;
+                nightDarkness = nightVisonDarkness;
             GUI.ShowNoGUI();
             GUI.ShowAllHUDs();
             GUI.SetHUDVals();

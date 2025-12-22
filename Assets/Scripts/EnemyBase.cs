@@ -16,12 +16,13 @@ public abstract class EnemyBase : MonoBehaviour, IEnemy
     public float damageTime = 3f;
     protected float hearingActiveDistance = 30f;
     public bool isDay = true;
+    public WeatherType WType;
     public AudioSource AD;
     public Sound deathSound;
 
     private bool hasBeenDamaged = false;
 
-    public virtual void Initialize(GameObject player, bool _isDay, SoundManager _SM)
+    public virtual void Initialize(GameObject player, bool _isDay, SoundManager _SM, WeatherType _weatherType)
     {
         this.player = player.transform;
         agent = GetComponent<NavMeshAgent>();
@@ -30,6 +31,7 @@ public abstract class EnemyBase : MonoBehaviour, IEnemy
         playerInterface = player.GetComponent<PlayerInterface>();
         SM = _SM;
         isDay = _isDay;
+        WType = _weatherType;
     }
     public void Initialize(GameObject player)
     {

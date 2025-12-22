@@ -19,6 +19,7 @@ public class EnemyController : MonoBehaviour
     private List<GameObject> enemies = new List<GameObject>();
     [SerializeField] private bool spawningEnabled = false;
     private bool isDay = true;
+    private WeatherType WeatherType = WeatherType.Clear;
 
     public void enableSpawning(bool enabled) { spawningEnabled = enabled; }
 
@@ -65,7 +66,7 @@ public class EnemyController : MonoBehaviour
         GameObject spawnerObj = possibleSpawners[Random.Range(0, possibleSpawners.Count)];
         GameObject enemyPrefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
 
-        GameObject enemy = spawnerObj.GetComponent<Spawner>().Spawn(enemyPrefab, player, isDay, SM);
+        GameObject enemy = spawnerObj.GetComponent<Spawner>().Spawn(enemyPrefab, player, isDay, SM, WeatherType);
         if (enemy != null)
         {
             enemies.Add(enemy);
@@ -79,6 +80,17 @@ public class EnemyController : MonoBehaviour
             if (enemy == null) continue;
             EnemyBase enemyComp = enemy.GetComponent<EnemyBase>();
             enemyComp.isDay = _isDay;
+        }
+    }
+
+     public void SetWeather(WeatherType type)
+    {
+        WeatherType = type;
+        foreach (var enemy in enemies.ToList())
+        {
+            if (enemy == null) continue;
+            EnemyBase enemyComp = enemy.GetComponent<EnemyBase>();
+            enemyComp.WType = type;
         }
     }
 
