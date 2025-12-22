@@ -30,7 +30,7 @@ public class WeaponHUD : MonoBehaviour
             GetComponentInChildren<TextMeshProUGUI>().text = "0/0";
         }
     }
-
+ 
     public void SetCurrentWeapon(Weapon wp)
     {
         currentWeapon = wp;
