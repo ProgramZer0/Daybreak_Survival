@@ -25,7 +25,7 @@ public class GameManager : MonoBehaviour
     [Header("night/day cycle")]
     [SerializeField] private float daylightTimeSec = 800f;
     [SerializeField] private float nightTimeSec = 500f;
-    [SerializeField] private float debugTimeMult = 10;
+    [SerializeField] private float debugTimeMult = 1;
     [SerializeField] private float daylightMax = 0.75f;
     [SerializeField] private float nightDarkness = 0f;
     [SerializeField] private bool cycleEnabled = false;
@@ -149,11 +149,13 @@ public class GameManager : MonoBehaviour
             if (isDay)
             {
                 SetNight();
+                SetMusic();
                 isDay = false;
             }
             else
             {
                 SetDay();
+                SetMusic();
                 isDay = true;
             }
         }
@@ -175,6 +177,8 @@ public class GameManager : MonoBehaviour
     public void EnteringBuilding()
     {
         inBuilding = true;
+        SM.FadeOutSound("dayAmbiance");
+        SM.FadeOutSound("nightAmbiance");
         StartLightingFade(nightDarkness, 0.35f, true);
     }
 
@@ -353,8 +357,6 @@ public class GameManager : MonoBehaviour
         enemyController.SetIsDay(true);
         SM.FadeOutSound("nightAmbiance");
         SM.FadeInSound("dayAmbiance");
-        SM.FadeOutCurrentMusic();
-        SetEnvMusic(1, false);
     }
 
     private void SetNight()
@@ -362,6 +364,10 @@ public class GameManager : MonoBehaviour
         enemyController.SetIsDay(false);
         SM.FadeOutSound("dayAmbiance");
         SM.FadeInSound("nightAmbiance");
+    }
+
+    private void SetMusic()
+    {
         SM.FadeOutCurrentMusic();
         SetEnvMusic(1, false);
     }
@@ -372,6 +378,8 @@ public class GameManager : MonoBehaviour
             SetDay();
         else
             SetNight();
+
+        SetMusic();
     }
     public void SetEnvMusic(float fade, bool startNow = true)
     {
