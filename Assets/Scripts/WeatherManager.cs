@@ -40,7 +40,6 @@ public class WeatherManager : MonoBehaviour
     private Coroutine thunderRoutine;
     private Coroutine weatherDurationRoutine;
 
-    private Coroutine audioFadeRoutine = null;
     private float currentVolumeMultiplier = 1f;
 
     private void Awake()
@@ -113,26 +112,12 @@ public class WeatherManager : MonoBehaviour
     // Update sound volume based on indoor/outdoor
     public void FadeAudio(float targetMultiplier, float duration = 0.5f)
     {
-        // Stop any currently running fade to avoid overlapping
-        if (audioFadeRoutine != null)
-        {
-            StopCoroutine(audioFadeRoutine);
-            audioFadeRoutine = null;
-        }
-
-        audioFadeRoutine = StartCoroutine(FadeAudioRoutine(targetMultiplier, duration));
-    }
-    private IEnumerator FadeAudioRoutine(float targetMultiplier, float duration)
-    {
         currentVolumeMultiplier = targetMultiplier;
 
         SM.SetSoundVolume("thunder", currentVolumeMultiplier);
         SM.SetSoundVolume("lightrain", currentVolumeMultiplier);
         SM.SetSoundVolume("heavyrain", currentVolumeMultiplier, true);
-
-        audioFadeRoutine = null;
     }
-
     // ----------------------------
     // INTERNAL
     // ----------------------------

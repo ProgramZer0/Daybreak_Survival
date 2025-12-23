@@ -92,7 +92,7 @@ public class Spawner : MonoBehaviour
         IEnemy enemy = o.GetComponent<IEnemy>();
         if (enemy != null)
         {
-            enemy.Initialize(player.gameObject, isDay, SM);
+            enemy.Initialize(player.gameObject, isDay, SM, WeatherType.Clear);
         }
 
         return o;
