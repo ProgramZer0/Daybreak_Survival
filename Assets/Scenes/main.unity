@@ -12165,6 +12165,7 @@ MonoBehaviour:
     volume: 0.224
     pitch: 1
     priority: 128
+    useIndoorDampen: 0
     source: {fileID: 0}
   - name: buttonClick
     clip: {fileID: 8300000, guid: ee34ece69c2372545a520b2e9db2efe0, type: 3}
@@ -12173,6 +12174,7 @@ MonoBehaviour:
     volume: 0.272
     pitch: 1
     priority: 128
+    useIndoorDampen: 0
     source: {fileID: 0}
   - name: nightAmbiance
     clip: {fileID: 8300000, guid: 459f6aadd39be9e4ca2eb6baf249b119, type: 3}
@@ -12181,6 +12183,7 @@ MonoBehaviour:
     volume: 0.11
     pitch: 1
     priority: 128
+    useIndoorDampen: 0
     source: {fileID: 0}
   - name: dayAmbiance
     clip: {fileID: 8300000, guid: 1072c48b21be8614dbc4adc56a975cad, type: 3}
@@ -12189,6 +12192,7 @@ MonoBehaviour:
     volume: 0.228
     pitch: 1
     priority: 128
+    useIndoorDampen: 0
     source: {fileID: 0}
   - name: dash
     clip: {fileID: 8300000, guid: f7e3c2dcf5020a844afbab2a85b7bd46, type: 3}
@@ -12197,6 +12201,7 @@ MonoBehaviour:
     volume: 0.19
     pitch: 1
     priority: 128
+    useIndoorDampen: 0
     source: {fileID: 0}
   - name: MeleeSoundEffect1
     clip: {fileID: 8300000, guid: 3f9ffbc919552fc428040a816ab4c9fd, type: 3}
@@ -12205,6 +12210,7 @@ MonoBehaviour:
     volume: 0.19
     pitch: 1
     priority: 128
+    useIndoorDampen: 0
     source: {fileID: 0}
   - name: MeleeSoundEffect2
     clip: {fileID: 8300000, guid: f5e91606a8b143a40884a89857b2867c, type: 3}
@@ -12213,6 +12219,7 @@ MonoBehaviour:
     volume: 0.19
     pitch: 1
     priority: 128
+    useIndoorDampen: 0
     source: {fileID: 0}
   - name: emptyAmmo
     clip: {fileID: 8300000, guid: 181cbc1e2815c3847a4be53e6c3bcbff, type: 3}
@@ -12221,6 +12228,7 @@ MonoBehaviour:
     volume: 0.435
     pitch: 1
     priority: 128
+    useIndoorDampen: 0
     source: {fileID: 0}
   - name: pickingUpSound
     clip: {fileID: 8300000, guid: 644a585be75248141bac534208f585c5, type: 3}
@@ -12229,6 +12237,7 @@ MonoBehaviour:
     volume: 0.616
     pitch: 1
     priority: 128
+    useIndoorDampen: 0
     source: {fileID: 0}
   - name: DayMusic4
     clip: {fileID: 8300000, guid: e360a811bccaae54593717f7abac9e8b, type: 3}
@@ -12237,6 +12246,7 @@ MonoBehaviour:
     volume: 0.523
     pitch: 1
     priority: 128
+    useIndoorDampen: 0
     source: {fileID: 0}
   - name: DayMusic5
     clip: {fileID: 8300000, guid: 93e2807e926a1ab45833e63458d449ae, type: 3}
@@ -12245,6 +12255,7 @@ MonoBehaviour:
     volume: 0.523
     pitch: 1
     priority: 128
+    useIndoorDampen: 0
     source: {fileID: 0}
   - name: DayMusic3
     clip: {fileID: 8300000, guid: 20974793b56f7ea4db682693c3d2618d, type: 3}
@@ -12253,6 +12264,7 @@ MonoBehaviour:
     volume: 0.523
     pitch: 1
     priority: 128
+    useIndoorDampen: 0
     source: {fileID: 0}
   - name: DayMusic2
     clip: {fileID: 8300000, guid: 4c18f87f134e195489200e009472aa7f, type: 3}
@@ -12261,6 +12273,7 @@ MonoBehaviour:
     volume: 0.523
     pitch: 1
     priority: 128
+    useIndoorDampen: 0
     source: {fileID: 0}
   - name: DayMusic1
     clip: {fileID: 8300000, guid: 2061842a8a54f244192f14887e53a7ba, type: 3}
@@ -12269,6 +12282,7 @@ MonoBehaviour:
     volume: 0.523
     pitch: 1
     priority: 128
+    useIndoorDampen: 0
     source: {fileID: 0}
   - name: Interact
     clip: {fileID: 8300000, guid: 271e241392a3f3d4cad04ebafcfd6db9, type: 3}
@@ -12277,6 +12291,7 @@ MonoBehaviour:
     volume: 0.192
     pitch: 1
     priority: 128
+    useIndoorDampen: 0
     source: {fileID: 0}
   - name: DefaultweaponEquip
     clip: {fileID: 8300000, guid: 7f02f0a44ff6d9244b301ba6cd29c0b4, type: 3}
@@ -12285,6 +12300,7 @@ MonoBehaviour:
     volume: 0.192
     pitch: 1
     priority: 128
+    useIndoorDampen: 0
     source: {fileID: 0}
   - name: GunShot
     clip: {fileID: 8300000, guid: ea54bf7c0ec24b04a82eb23a73ec9966, type: 3}
@@ -12293,6 +12309,7 @@ MonoBehaviour:
     volume: 0.586
     pitch: 1
     priority: 128
+    useIndoorDampen: 0
     source: {fileID: 0}
   - name: NightMusic1
     clip: {fileID: 8300000, guid: 1bebdc475cd31044c8ea2cc534816919, type: 3}
@@ -12301,6 +12318,7 @@ MonoBehaviour:
     volume: 0.523
     pitch: 1
     priority: 128
+    useIndoorDampen: 0
     source: {fileID: 0}
   - name: NightMusic2
     clip: {fileID: 8300000, guid: 8e9ed872498435c489ec6d6a3516e6a8, type: 3}
@@ -12309,6 +12327,7 @@ MonoBehaviour:
     volume: 0.523
     pitch: 1
     priority: 128
+    useIndoorDampen: 0
     source: {fileID: 0}
   - name: NightMusic3
     clip: {fileID: 8300000, guid: 5a6d3bea9bb270645a818852eb4565d6, type: 3}
@@ -12317,6 +12336,7 @@ MonoBehaviour:
     volume: 0.523
     pitch: 1
     priority: 128
+    useIndoorDampen: 0
     source: {fileID: 0}
   - name: mainMusic1
     clip: {fileID: 8300000, guid: ae887475a694d8143a1a66d222103966, type: 3}
@@ -12325,6 +12345,7 @@ MonoBehaviour:
     volume: 0.523
     pitch: 1
     priority: 128
+    useIndoorDampen: 0
     source: {fileID: 0}
   - name: mainMusic2
     clip: {fileID: 8300000, guid: e1b1d12f18bd5c3488dcff44bcec5452, type: 3}
@@ -12333,6 +12354,7 @@ MonoBehaviour:
     volume: 0.523
     pitch: 1
     priority: 128
+    useIndoorDampen: 0
     source: {fileID: 0}
   - name: chaseMusic
     clip: {fileID: 8300000, guid: 0ae2b19a3a3dccf4091fe68af75c2520, type: 3}
@@ -12341,6 +12363,7 @@ MonoBehaviour:
     volume: 0.523
     pitch: 1
     priority: 128
+    useIndoorDampen: 0
     source: {fileID: 0}
   - name: deathComming
     clip: {fileID: 8300000, guid: c03f186843f956542923bb0af41b361f, type: 3}
@@ -12349,6 +12372,7 @@ MonoBehaviour:
     volume: 0.236
     pitch: 1
     priority: 128
+    useIndoorDampen: 0
     source: {fileID: 0}
   - name: thunder
     clip: {fileID: 8300000, guid: fe09388bcf1b56147babeb04890fb3e3, type: 3}
@@ -12357,6 +12381,7 @@ MonoBehaviour:
     volume: 0.32
     pitch: 1
     priority: 140
+    useIndoorDampen: 0
     source: {fileID: 0}
   - name: lightrain
     clip: {fileID: 8300000, guid: 1c033bd67a2b93e4aaa0d3b330cbd00d, type: 3}
@@ -12365,6 +12390,7 @@ MonoBehaviour:
     volume: 0.236
     pitch: 1
     priority: 140
+    useIndoorDampen: 0
     source: {fileID: 0}
   - name: heavyrain
     clip: {fileID: 8300000, guid: 09e023dd2d08f434dbce4d8f5760b823, type: 3}
@@ -12373,6 +12399,7 @@ MonoBehaviour:
     volume: 0.236
     pitch: 1
     priority: 140
+    useIndoorDampen: 0
     source: {fileID: 0}
 --- !u!4 &276416485
 Transform:
@@ -39872,6 +39899,7 @@ MonoBehaviour:
   debugTimeMult: 1
   daylightMax: 0.75
   nightDarkness: 0
+  nightVisonDarkness: 0.05
   cycleEnabled: 0
   deathTime: 3600
   colorStart: 0.38
@@ -40001,6 +40029,7 @@ MonoBehaviour:
   thunderLight: {fileID: 702158097}
   SM: {fileID: 276416484}
   GM: {fileID: 1754269201}
+  EM: {fileID: 0}
   minWeatherDuration: 60
   maxWeatherDuration: 240
   indoorVolumeMultiplier: 0.2
@@ -42901,16 +42930,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4cd58449cac0087429e36aaace00554f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  worldSize: 60
+  worldSize: 40
   outsideRingThickness: 3
   sectionSpawnMargin: 10
   cubeSize: 25
   sectionSettings:
   - type: 2
     minSections: 1
-    maxSections: 3
+    maxSections: 2
     minSize: 2
-    maxSize: 5
+    maxSize: 3
     loadOrder: 0
     cityToRoadChance: 0.6
     cityStyle: 1
@@ -42918,9 +42947,9 @@ MonoBehaviour:
     maxRoadSpacing: 2
   - type: 2
     minSections: 2
-    maxSections: 3
+    maxSections: 4
     minSize: 2
-    maxSize: 5
+    maxSize: 4
     loadOrder: 1
     cityToRoadChance: 0.5
     cityStyle: 2
@@ -42999,8 +43028,8 @@ MonoBehaviour:
   - {fileID: 5516276053283988616, guid: e24c8c7c7cbaf6e4ca23eea3a22ab420, type: 3}
   - {fileID: 5516276053283988616, guid: 7b544dc97ba238d4283c9d09029b6377, type: 3}
   - {fileID: 5516276053283988616, guid: d2f2fbe4807c7f6478058374b4e875b6, type: 3}
-  cityMinDistance: 7
-  maxCityPlacementTries: 10
+  cityMinDistance: 6
+  maxCityPlacementTries: 20
   gridCityBias: 0.294
   shackChance: 0.01
   enemySpawnersObj: []
